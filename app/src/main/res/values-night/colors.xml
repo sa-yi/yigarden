@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="default_gray">#ffeeeeee</color>
+
+    <color name="default_background">#ff141118</color>
+
+
+
+
+
+
+
+
+
+
+
+    <color name="white_blue">#ff1a212b</color>
+
+
+    <color name="day_black">#ffffffff</color>
+    <color name="day_white">#ff000000</color>
+</resources>

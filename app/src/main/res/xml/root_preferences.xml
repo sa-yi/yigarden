@@ -1,0 +1,55 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory app:title="主题">
+
+        <SwitchPreferenceCompat
+            app:key="theme"
+            app:title="@string/theme_title"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+    <PreferenceCategory app:title="@string/messages_header">
+
+        <EditTextPreference
+            app:key="signature"
+            app:title="@string/signature_title"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            app:defaultValue="reply"
+            app:entries="@array/reply_entries"
+            app:entryValues="@array/reply_values"
+            app:key="reply"
+            app:title="@string/reply_title"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/sync_header">
+
+        <SwitchPreferenceCompat
+            app:key="sync"
+            app:title="@string/sync_title" />
+
+        <SwitchPreferenceCompat
+            app:dependency="sync"
+            app:key="attachment"
+            app:summaryOff="@string/attachment_summary_off"
+            app:summaryOn="@string/attachment_summary_on"
+            app:title="@string/attachment_title" />
+
+    </PreferenceCategory>
+    <PreferenceCategory app:title="权限">
+        <SwitchPreferenceCompat
+            app:key="external_storage"
+            app:title="存储"
+            app:summary="用于存储图片文件及下载的文件等"
+            app:summaryOff="关闭后你将无法下载文件"/>
+        <SwitchPreferenceCompat
+            app:key="float_window"
+            app:title="悬浮窗"
+            app:summary="用于悬浮歌词的显示"/>
+        <Preference
+            app:key="system_settings"
+            app:title="转到系统设置"/>
+    </PreferenceCategory>
+</PreferenceScreen>
