@@ -77,7 +77,7 @@ public class PostActivity extends AppCompatActivity {
                 Log.e("uri:", "scheme:" + uri.getScheme()
                         + ",path:" + uri.getPath()
                         + ",id:" + id);
-/*
+
                 ApiService apiService = ApiClient.getRetrofitInstance().create(ApiService.class);
                 Call<ApiPostFeed> call = apiService.getPost(id);
 
@@ -120,7 +120,7 @@ public class PostActivity extends AppCompatActivity {
                         DialogLoading.dismiss(PostActivity.this);
                     }
                 });
-*/
+
                 try {
                     InputStreamReader isr=new InputStreamReader(getAssets().open("data.json"),"UTF-8");
 

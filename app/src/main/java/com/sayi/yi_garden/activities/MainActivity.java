@@ -1,10 +1,13 @@
 package com.sayi.yi_garden.activities;
 
+import static com.sayi.yi_garden.Consts.sp_token;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -17,6 +20,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.sayi.MainApplication;
+import com.sayi.yi_garden.Consts;
 import com.sayi.yi_garden.activities.mainfragments.dashboard.DashboardFragment;
 import com.sayi.yi_garden.activities.mainfragments.home.HomeFragment;
 import com.sayi.yi_garden.activities.mainfragments.music.MusicFragment;
@@ -29,33 +33,28 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    String TAG="MainActivity";
     private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("app基于Cookies运作").setMessage("未获取到Cookies，点击确定键前往获取Cookies，点击取消退出app")
-                .setPositiveButton("确定", (dialog, which) -> {
-                    startActivity(new Intent(MainActivity.this, LoginWebActivity.class));
-                }).setNegativeButton("取消", ((dialog, which) -> {
-                    finish();
-                }));
-        AlertDialog dialog = builder.create();
-        SharedPreferences pref = getSharedPreferences("data", MODE_PRIVATE);
+        SharedPreferences pref = getSharedPreferences(Consts.sp_user_data, MODE_PRIVATE);
         //String cookie = pref.getString("cookie", "");
-        String cookie = pref.getString("cookie", "wordpress_logged_in_bdf5fb41c0e0e935d2c6e30a9ee42a6c=%E9%A3%92%E7%BF%8A%7C1722172831%7Ce01JqqPzIP2YBmdR84J6C3BZmO8ouqx1zIW0xNKIitF%7C73519d8fef8f27e67fb26cbe3dedcbfa2764ba7afb86f81f875d4cba80504246;");
-
-        if (cookie.isEmpty()) {
-            dialog.show();
+        String token = pref.getString(sp_token, "");
+        Log.d(TAG,token);
+        if (token.isEmpty()) {
+            //dialog.show();
+            Intent intent=new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
         }
-        MainApplication.cookies = cookie;
         init();
     }
 
     public void init() {
         Window window = getWindow();
-        /*如果之前是办透明模式，要加这一句需要取消半透明的Flag*/
+        /*如果之前是半透明模式，要加这一句需要取消半透明的Flag*/
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         window.setStatusBarColor(Color.TRANSPARENT);

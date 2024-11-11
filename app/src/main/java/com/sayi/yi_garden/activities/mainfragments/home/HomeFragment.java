@@ -1,8 +1,10 @@
 package com.sayi.yi_garden.activities.mainfragments.home;
 
+import static android.content.Context.MODE_PRIVATE;
 import static android.text.Html.FROM_HTML_MODE_LEGACY;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -66,59 +68,27 @@ public class HomeFragment extends Fragment {
         return root;
     }
 
-
+    HomeViewModel homeViewModel;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        HomeViewModel homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
         binding.nickPostView
                 .setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         binding.announceBar.setPageTransformer(new AnnounceVerticalPageTransformer());
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        binding.recommendBar.setLayoutManager(linearLayoutManager);
-
-
-        recommendBarAdapter = new RecommendBarAdapter();
-        binding.recommendBar.setAdapter(recommendBarAdapter);
-        homeViewModel.recommendDataList.observe(getViewLifecycleOwner(), recommendBarAdapter::setRecommendDataList);
-        binding.recommendBar.scrollToPosition(Integer.MAX_VALUE / 2);
-
 
         postFeedAdapter = new PostFeedAdapter();
-        /*homeViewModel.postFeedsDataList.observe(getViewLifecycleOwner(), apiPostFeeds -> {
+        homeViewModel.postFeedsDataList.observe(getViewLifecycleOwner(), apiPostFeeds -> {
             for (ApiPostFeed apiPostFeed : apiPostFeeds)
                 Log.d("fetching posts", apiPostFeed.toString());
             postFeedAdapter.setPostFeeds(apiPostFeeds);
             binding.nickPostView.setAdapter(postFeedAdapter);
-        });*/
+        });
 
 
-        try {
-            InputStreamReader isr=new InputStreamReader(requireActivity().getAssets().open("data.json"),"UTF-8");
-
-            BufferedReader br = new BufferedReader(isr);
-            String line;
-            //StringBuilder和StringBuffer功能类似,存储字符串
-            StringBuilder builder = new StringBuilder();
-            while ((line = br.readLine()) != null) {
-                //append 被选元素的结尾(仍然在内部)插入指定内容,缓存的内容依次存放到builder中
-                builder.append(line);
-            }
-            br.close();
-            isr.close();
-
-           List<ApiPostFeed> addressResponses = JSON.parseArray(builder.toString(), ApiPostFeed.class);
-            for(ApiPostFeed postFeed:addressResponses){
-                Log.d("posts",postFeed.toString());
-            }
-            postFeedAdapter.setPostFeeds(addressResponses);
-            binding.nickPostView.setAdapter(postFeedAdapter);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        fetchData(0);
 
         announceAdapter = new AnnounceAdapter();
         binding.announceBar.setAdapter(announceAdapter);
@@ -148,7 +118,11 @@ public class HomeFragment extends Fragment {
         ticker.start();
 
     }
-
+    public void fetchData(int page){
+        binding.nickPostView.setVisibility(View.GONE);
+        homeViewModel.fetchData(page);
+        binding.nickPostView.setVisibility(View.VISIBLE);
+    }
 
     @Override
     public void onHiddenChanged(boolean hidden) {

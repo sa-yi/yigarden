@@ -137,7 +137,7 @@ public class ApiPostFeed {
         @Override
         public String toString() {
             return "RenderedField{" +
-                    "rendered='" + rendered + '\'' +
+                    "rendered='" + rendered + "'" +
                     ", isProtected=" + isProtected +
                     '}';
         }
@@ -157,7 +157,7 @@ public class ApiPostFeed {
         @Override
         public String toString() {
             return "MetaData{" +
-                    "footnotes='" + footnotes + '\'' +
+                    "footnotes='" + footnotes + "'" +
                     '}';
         }
     }
@@ -166,25 +166,25 @@ public class ApiPostFeed {
     public String toString() {
         return "PostFeed{" +
                 "id=" + id +
-                ", date='" + date + '\'' +
-                ", date_gmt='" + date_gmt + '\'' +
+                ", date='" + date + "'" +
+                ", date_gmt='" + date_gmt + "'" +
                 ", guid=" + guid +
-                ", modified='" + modified + '\'' +
-                ", modified_gmt='" + modified_gmt + '\'' +
-                ", slug='" + slug + '\'' +
-                ", status='" + status + '\'' +
-                ", type='" + type + '\'' +
-                ", link='" + link + '\'' +
+                ", modified='" + modified + "'" +
+                ", modified_gmt='" + modified_gmt + "'" +
+                ", slug='" + slug + "'" +
+                ", status='" + status + "'" +
+                ", type='" + type + "'" +
+                ", link='" + link + "'" +
                 ", title=" + title +
                 ", content=" + content +
                 ", excerpt=" + excerpt +
                 ", author=" + author +
                 ", featured_media=" + featured_media +
-                ", comment_status='" + comment_status + '\'' +
-                ", ping_status='" + ping_status + '\'' +
+                ", comment_status='" + comment_status + "'" +
+                ", ping_status='" + ping_status + "'" +
                 ", sticky=" + sticky +
-                ", template='" + template + '\'' +
-                ", format='" + format + '\'' +
+                ", template='" + template + "'" +
+                ", format='" + format + "'" +
                 ", metaData=" + metaData +
                 ", categories=" + Arrays.toString(categories) +
                 ", tags=" + Arrays.toString(tags) +

@@ -1,6 +1,11 @@
 package com.sayi.yi_garden.activities.mainfragments.user;
 
+import static android.content.Context.MODE_PRIVATE;
+import static com.sayi.yi_garden.Consts.sp_token;
+import static com.sayi.yi_garden.Consts.sp_user_data;
+
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +32,15 @@ public class UserFragment extends Fragment {
 
         //final TextView textView = binding.textUser;
         //userViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+
+        binding.logout.setOnClickListener(v->{
+            SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(sp_user_data, MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(sp_token,"");
+            editor.apply();
+            requireActivity().finish();
+        });
+
         binding.settings.setOnClickListener(v->{
             Intent intent=new Intent(getContext(), SettingsActivity.class);
             startActivity(intent);

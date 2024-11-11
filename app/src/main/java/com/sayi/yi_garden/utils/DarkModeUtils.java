@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 
 /**
@@ -60,12 +61,12 @@ public class DarkModeUtils {
         }
     }
  
-    private static int getNightModel(Context context) {
+    private static int getNightModel(@NonNull Context context) {
         SharedPreferences sp = context.getSharedPreferences(KEY_MODE, Context.MODE_PRIVATE);
         return sp.getInt(KEY_MODE, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
     }
  
-    public static void setNightModel(Context context, int nightMode) {
+    public static void setNightModel(@NonNull Context context, int nightMode) {
         SharedPreferences sp = context.getSharedPreferences(KEY_MODE, Context.MODE_PRIVATE);
         sp.edit().putInt(KEY_MODE, nightMode).apply();
     }

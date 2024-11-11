@@ -34,3 +34,18 @@
 -keep class retrofit2.** { *; }
 -keepattributes Signature
 -keepattributes *Annotation*
+
+-dontwarn java.awt.Color
+-dontwarn java.awt.Font
+-dontwarn java.awt.Point
+-dontwarn java.awt.Rectangle
+-dontwarn javax.ws.rs.Consumes
+-dontwarn javax.ws.rs.Produces
+-dontwarn javax.ws.rs.core.Response
+-dontwarn javax.ws.rs.core.StreamingOutput
+-dontwarn javax.ws.rs.ext.MessageBodyReader
+-dontwarn javax.ws.rs.ext.MessageBodyWriter
+-dontwarn javax.ws.rs.ext.Provider
+-dontwarn org.glassfish.jersey.internal.spi.AutoDiscoverable
+-dontwarn springfox.documentation.spring.web.json.Json
+-dontwarn sun.reflect.annotation.AnnotationType

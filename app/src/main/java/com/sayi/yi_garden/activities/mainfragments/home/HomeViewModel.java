@@ -27,28 +27,15 @@ import retrofit2.Response;
 public class HomeViewModel extends ViewModel {
 
 
-    private static final String USERNAME = "admin";
-    private static final String APPLICATION_PASSWORD = "MGOw EG9V 04xo sUZ0 60wo J2OG";
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-    public MutableLiveData<List<Recommend>> recommendDataList;
     public MutableLiveData<List<ApiPostFeed>> postFeedsDataList;
     public MutableLiveData<List<Announcement>> announcementsDataList;
 
     public HomeViewModel() {
-        List<Recommend> recommends = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            Recommend data = new Recommend();
-            data.setImage_url("sdhh");
-            data.setTitle("title " + i);
-            recommends.add(data);
-        }
-        recommendDataList = new MutableLiveData<>(new ArrayList<>());
-        recommendDataList.setValue(recommends);
-
 
         postFeedsDataList = new MutableLiveData<>(new ArrayList<>());
 
         List<ApiPostFeed> postFeeds = new ArrayList<>();
+        /*
         ApiPostFeed postFeed = new ApiPostFeed();
         postFeed.setAuthor(1);
         postFeed.setDate("1145-1-4");
@@ -58,6 +45,7 @@ public class HomeViewModel extends ViewModel {
         postFeeds.add(postFeed);
         ApiPostFeed postFeed1 = new ApiPostFeed();
         postFeeds.add(postFeed1);
+        */
         postFeedsDataList.setValue(postFeeds);
 
 
@@ -69,30 +57,27 @@ public class HomeViewModel extends ViewModel {
         announcementsDataList = new MutableLiveData<>(new ArrayList<>());
         announcementsDataList.setValue(announcements);
 
+    }
 
+    public void fetchData(int page){
         ApiService apiService = ApiClient.getRetrofitInstance().create(ApiService.class);
         Call<List<ApiPostFeed>> call = apiService.getPosts();
 
-        /*call.enqueue(new Callback<>() {
+        call.enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<List<ApiPostFeed>> call, @NonNull Response<List<ApiPostFeed>> response) {
-                if (response.isSuccessful() && response.body() != null) {
+                if (response.isSuccessful()) {
 
-                    List<ApiPostFeed> postFeedList = response.body();
-                    List<ApiPostFeed> orginpostFeedList = postFeedsDataList.getValue();
+                    if(response.body()!=null) {
+                        List<ApiPostFeed> postFeedList = response.body();
 
-
-                    for (ApiPostFeed postFeed : postFeedList) {
-                        Log.d("post", postFeed.toString());
-                        orginpostFeedList.add(postFeed);
+                        postFeedsDataList.setValue(postFeedList);
                     }
-                    orginpostFeedList.remove(0);
-                    orginpostFeedList.remove(0);
-                    postFeedsDataList.setValue(orginpostFeedList);
 
 
                 } else {
                     Log.e("failed", "Failed to retrieve posts");
+                    Log.e("failed",response.toString());
                     MainApplication.toast("Failed to retrieve posts");
                 }
             }
@@ -102,8 +87,7 @@ public class HomeViewModel extends ViewModel {
                 Log.e("Call Failure", t.getMessage());
                 MainApplication.toast("Call Failure");
             }
-        });*/
+        });
     }
-
 
 }

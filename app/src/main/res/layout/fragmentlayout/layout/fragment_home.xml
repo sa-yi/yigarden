@@ -109,11 +109,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/original_work" /-->
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:visibility="gone"
-                    android:id="@+id/recommend_bar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
@@ -136,6 +131,7 @@
                     android:id="@+id/nick_post_view"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
+                    android:visibility="visible"
                     android:layout_weight="1" />
             </LinearLayout>
 
