@@ -114,10 +114,27 @@ public class MusicService extends Service implements Player.Listener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        windowManager.removeView(lrcView);
+        if(isViewInOverlay(lrcView))
+            windowManager.removeView(lrcView);
         controller.release();
     }
+    public boolean isViewInOverlay(View view) {
+        if (view == null) {
+            return false;
+        }
 
+        WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) view.getLayoutParams();
+        if (layoutParams != null) {
+            // 检查布局参数的类型是否为 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+            // 或其他悬浮窗类型，例如 TYPE_PHONE、TYPE_SYSTEM_ALERT、TYPE_SYSTEM_OVERLAY 等
+            return layoutParams.type == WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY ||
+                    layoutParams.type == WindowManager.LayoutParams.TYPE_PHONE ||
+                    layoutParams.type == WindowManager.LayoutParams.TYPE_SYSTEM_ALERT ||
+                    layoutParams.type == WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
+        }
+
+        return false;
+    }
     @Override
     public void onMediaItemTransition(@Nullable MediaItem mediaItem, int reason) {
         Player.Listener.super.onMediaItemTransition(mediaItem, reason);
