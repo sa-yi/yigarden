@@ -90,8 +90,9 @@ public class HomeFragment extends Fragment {
             postFeedAdapter.notifyDataSetChanged();
         });
 
-
-        fetchData(0);
+        binding.nickPostView.setVisibility(View.GONE);
+        homeViewModel.fetchData(0);
+        binding.nickPostView.setVisibility(View.VISIBLE);
 
         announceAdapter = new AnnounceAdapter();
         binding.announceBar.setAdapter(announceAdapter);
@@ -120,11 +121,6 @@ public class HomeFragment extends Fragment {
                 () -> binding.announceBar.setCurrentItem(binding.announceBar.getCurrentItem() + 1, true));
         ticker.start();
 
-    }
-    public void fetchData(int page){
-        binding.nickPostView.setVisibility(View.GONE);
-        homeViewModel.fetchData(page);
-        binding.nickPostView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -238,7 +234,7 @@ public class HomeFragment extends Fragment {
             binding.title.setText(postFeed.getTitle().getRendered());
             postFeed.getAvatarUrl(url -> {
                 Log.d("getavatar",url);
-                Glide.with(requireActivity()).load(url).listener(new RequestListener<Drawable>() {
+                Glide.with(requireActivity()).load(url).listener(new RequestListener<>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         // 加载失败时的逻辑处理，例如：显示错误信息，记录日志等

@@ -4,9 +4,14 @@ import static com.sayi.yi_garden.Consts.sp_token;
 import static com.sayi.yi_garden.Consts.sp_user_data;
 
 import android.annotation.SuppressLint;
+import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
+import android.content.ClipboardManager;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -15,6 +20,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -24,6 +30,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.sayi.MainApplication;
 import com.sayi.yi_garden.R;
 
 import org.json.JSONException;
@@ -55,11 +62,12 @@ public class LoginActivity extends AppCompatActivity {
         //如果之前是办透明模式，要加这一句需要取消半透明的Flag
         //window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         //window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        window.setStatusBarColor(Color.TRANSPARENT);
+
 
         int flags = window.getDecorView().getSystemUiVisibility();
         flags |= View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
         window.getDecorView().setSystemUiVisibility(flags);
+        window.setStatusBarColor(Color.TRANSPARENT);
 
         setContentView(R.layout.activity_login);
         jump_to_rig = findViewById(R.id.jump_to_rig);
@@ -107,7 +115,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-                                Toast.makeText(LoginActivity.this, "Login Successful:" + response, Toast.LENGTH_SHORT).show();
                                 Intent intent=new Intent(this,MainActivity.class);
                                 startActivity(intent);
                                 finish();
@@ -124,38 +131,28 @@ public class LoginActivity extends AppCompatActivity {
             requestQueue.add(jsonObjectRequest);
         });
         jump_to_rig.setOnClickListener(v -> {
-            String username = usernameV.getText().toString();
-            String password = passwdV.getText().toString();
 
-            // 创建JSON对象
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("username", username);
-                jsonObject.put("password", password);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+            builder.setTitle("是否跳转至网站主页");
+            builder.setPositiveButton("是", (dialog, which) -> {
+                Intent intent= new Intent();
+                intent.setAction("android.intent.action.VIEW");
+                Uri content_url = Uri.parse("http://118.25.55.56/");
+                intent.setData(content_url);
+                startActivity(intent);
+            }).setNeutralButton("复制网站链接", (dialog, which) -> {
+                String url = "http://118.25.55.56/";
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("website", url);
+                clipboard.setPrimaryClip(clip);
+            }).setMessage("http://118.25.55.56/");
+            AlertDialog dialog= builder.create();
+            dialog.show();
 
-            // 创建请求队列
-            RequestQueue requestQueue = Volley.newRequestQueue(LoginActivity.this, new AllTrustHurlStack());
 
-            // 创建请求
-            String url = "http://127.0.0.1:5000/register"; // 本地服务器地址
-            JsonObjectRequest jsonObjectRequest =
-                    new JsonObjectRequest(Request.Method.POST, url, jsonObject,
-                            response -> {
-                                // 注册成功
-                                Toast.makeText(LoginActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
-                            },
-                            error -> {
-                                // 注册失败
-                                Toast.makeText(LoginActivity.this, "Registration Failed", Toast.LENGTH_SHORT).show();
-                            });
-            // 添加请求到队列
-            requestQueue.add(jsonObjectRequest);
         });
         retrieve_password.setOnClickListener(v->{
-
+            MainApplication.toast("开发中...");
         });
 
     }

@@ -113,7 +113,7 @@ public class PostFeed {
         });
     }
     public interface OnGetAvatarUrl{
-        public void onSuccess(String url);
+        void onSuccess(String url);
     }
 
     public RenderedField getTitle() {

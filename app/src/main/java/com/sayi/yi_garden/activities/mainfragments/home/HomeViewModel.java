@@ -57,13 +57,13 @@ public class HomeViewModel extends ViewModel {
                         MainApplication.toast(postFeedList.size()+"");
                         postFeedsDataList.setValue(postFeedList);
                     }else {
-                        MainApplication.toast("null post");
+                        MainApplication.toast("暂无帖子");
                     }
 
                 } else {
                     Log.e("failed", "Failed to retrieve posts");
                     Log.e("failed", response.toString());
-                    MainApplication.toast("Failed to retrieve posts");
+                    MainApplication.toast("获取帖子失败");
                 }
             }
 
