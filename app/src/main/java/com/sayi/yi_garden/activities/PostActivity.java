@@ -2,7 +2,6 @@ package com.sayi.yi_garden.activities;
 
 import static android.text.Html.FROM_HTML_MODE_COMPACT;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -37,9 +36,10 @@ import androidx.core.content.ContextCompat;
 
 import com.alibaba.fastjson.JSON;
 import com.sayi.yi_garden.R;
-import com.sayi.yi_garden.api.ApiClient;
-import com.sayi.yi_garden.api.ApiPostFeed;
-import com.sayi.yi_garden.api.ApiService;
+import com.sayi.yi_garden.activities.fragments.UserBannerFragment;
+import com.sayi.yi_garden.entity.ApiClient;
+import com.sayi.yi_garden.entity.PostFeed;
+import com.sayi.yi_garden.entity.ApiService;
 import com.sayi.yi_garden.databinding.ActivityPostBinding;
 import com.sayi.yi_garden.utils.DialogLoading;
 
@@ -79,11 +79,11 @@ public class PostActivity extends AppCompatActivity {
                         + ",id:" + id);
 
                 ApiService apiService = ApiClient.getRetrofitInstance().create(ApiService.class);
-                Call<ApiPostFeed> call = apiService.getPost(id);
+                Call<PostFeed> call = apiService.getPost(id);
 
                 call.enqueue(new Callback<>() {
                     @Override
-                    public void onResponse(@NonNull Call<ApiPostFeed> call, @NonNull Response<ApiPostFeed> response) {
+                    public void onResponse(@NonNull Call<PostFeed> call, @NonNull Response<PostFeed> response) {
                         if (response.isSuccessful() && response.body() != null) {
                             Log.d("post", response.body().toString());
                             binding = ActivityPostBinding.inflate(getLayoutInflater());
@@ -93,10 +93,16 @@ public class PostActivity extends AppCompatActivity {
 
                             Objects.requireNonNull(getSupportActionBar()).setTitle(response.body().getTitle().getRendered() + "");
 
+                            UserBannerFragment userBanner= (UserBannerFragment) getSupportFragmentManager().findFragmentById(R.id.banner);
+
+
                             int author = response.body().getAuthor();
-                            binding.author.setText(author + "");
+                            //binding.banner.author.setText(author + "");
                             String date = response.body().getDate();
-                            binding.sendTime.setText(date);
+                            //binding.banner.sendTime.setText(date);
+
+                            userBanner.setUserName(author+"");
+                            userBanner.setSendTime(date);
 
                             String content = response.body().getContent().getRendered();
                             Spanned spannedText = Html.fromHtml(content, FROM_HTML_MODE_COMPACT, new ImageGetter(), new CustomTagHandler());
@@ -115,64 +121,12 @@ public class PostActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(@NonNull Call<ApiPostFeed> call, @NonNull Throwable t) {
+                    public void onFailure(@NonNull Call<PostFeed> call, @NonNull Throwable t) {
                         Log.e("post failed", "call failed");
                         DialogLoading.dismiss(PostActivity.this);
                     }
                 });
 
-                try {
-                    InputStreamReader isr=new InputStreamReader(getAssets().open("data.json"),"UTF-8");
-
-                    BufferedReader br = new BufferedReader(isr);
-                    String line;
-                    //StringBuilder和StringBuffer功能类似,存储字符串
-                    StringBuilder builder = new StringBuilder();
-                    while ((line = br.readLine()) != null) {
-                        //append 被选元素的结尾(仍然在内部)插入指定内容,缓存的内容依次存放到builder中
-                        builder.append(line);
-                    }
-                    br.close();
-                    isr.close();
-
-                    List<ApiPostFeed> addressResponses = JSON.parseArray(builder.toString(), ApiPostFeed.class);
-                    for(ApiPostFeed postFeed:addressResponses){
-                        //Log.d("posts",postFeed.toString());
-                        if(postFeed.getId()==id){
-
-
-                            binding = ActivityPostBinding.inflate(getLayoutInflater());
-                            setContentView(binding.getRoot());
-                            setSupportActionBar(binding.toolbar);
-                            Objects.requireNonNull(binding.toolbar.getOverflowIcon()).setColorFilter(ContextCompat.getColor(PostActivity.this, R.color.default_gray), PorterDuff.Mode.SRC_ATOP);
-
-                            Objects.requireNonNull(getSupportActionBar()).setTitle(postFeed.getTitle().getRendered() + "");
-
-                            int author = postFeed.getAuthor();
-                            binding.author.setText(author + "");
-                            String date = postFeed.getDate();
-                            binding.sendTime.setText(date);
-
-                            String content = postFeed.getContent().getRendered();
-                            Spanned spannedText = Html.fromHtml(content, FROM_HTML_MODE_COMPACT, new ImageGetter(), new CustomTagHandler());
-                            binding.content.setText(spannedText);
-
-                            ViewGroup.LayoutParams layoutParams1 = binding.content.getLayoutParams();
-                            layoutParams1.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-                            binding.content.setLayoutParams(layoutParams1);
-                            binding.content.setMovementMethod(LinkMovementMethod.getInstance());
-
-                            setupUI();
-
-
-                            DialogLoading.dismiss(PostActivity.this);
-                            break;
-                        }
-                    }
-
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
             }
         }
 

@@ -59,7 +59,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-
+                    <!-- 用户信息 >
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -71,16 +71,16 @@
                             android:layout_width="50dp"
                             android:layout_height="50dp"
                             app:cardCornerRadius="25dp">
-                            <!-- 头像 -->
+                            <!- 头像 ->
                             <ImageView
                                 android:id="@+id/avator"
                                 android:layout_width="50dp"
                                 android:layout_height="50dp"
-                                android:contentDescription="avator"
                                 android:scaleType="centerCrop"
-                                android:src="@drawable/default_avator" />
+                                android:src="@drawable/default_avator"
+                                android:contentDescription="avator" />
                         </androidx.cardview.widget.CardView>
-                        <!-- 用户名和发布时间 -->
+                        <!- 用户名和发布时间 >
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -104,7 +104,7 @@
                                 android:textColor="#666"
                                 android:textSize="12sp" />
                         </LinearLayout>
-                        <!-- 用户操作 -->
+                        <!- 用户操作 ->
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -151,8 +151,13 @@
                             </androidx.cardview.widget.CardView>
 
                         </LinearLayout>
-                    </LinearLayout>
-
+                    </LinearLayout-->
+                    <fragment android:name="com.sayi.yi_garden.activities.fragments.UserBannerFragment"
+                        android:id="@+id/banner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:gravity="center_vertical"/>
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"

@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -25,7 +24,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.sayi.MainApplication;
 import com.sayi.yi_garden.R;
 
 import org.json.JSONException;
@@ -63,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
         flags |= View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
         window.getDecorView().setSystemUiVisibility(flags);
 
-        setContentView(R.layout.login);
+        setContentView(R.layout.activity_login);
         jump_to_rig = findViewById(R.id.jump_to_rig);
 
         login = findViewById(R.id.login);

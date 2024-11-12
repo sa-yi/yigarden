@@ -85,8 +85,6 @@
             android:exported="true"
             android:launchMode="singleInstance"
             android:theme="@style/ErrorTheme" />
-        <activity android:name=".utils.TestActivity"
-            android:exported="true"/>
         <service
             android:name="com.sayi.music.PlaybackService"
             android:exported="true"

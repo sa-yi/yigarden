@@ -33,7 +33,12 @@ android {
 
     buildTypes {
         release {
+            isDebuggable = false
+            // 启用代码压缩、优化及混淆
             isMinifyEnabled = true
+            // 启用资源压缩，需配合 minifyEnabled=true 使用
+            isShrinkResources=true
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -48,6 +53,7 @@ android {
         getByName("main") {
             res.srcDirs(
                 "src/main/res/layout/fragmentlayout",
+                "src/main/res/layout/fragments",
                 "src/main/res/layout",
                 "src/main/res/layout/items",
                 "src/main/res"

@@ -1,57 +1,58 @@
 package com.sayi.yi_garden.activities.mainfragments.home;
 
-import static android.content.Context.MODE_PRIVATE;
 import static android.text.Html.FROM_HTML_MODE_LEGACY;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.JsonReader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.alibaba.fastjson.JSON;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.sayi.MainApplication;
 import com.sayi.yi_garden.R;
 import com.sayi.yi_garden.activities.NotifyActivity;
 import com.sayi.yi_garden.activities.PostActivity;
 import com.sayi.yi_garden.activities.PublishActivity;
 import com.sayi.yi_garden.activities.SearchActivity;
-import com.sayi.yi_garden.api.ApiPostFeed;
+import com.sayi.yi_garden.activities.fragments.UserBannerFragment;
+import com.sayi.yi_garden.entity.PostFeed;
 import com.sayi.yi_garden.databinding.FragmentHomeBinding;
 import com.sayi.yi_garden.databinding.NickPostBinding;
 import com.sayi.yi_garden.entity.Announcement;
-import com.sayi.yi_garden.entity.Recommend;
 import com.sayi.yi_garden.utils.Dialog;
 import com.sayi.yi_garden.utils.Statusbar;
 import com.sayi.yi_garden.utils.Ticker;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
 
     Ticker ticker;
-    RecommendBarAdapter recommendBarAdapter;
     AnnounceAdapter announceAdapter;
     PostFeedAdapter postFeedAdapter;
     View root;
@@ -69,6 +70,7 @@ public class HomeFragment extends Fragment {
     }
 
     HomeViewModel homeViewModel;
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -80,11 +82,12 @@ public class HomeFragment extends Fragment {
 
 
         postFeedAdapter = new PostFeedAdapter();
+        binding.nickPostView.setAdapter(postFeedAdapter);
         homeViewModel.postFeedsDataList.observe(getViewLifecycleOwner(), apiPostFeeds -> {
-            for (ApiPostFeed apiPostFeed : apiPostFeeds)
+            for (PostFeed apiPostFeed : apiPostFeeds)
                 Log.d("fetching posts", apiPostFeed.toString());
             postFeedAdapter.setPostFeeds(apiPostFeeds);
-            binding.nickPostView.setAdapter(postFeedAdapter);
+            postFeedAdapter.notifyDataSetChanged();
         });
 
 
@@ -136,49 +139,6 @@ public class HomeFragment extends Fragment {
         super.onDestroyView();
         ticker.stop();
         binding = null;
-    }
-
-    class RecommendBarAdapter extends RecyclerView.Adapter<RecommendBarAdapter.RecommendViewHolder> {
-        private List<Recommend> recommendDataList;
-
-        public RecommendBarAdapter() {
-        }
-
-        public void setRecommendDataList(List<Recommend> _recommendDataList) {
-            recommendDataList = _recommendDataList;
-        }
-
-        @NonNull
-        @Override
-        public RecommendViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            RecommendViewHolder holder = new RecommendViewHolder(LayoutInflater.from(
-                    getContext()).inflate(R.layout.recommand_card, parent,
-                    false));
-            return holder;
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull RecommendViewHolder holder, int position) {
-            Recommend data = recommendDataList.get(position % recommendDataList.size());
-            holder.title.setText(data.getTitle());
-            holder.cover.setImageResource(R.drawable.background);
-        }
-
-        @Override
-        public int getItemCount() {
-            return Integer.MAX_VALUE;
-        }
-
-        class RecommendViewHolder extends RecyclerView.ViewHolder {
-            ImageView cover;
-            TextView title;
-
-            public RecommendViewHolder(@NonNull View itemView) {
-                super(itemView);
-                cover = itemView.findViewById(R.id.cover);
-                title = itemView.findViewById(R.id.title);
-            }
-        }
     }
 
     class AnnounceAdapter extends RecyclerView.Adapter<AnnounceViewHolder> {
@@ -235,7 +195,7 @@ public class HomeFragment extends Fragment {
     }
 
     class PostFeedAdapter extends RecyclerView.Adapter<PostFeedViewHolder> {
-        private List<ApiPostFeed> postFeeds;
+        private List<PostFeed> postFeeds;
 
         @NonNull
         @Override
@@ -245,13 +205,13 @@ public class HomeFragment extends Fragment {
             return new PostFeedViewHolder(nickPostBinding);
         }
 
-        public void setPostFeeds(List<ApiPostFeed> _postFeeds) {
-            postFeeds = _postFeeds;
+        public void setPostFeeds(List<PostFeed> postFeeds) {
+            this.postFeeds = postFeeds;
         }
 
         @Override
         public void onBindViewHolder(@NonNull PostFeedViewHolder holder, int position) {
-            ApiPostFeed postFeed = postFeeds.get(position);
+            PostFeed postFeed = postFeeds.get(position);
             holder.bind(postFeed);
         }
 
@@ -270,35 +230,46 @@ public class HomeFragment extends Fragment {
             this.binding = binding;
         }
 
-        public void bind(ApiPostFeed postFeed) {
+        public void bind(PostFeed postFeed) {
             //binding.avator.setImageResource(postFeed.getAvatarResourceId());
             Log.d("onBinding", postFeed.toString());
             binding.userName.setText(postFeed.getAuthor() + "");
             binding.sendTime.setText(postFeed.getDate());
             binding.title.setText(postFeed.getTitle().getRendered());
+            postFeed.getAvatarUrl(url -> {
+                Log.d("getavatar",url);
+                Glide.with(requireActivity()).load(url).listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        // 加载失败时的逻辑处理，例如：显示错误信息，记录日志等
+                        MainApplication.toast("加载头像失败");
+                        return false; // 返回false表示你不想处理这个事件，Glide会继续调用error()方法设置的占位图
+                    }
 
-            //String content=postFeed.getContent().getRendered();
-            Spanned spannedText = Html.fromHtml(postFeed.getContent().getRendered(), FROM_HTML_MODE_LEGACY);
-            String content=spannedText.toString();
-            binding.content.setText(content);
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        // 加载成功时的逻辑处理
+                        return false; // 返回false表示你不想处理这个事件
+                    }
+                }).placeholder(R.drawable.default_avator).into(binding.avator);
+            });
+
+            Spanned expert = Html.fromHtml(postFeed.getExcerpt().getRendered(), FROM_HTML_MODE_LEGACY);
+            //String content=expert.toString();
+            binding.expert.setText(expert);
+
+
             //binding.score.setText(String.valueOf(postFeed.getScore()));
             binding.getRoot().setOnClickListener(v -> {
                 Intent intent = new Intent(getContext(), PostActivity.class);
                 //intent.setData();
-                Uri uri = new Uri.Builder().scheme("yigarden")
+                Uri uri = new Uri.Builder().scheme("sayi")
                         .authority("")  // authority 这里可以为空
                         .path("/viewpost")
                         .appendQueryParameter("id", postFeed.getId() + "")
                         .build();
                 intent.setData(uri);
                 startActivity(intent);
-            });
-
-            binding.follow.setOnClickListener(v -> {
-                MainApplication.toast("followed");
-            });
-            binding.chat.setOnClickListener(v -> {
-                MainApplication.toast("chat");
             });
 
 

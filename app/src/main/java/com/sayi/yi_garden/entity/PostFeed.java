@@ -1,14 +1,21 @@
 package com.sayi.yi_garden.entity;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Arrays;
+import java.util.List;
 
-public class ApiPostFeed {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class PostFeed {
     @SerializedName("id")
-    private int id=0;
+    private int id=-1;
     @SerializedName("date")
     private String date="114-5-14";
 
@@ -24,7 +31,7 @@ public class ApiPostFeed {
     @SerializedName("modified_gmt")
     private String modified_gmt="yet";
 
-    @SerializedName("slug")
+    @SerializedName("slug")//简介
     private String slug="what's this";
 
     @SerializedName("status")
@@ -46,7 +53,7 @@ public class ApiPostFeed {
     private RenderedField excerpt=new RenderedField();
 
     @SerializedName("author")
-    private int author=0;
+    private int author=-1;
 
     @SerializedName("featured_media")
     private int featured_media=0;
@@ -76,65 +83,69 @@ public class ApiPostFeed {
     private int[] tags=new int[]{};
 
     public int getId(){return id;}
-    public void setId(int _id){id=_id;}
 
 
     public String getDate(){return date;}
 
-    public void setDate(String date){
-        this.date=date;
-    }
 
     public int getAuthor() {
         return author;
     }
 
-    public void setAuthor(int author) {
-        this.author = author;
-    }
 
+
+    public void getAvatarUrl(OnGetAvatarUrl onGetAvatarUrl){
+        ApiService apiService = ApiClient.getRetrofitInstance().create(ApiService.class);
+        Call<User> callUser= apiService.getUser(id);
+        callUser.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
+                if(response.isSuccessful()){
+                    User user= response.body();
+                    Log.d("User",user.toString());
+                    onGetAvatarUrl.onSuccess(user.getAvatorUrls().max);
+                }
+            }
+            @Override
+            public void onFailure(Call<User> call, Throwable throwable) {
+
+            }
+        });
+    }
+    public interface OnGetAvatarUrl{
+        public void onSuccess(String url);
+    }
 
     public RenderedField getTitle() {
         return title;
     }
 
-    public void setTitle(RenderedField title) {
-        this.title = title;
-    }
 
     public RenderedField getContent() {
         return content;
     }
 
-    public void setContent(RenderedField content) {
-        this.content = content;
-    }
 
     public RenderedField getExcerpt() {
         return excerpt;
     }
 
-    public void setExcerpt(RenderedField excerpt) {
-        this.excerpt = excerpt;
-    }
 
 
 
     public static class RenderedField {
-        private String rendered="defalut content";
-        private boolean isProtected=false;
+
+        @SerializedName("rendered")
+        private String rendered="";
 
         public String getRendered() {
             return rendered;
         }
 
-        public void setRendered(String rendered) {
-            this.rendered = rendered;
-        }
-
         @NonNull
         @Override
         public String toString() {
+            boolean isProtected = false;
             return "RenderedField{" +
                     "rendered='" + rendered + "'" +
                     ", isProtected=" + isProtected +
@@ -153,6 +164,7 @@ public class ApiPostFeed {
             this.footnotes = footnotes;
         }
 
+        @NonNull
         @Override
         public String toString() {
             return "MetaData{" +
@@ -161,6 +173,7 @@ public class ApiPostFeed {
         }
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "PostFeed{" +

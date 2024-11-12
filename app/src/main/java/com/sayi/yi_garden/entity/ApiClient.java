@@ -1,4 +1,4 @@
-package com.sayi.yi_garden.api;
+package com.sayi.yi_garden.entity;
 
 import android.util.Log;
 import android.webkit.WebSettings;
@@ -88,8 +88,6 @@ public class ApiClient {
             Request originalRequest = chain.request();
 
             String token = MainApplication.getContext().getToken();
-            Log.d("token",token);
-
 
             Request.Builder builder = originalRequest.newBuilder();
             builder.removeHeader("User-Agent");

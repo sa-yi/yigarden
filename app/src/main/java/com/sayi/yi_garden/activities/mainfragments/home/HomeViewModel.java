@@ -1,7 +1,5 @@
 package com.sayi.yi_garden.activities.mainfragments.home;
 
-import android.util.Base64;
-import android.util.JsonReader;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -9,16 +7,13 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.sayi.MainApplication;
-import com.sayi.yi_garden.api.ApiClient;
-import com.sayi.yi_garden.api.ApiPostFeed;
-import com.sayi.yi_garden.api.ApiService;
+import com.sayi.yi_garden.entity.ApiClient;
+import com.sayi.yi_garden.entity.PostFeed;
+import com.sayi.yi_garden.entity.ApiService;
 import com.sayi.yi_garden.entity.Announcement;
-import com.sayi.yi_garden.entity.Recommend;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,25 +22,14 @@ import retrofit2.Response;
 public class HomeViewModel extends ViewModel {
 
 
-    public MutableLiveData<List<ApiPostFeed>> postFeedsDataList;
+    public MutableLiveData<List<PostFeed>> postFeedsDataList;
     public MutableLiveData<List<Announcement>> announcementsDataList;
 
     public HomeViewModel() {
 
         postFeedsDataList = new MutableLiveData<>(new ArrayList<>());
 
-        List<ApiPostFeed> postFeeds = new ArrayList<>();
-        /*
-        ApiPostFeed postFeed = new ApiPostFeed();
-        postFeed.setAuthor(1);
-        postFeed.setDate("1145-1-4");
-        ApiPostFeed.RenderedField content = new ApiPostFeed.RenderedField();
-        content.setRendered("加载中");
-        postFeed.setContent(content);
-        postFeeds.add(postFeed);
-        ApiPostFeed postFeed1 = new ApiPostFeed();
-        postFeeds.add(postFeed1);
-        */
+        List<PostFeed> postFeeds = new ArrayList<>();
         postFeedsDataList.setValue(postFeeds);
 
 
@@ -59,31 +43,32 @@ public class HomeViewModel extends ViewModel {
 
     }
 
-    public void fetchData(int page){
+    public void fetchData(int page) {
         ApiService apiService = ApiClient.getRetrofitInstance().create(ApiService.class);
-        Call<List<ApiPostFeed>> call = apiService.getPosts();
+        Call<List<PostFeed>> call = apiService.getPosts();
 
         call.enqueue(new Callback<>() {
             @Override
-            public void onResponse(@NonNull Call<List<ApiPostFeed>> call, @NonNull Response<List<ApiPostFeed>> response) {
+            public void onResponse(@NonNull Call<List<PostFeed>> call, @NonNull Response<List<PostFeed>> response) {
                 if (response.isSuccessful()) {
 
-                    if(response.body()!=null) {
-                        List<ApiPostFeed> postFeedList = response.body();
-
+                    if (response.body() != null) {
+                        List<PostFeed> postFeedList = response.body();
+                        MainApplication.toast(postFeedList.size()+"");
                         postFeedsDataList.setValue(postFeedList);
+                    }else {
+                        MainApplication.toast("null post");
                     }
-
 
                 } else {
                     Log.e("failed", "Failed to retrieve posts");
-                    Log.e("failed",response.toString());
+                    Log.e("failed", response.toString());
                     MainApplication.toast("Failed to retrieve posts");
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<ApiPostFeed>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<List<PostFeed>> call, @NonNull Throwable t) {
                 Log.e("Call Failure", t.getMessage());
                 MainApplication.toast("Call Failure");
             }

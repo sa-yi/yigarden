@@ -82,7 +82,6 @@ public class MusicFragment extends Fragment implements Player.Listener {
         super.onCreate(savedInstanceState);
 
         callPermissionRequest = registerForActivityResult(new ActivityResultContracts.RequestPermission(), _granted -> {
-            MainApplication.toast("is" + granted);
             granted = _granted;
             if (granted) {
                 Intent intent = new Intent(getActivity(), MusicService.class);

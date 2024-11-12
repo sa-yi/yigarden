@@ -105,6 +105,7 @@
 
             </LinearLayout>
         </LinearLayout>
+
         <!-- 帖子标题 -->
         <TextView
             android:id="@+id/title"
@@ -113,9 +114,9 @@
             android:text="ZTZ99III"
             android:textSize="18sp"
             android:textStyle="bold" />
-        <!-- 帖子内容 -->
+        <!-- 帖子摘要 -->
         <TextView
-            android:id="@+id/content"
+            android:id="@+id/expert"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"

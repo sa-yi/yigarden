@@ -20,8 +20,11 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
-# 保留 com.sayi.logintest.api 包下的所有类及其字段
--keep class com.sayi.yi_garden.api.** { *; }
+# 保留 com.sayi.yi_garden.entity 包下的所有类及其字段
+-keep class com.sayi.yi_garden.entity.** { *; }
+
+-optimizationpasses 5
+
 
 -keep class com.google.gson.** { *; }
 -keepattributes Signature

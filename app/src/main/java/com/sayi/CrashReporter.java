@@ -17,7 +17,7 @@ public class CrashReporter extends Activity {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
         ll.setLayoutParams(layoutParams);
         ll.setBackgroundColor(Color.WHITE);
-        String error=getIntent().getStringExtra("error");
+        String error=getIntent().getStringExtra("error")+"";
         TextView tx=new TextView(this);
         tx.setText(error);
         tx.setTextIsSelectable(true);
