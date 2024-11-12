@@ -19,4 +19,7 @@ public interface ApiService {
 
     @GET("wp/v2/posts/{id}")
     Call<ApiPostFeed> getPost(@Path("id") int id);
+
+
+
 }
