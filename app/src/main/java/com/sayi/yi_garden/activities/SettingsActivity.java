@@ -14,15 +14,15 @@ import androidx.preference.PreferenceManager;
 
 import com.sayi.MainApplication;
 import com.sayi.yi_garden.R;
-import com.sayi.yi_garden.databinding.SettingsActivityBinding;
+import com.sayi.yi_garden.databinding.ActivitySettingsBinding;
 
 public class SettingsActivity extends AppCompatActivity {
-
+    ActivitySettingsBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.settings_activity);
-        SettingsActivityBinding binding=SettingsActivityBinding.inflate(getLayoutInflater());
+        setContentView(R.layout.activity_settings);
+        binding=ActivitySettingsBinding.inflate(getLayoutInflater());
         setSupportActionBar(binding.toolbar);
         if (savedInstanceState == null) {
             getSupportFragmentManager()

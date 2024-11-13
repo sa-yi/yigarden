@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.sayi.yi_garden.activities.LoginActivity;
 import com.sayi.yi_garden.activities.SettingsActivity;
 import com.sayi.yi_garden.databinding.FragmentUserBinding;
 
@@ -39,6 +40,8 @@ public class UserFragment extends Fragment {
             editor.putString(sp_token,"");
             editor.apply();
             requireActivity().finish();
+            Intent intent=new Intent(getContext(), LoginActivity.class);
+            startActivity(intent);
         });
 
         binding.settings.setOnClickListener(v->{
