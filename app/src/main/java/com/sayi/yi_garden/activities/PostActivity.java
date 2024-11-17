@@ -26,6 +26,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,12 +39,18 @@ import androidx.core.content.ContextCompat;
 import com.alibaba.fastjson.JSON;
 import com.sayi.yi_garden.R;
 import com.sayi.yi_garden.activities.fragments.UserBannerFragment;
+import com.sayi.yi_garden.customview.HtmlToAndroidLayout;
 import com.sayi.yi_garden.entity.ApiClient;
 import com.sayi.yi_garden.entity.PostFeed;
 import com.sayi.yi_garden.entity.ApiService;
 import com.sayi.yi_garden.databinding.ActivityPostBinding;
 import com.sayi.yi_garden.utils.DialogLoading;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Node;
+import org.jsoup.select.NodeTraversor;
+import org.jsoup.select.NodeVisitor;
 import org.xml.sax.XMLReader;
 
 import java.io.BufferedReader;
@@ -105,14 +113,44 @@ public class PostActivity extends AppCompatActivity {
                             userBanner.setSendTime(date);
 
                             String content = response.body().getContent().getRendered();
-                            Spanned spannedText = Html.fromHtml(content, FROM_HTML_MODE_COMPACT, new ImageGetter(), new CustomTagHandler());
-                            binding.content.setText(spannedText);
 
+
+                            Document document= Jsoup.parse(content);
+
+                            // 创建一个NodeVisitor来访问每个节点
+                            NodeVisitor nodeVisitor = new NodeVisitor() {
+                                public void head(Node node, int depth) {
+                                    // 在进入节点时调用
+                                    if(depth>=3)
+                                        Log.d(TAG,node.nodeName()+":"+node+",depth"+depth);
+                                }
+
+                                public void tail(Node node, int depth) {
+                                    // 在离开节点时调用
+                                    // 这里我们不执行任何操作
+                                }
+                            };
+
+                            // 使用NodeTraversor来遍历文档中的所有节点
+                            //NodeTraversor traversor = new NodeTraversor();
+
+                            //NodeTraversor.traverse(nodeVisitor, document);
+
+
+
+
+                            //Spanned spannedText = Html.fromHtml(content, FROM_HTML_MODE_COMPACT, new ImageGetter(), new CustomTagHandler());
+
+                            //LinearLayout htmlToAndroidLayout=HtmlToAndroidLayout.parseHtmlToLayout(PostActivity.this,content);
+                            LinearLayout htmlToAndroidLayout=HtmlToAndroidLayout.processHtml(PostActivity.this,content);
+                            binding.content.addView(htmlToAndroidLayout);
+
+                            /*
                             ViewGroup.LayoutParams layoutParams1 = binding.content.getLayoutParams();
                             layoutParams1.height = ViewGroup.LayoutParams.WRAP_CONTENT;
                             binding.content.setLayoutParams(layoutParams1);
                             binding.content.setMovementMethod(LinkMovementMethod.getInstance());
-
+                            */
                             setupUI();
                         } else {
                             Log.e("post", "call failed");
@@ -244,8 +282,8 @@ public class PostActivity extends AppCompatActivity {
                     mDrawable.setLevel(1);
                     // i don't know yet a better way to refresh TextView
                     // mTv.invalidate() doesn't work as expected
-                    CharSequence t = binding.content.getText();
-                    binding.content.setText(t);
+                    //CharSequence t = binding.content.getText();
+                    //binding.content.setText(t);
                 }
             }
         }
@@ -263,6 +301,7 @@ public class PostActivity extends AppCompatActivity {
                     @Override
                     public void onClick(@NonNull View widget) {
                         Toast.makeText(PostActivity.this, "Image clicked: " + src + "," + imageSource, Toast.LENGTH_SHORT).show();
+
                     }
                 };
 

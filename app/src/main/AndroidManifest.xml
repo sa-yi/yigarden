@@ -76,6 +76,7 @@
                     android:scheme="sayi" />
             </intent-filter>
         </activity>
+        <activity android:name=".activities.PostViewImageActivity"/>
         <activity
             android:name=".activities.LoginActivity"
             android:exported="true"
