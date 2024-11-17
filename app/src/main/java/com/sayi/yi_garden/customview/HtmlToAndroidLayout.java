@@ -50,7 +50,7 @@ public class HtmlToAndroidLayout {
         int a = 0;
         for (Element element : document.body().children()) {
             a++;
-            System.out.println(element + "" + a);
+            Log.d("element",element+""+a);
             View view = baseProcess(element, context);
             layout.addView(view);
         }
@@ -198,20 +198,6 @@ public class HtmlToAndroidLayout {
                 View view = new View(context);
                 return view;
         }
-    }
-
-    public static String readFileToString(String filePath) {
-        StringBuilder contentBuilder = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String currentLine;
-            while ((currentLine = br.readLine()) != null) {
-                contentBuilder.append(currentLine).append(System.lineSeparator());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return contentBuilder.toString();
     }
 
 

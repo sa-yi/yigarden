@@ -20,9 +20,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,11 +36,10 @@ import com.sayi.yi_garden.activities.NotifyActivity;
 import com.sayi.yi_garden.activities.PostActivity;
 import com.sayi.yi_garden.activities.PublishActivity;
 import com.sayi.yi_garden.activities.SearchActivity;
-import com.sayi.yi_garden.activities.fragments.UserBannerFragment;
-import com.sayi.yi_garden.entity.PostFeed;
 import com.sayi.yi_garden.databinding.FragmentHomeBinding;
 import com.sayi.yi_garden.databinding.NickPostBinding;
 import com.sayi.yi_garden.entity.Announcement;
+import com.sayi.yi_garden.entity.PostFeed;
 import com.sayi.yi_garden.utils.Dialog;
 import com.sayi.yi_garden.utils.Statusbar;
 import com.sayi.yi_garden.utils.Ticker;
@@ -56,6 +52,7 @@ public class HomeFragment extends Fragment {
     AnnounceAdapter announceAdapter;
     PostFeedAdapter postFeedAdapter;
     View root;
+    HomeViewModel homeViewModel;
     private FragmentHomeBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -69,7 +66,6 @@ public class HomeFragment extends Fragment {
         return root;
     }
 
-    HomeViewModel homeViewModel;
     @SuppressLint("NotifyDataSetChanged")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -193,16 +189,16 @@ public class HomeFragment extends Fragment {
     class PostFeedAdapter extends RecyclerView.Adapter<PostFeedViewHolder> {
         private List<PostFeed> postFeeds;
 
+        public void setPostFeeds(List<PostFeed> postFeeds) {
+            this.postFeeds = postFeeds;
+        }
+
         @NonNull
         @Override
         public PostFeedViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             NickPostBinding nickPostBinding = NickPostBinding.inflate(inflater, parent, false);
             return new PostFeedViewHolder(nickPostBinding);
-        }
-
-        public void setPostFeeds(List<PostFeed> postFeeds) {
-            this.postFeeds = postFeeds;
         }
 
         @Override
@@ -229,11 +225,11 @@ public class HomeFragment extends Fragment {
         public void bind(PostFeed postFeed) {
             //binding.avator.setImageResource(postFeed.getAvatarResourceId());
             Log.d("onBinding", postFeed.toString());
-            binding.userName.setText(postFeed.getAuthor() + "");
+            binding.userName.setText(postFeed.getAuthor()+"");
             binding.sendTime.setText(postFeed.getDate());
             binding.title.setText(postFeed.getTitle().getRendered());
             postFeed.getAvatarUrl(url -> {
-                Log.d("getavatar",url);
+                Log.d("getAvatar", url);
                 Glide.with(requireActivity()).load(url).listener(new RequestListener<>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
@@ -275,7 +271,7 @@ public class HomeFragment extends Fragment {
             binding.score.setOnClickListener(v -> {
                 MainApplication.toast("thumbed up");
             });
-            binding.comment.setOnClickListener(v -> {
+            binding.postComment.setOnClickListener(v -> {
                 MainApplication.toast("comment");
             });
             binding.share.setOnClickListener(v -> {

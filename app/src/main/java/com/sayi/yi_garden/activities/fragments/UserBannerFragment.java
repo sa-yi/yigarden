@@ -8,34 +8,40 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
-import com.bumptech.glide.Glide;
 import com.sayi.MainApplication;
 import com.sayi.yi_garden.databinding.UserBannerBinding;
 
 public class UserBannerFragment extends Fragment {
-    UserBannerBinding binding;
+    private UserBannerBinding binding;
+    private UserBannerViewModel viewModel;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding=UserBannerBinding.inflate(getLayoutInflater());
+        binding = UserBannerBinding.inflate(getLayoutInflater());
+        viewModel = new ViewModelProvider(this).get(UserBannerViewModel.class);
 
-        binding.follow.setOnClickListener(v->{
-            MainApplication.toast("followed");
+        // 绑定 ViewModel 数据到 UI
+        viewModel.getUserName().observe(getViewLifecycleOwner(), name -> binding.userName.setText(name));
+        viewModel.getSendTime().observe(getViewLifecycleOwner(), time -> binding.sendTime.setText(time));
+
+        // 初始化点击事件
+        binding.follow.setOnClickListener(v -> MainApplication.toast("followed"));
+        binding.chat.setOnClickListener(v -> MainApplication.toast("chatting"));
+
+        binding.getRoot().setOnClickListener(v->{
+            MainApplication.toast("userBanner");
         });
-        binding.chat.setOnClickListener(v->{
-            MainApplication.toast("chatting");
-        });
+
         return binding.getRoot();
     }
 
-    public void setAvator(String url){
-        Glide.with(this).load(url).into(binding.avator);
-    }
-    public void setUserName(String name){
-        binding.userName.setText(name);
+    public void fetchUserData(int id) {
+        viewModel.fetchUserData(id);
     }
     public void setSendTime(String time){
-        binding.sendTime.setText(time);
+        viewModel.setSendTime(time);
     }
 }

@@ -131,28 +131,6 @@ public class PostFeed {
     }
 
 
-
-
-    public static class RenderedField {
-
-        @SerializedName("rendered")
-        private String rendered="";
-
-        public String getRendered() {
-            return rendered;
-        }
-
-        @NonNull
-        @Override
-        public String toString() {
-            boolean isProtected = false;
-            return "RenderedField{" +
-                    "rendered='" + rendered + "'" +
-                    ", isProtected=" + isProtected +
-                    '}';
-        }
-    }
-
     public static class MetaData {
         private String footnotes;
 

@@ -6,6 +6,7 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface ApiService {
 
@@ -17,6 +18,9 @@ public interface ApiService {
 
     @GET("wp/v2/posts/{id}")
     Call<PostFeed> getPost(@Path("id") int id);
+
+    @GET("wp/v2/comments")
+    Call<List<PostComment>> getComments(@Query("post") int id);
 
 
     @GET("wp/v2/users/{id}")

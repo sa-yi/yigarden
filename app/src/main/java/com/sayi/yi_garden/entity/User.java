@@ -24,6 +24,9 @@ public class User {
     @SerializedName("avatar_urls")
     private AvatarUrls avatarUrls =null;
 
+    public String getName(){
+        return name;
+    }
     public AvatarUrls getAvatorUrls(){
         return avatarUrls;
     }
