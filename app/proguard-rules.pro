@@ -38,6 +38,10 @@
 -keepattributes Signature
 -keepattributes *Annotation*
 
+-keep class javax.xml.stream.** { *; }
+-keep class org.apache.tika.** { *; }
+
+
 -dontwarn java.awt.Color
 -dontwarn java.awt.Font
 -dontwarn java.awt.Point
