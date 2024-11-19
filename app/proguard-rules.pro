@@ -56,3 +56,12 @@
 -dontwarn org.glassfish.jersey.internal.spi.AutoDiscoverable
 -dontwarn springfox.documentation.spring.web.json.Json
 -dontwarn sun.reflect.annotation.AnnotationType
+
+-dontwarn aQute.bnd.annotation.Version
+-dontwarn javax.xml.stream.XMLInputFactory
+-dontwarn javax.xml.stream.XMLResolver
+-dontwarn org.osgi.framework.BundleActivator
+-dontwarn org.osgi.framework.BundleContext
+-dontwarn org.osgi.framework.ServiceReference
+-dontwarn org.osgi.util.tracker.ServiceTracker
+-dontwarn org.osgi.util.tracker.ServiceTrackerCustomizer

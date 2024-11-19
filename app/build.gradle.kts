@@ -105,4 +105,11 @@ dependencies {
 
     implementation("org.apache.tika:tika-core:2.9.0")
 
+    implementation("org.apache.tika:tika-parsers:2.9.0") {
+        exclude(group = "org.osgi")
+        exclude(group = "javax.xml.stream")
+        exclude(group = "aQute.bnd")
+    }
+
+
 }
