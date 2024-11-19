@@ -39,5 +39,5 @@
         android:layout_height="match_parent"
         android:src="@drawable/more_action"
         android:gravity="end|center_vertical"
-        android:tint="@color/day_black"/>
+        app:tint="@color/day_black"/>
 </LinearLayout>
