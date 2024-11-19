@@ -18,6 +18,7 @@ import com.google.common.util.concurrent.SettableFuture;
 
 import java.util.List;
 
+@UnstableApi
 public class PlaybackService extends MediaSessionService {
     private MediaSession mediaSession = null;
     private MediaSessionCallback mediaSessionCallback;

@@ -102,4 +102,7 @@ dependencies {
 
     implementation("org.wordpress.aztec:glide-loader:1080-2a2a1d5e515185d2df97442c0bb45aa5f46b8471")
 
+
+    implementation("org.apache.tika:tika-core:2.9.0")
+
 }

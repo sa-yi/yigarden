@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Spannable;
@@ -43,16 +44,43 @@ import org.wordpress.aztec.glideloader.GlideImageLoader;
 import org.wordpress.aztec.toolbar.IAztecToolbarClickListener;
 
 import java.net.URL;
+import java.util.Map;
 import java.util.Objects;
 
 
 public class PublishActivity extends AppCompatActivity implements IAztecToolbarClickListener {
     ActivityPublishBinding binding;
-    private ActivityResultLauncher<Intent> imageSelecterLauncher;
+    private ActivityResultLauncher<Intent> imageSelectorLauncher;
+
+
+    // 在 Activity 中注册 ActivityResult handler
+    private ActivityResultLauncher<String[]> requestPermissions;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        requestPermissions = registerForActivityResult(
+                new ActivityResultContracts.RequestMultiplePermissions(),
+                results -> {
+                    // 处理权限请求结果
+                    for (Map.Entry<String, Boolean> entry : results.entrySet()) {
+                        String permission = entry.getKey();
+                        boolean isGranted = entry.getValue();
+                        if (isGranted) {
+                            Log.d("Permissions", permission + " granted.");
+                        } else {
+                            Log.d("Permissions", permission + " denied.");
+                        }
+                    }
+                }
+        );
+
+        // 触发权限请求逻辑
+        requestPermissionsIfNeeded();
+
+
+
         Window window = getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
@@ -73,16 +101,17 @@ public class PublishActivity extends AppCompatActivity implements IAztecToolbarC
         getSupportActionBar().setTitle("编辑文章");
 
 
-        imageSelecterLauncher = registerForActivityResult(
+        imageSelectorLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
+                    MainApplication.toast(result.toString());
                     if (result.getResultCode() == RESULT_OK) {
                         Intent data = result.getData();
                         Uri uri = data.getData();
 
                         DialogLoading.show(PublishActivity.this, "图片上传中...");
                         //tvResult.setText(data.getStringExtra("result"));
-                        //MainApplication.toast(getPathFromUri(PublishActivity.this, uri));
+                        MainApplication.toast(getPathFromUri(PublishActivity.this, uri));
                         //binding.visual.fromHtml("<img src = \"file:///android_asset/cover.jpg\"/>", false);
 
                         /*String html = binding.visual.toHtml(true);
@@ -131,6 +160,9 @@ public class PublishActivity extends AppCompatActivity implements IAztecToolbarC
                             }
                         });
 
+                    } else if (result.getResultCode()==RESULT_CANCELED) {
+                        MainApplication.toast("选择取消");
+
                     }
                 }
         );
@@ -139,7 +171,7 @@ public class PublishActivity extends AppCompatActivity implements IAztecToolbarC
         imageButton.setMediaToolbarButtonClickListener(view -> {
             Intent intent = new Intent(Intent.ACTION_PICK);
             intent.setType("image/*");
-            imageSelecterLauncher.launch(intent);
+            imageSelectorLauncher.launch(intent);
 
         });
         binding.formattingToolbar.addButton(imageButton);
@@ -148,6 +180,30 @@ public class PublishActivity extends AppCompatActivity implements IAztecToolbarC
         binding.visual.fromHtml("<img src=\"https://cdn.bbs.66ccff.cc/2024/04/20240429180741291-0041.jpg\"/>", false);
 
     }
+
+
+    private void requestPermissionsIfNeeded() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            // Android 14 及以上
+            requestPermissions.launch(new String[]{
+                    android.Manifest.permission.READ_MEDIA_IMAGES,
+                    android.Manifest.permission.READ_MEDIA_VIDEO,
+                    android.Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
+            });
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Android 13
+            requestPermissions.launch(new String[]{
+                    android.Manifest.permission.READ_MEDIA_IMAGES,
+                    android.Manifest.permission.READ_MEDIA_VIDEO
+            });
+        } else {
+            // Android 12 及以下
+            requestPermissions.launch(new String[]{
+                    android.Manifest.permission.READ_EXTERNAL_STORAGE
+            });
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

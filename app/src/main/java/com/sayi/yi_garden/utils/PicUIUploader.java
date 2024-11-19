@@ -3,6 +3,7 @@ import okhttp3.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,7 +11,7 @@ public class PicUIUploader {
 
 
     static String token = "Bearer 211|cZUJbFc4BJAT8RsgbyiHLQNgz94uRzGZakuY30N5";
-    static String uploadUrl = "https://picui.cn/api/v1/upload";
+    static String uploadUrl = "https://sa-yi.cn/wp-json/wp/v2/meida";
     static String filePath = "C:\\Users\\Administrator\\Pictures\\微信图片_20231104191108.jpg";
 
 
@@ -30,15 +31,21 @@ public class PicUIUploader {
     }
 
     public static void upload(String filePath,OnCompleteListener listener){
+        File file=new File(filePath);
+        upload(file,listener);
+    }
 
-        File imageFile = new File(filePath);
+
+    public static void upload(File imageFile,OnCompleteListener listener){
+
+        //File imageFile = new File(filePath);
 
         OkHttpClient client = new OkHttpClient();
 
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("file", imageFile.getName(),
-                        RequestBody.create(MediaType.parse("image/*"), imageFile))
+                        RequestBody.create(Objects.requireNonNull(MediaType.parse("image/*")), imageFile))
                 .build();
 
         Request request = new Request.Builder()
