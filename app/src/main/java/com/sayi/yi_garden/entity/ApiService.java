@@ -32,5 +32,5 @@ public interface ApiService {
 
     @Multipart
     @POST("wp/v2/media")
-    Call<ResponseBody> uploadMedia(@Part MultipartBody.Part file);
+    Call<MediaItem> uploadMedia(@Part MultipartBody.Part file);
 }

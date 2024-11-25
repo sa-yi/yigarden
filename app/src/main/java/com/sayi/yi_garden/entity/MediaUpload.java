@@ -2,6 +2,8 @@ package com.sayi.yi_garden.entity;
 
 import androidx.annotation.NonNull;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.apache.tika.Tika;
 
 import java.io.File;
@@ -34,17 +36,17 @@ public class MediaUpload {
         ApiService apiService = ApiClient.getRetrofitInstance().create(ApiService.class);
 
         // 调用接口
-        Call<ResponseBody> call = apiService.uploadMedia(body);
+        Call<MediaItem> call = apiService.uploadMedia(body);
         call.enqueue(new Callback<>() {
             @Override
-            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+            public void onResponse(@NonNull Call<MediaItem> call, @NonNull Response<MediaItem> response) {
                 if (response.isSuccessful()) {
                     callback.onSuccess(response);
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable throwable) {
+            public void onFailure(@NonNull Call<MediaItem> call, @NonNull Throwable throwable) {
                 throwable.printStackTrace();
                 callback.onFailure(throwable);
             }
@@ -53,7 +55,7 @@ public class MediaUpload {
     }
 
     public interface MediaUploadCallback {
-        void onSuccess(Response response);
+        void onSuccess(Response<MediaItem> response);
         void onFailure(Throwable throwable);
         void onParsedError();
     }

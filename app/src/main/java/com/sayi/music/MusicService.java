@@ -27,7 +27,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.hw.lrcviewlib.LrcDataBuilder;
 import com.hw.lrcviewlib.LrcRow;
-import com.sayi.MainApplication;
 import com.sayi.music.util.lrcparser.LrcParser;
 import com.sayi.yi_garden.utils.Ticker;
 
@@ -82,6 +81,7 @@ public class MusicService extends Service implements Player.Listener {
                     controller = controllerFuture.get();
                 } catch (ExecutionException | InterruptedException e) {
                     e.printStackTrace();
+                    Log.e("ControllerFeature",e.getMessage());
                 }
                 controller.setMediaItems(mediaItems);
                 controller.setShuffleModeEnabled(true);
@@ -114,10 +114,11 @@ public class MusicService extends Service implements Player.Listener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(isViewInOverlay(lrcView))
+        if (isViewInOverlay(lrcView))
             windowManager.removeView(lrcView);
         controller.release();
     }
+
     public boolean isViewInOverlay(View view) {
         if (view == null) {
             return false;
@@ -135,6 +136,7 @@ public class MusicService extends Service implements Player.Listener {
 
         return false;
     }
+
     @Override
     public void onMediaItemTransition(@Nullable MediaItem mediaItem, int reason) {
         Player.Listener.super.onMediaItemTransition(mediaItem, reason);
@@ -189,6 +191,7 @@ public class MusicService extends Service implements Player.Listener {
                 windowManager.addView(lrcView, params);
             }
         }
+
         public void addListener(Player.Listener listener) {
             if (controller != null)
                 controller.addListener(listener);
@@ -313,11 +316,11 @@ public class MusicService extends Service implements Player.Listener {
             return isLyricsShown;
         }
 
-        public Bitmap getAlbumCover(){
-            Bitmap bitmap=null;
-            Uri artworkUri=mediaItem.mediaMetadata.artworkUri;
-            Log.d("artworkUri",artworkUri+"");
-            if(artworkUri==null)
+        public Bitmap getAlbumCover() {
+            Bitmap bitmap = null;
+            Uri artworkUri = mediaItem.mediaMetadata.artworkUri;
+            Log.d("artworkUri", artworkUri + "");
+            if (artworkUri == null)
                 return null;
             MediaMetadataRetriever retriever = new MediaMetadataRetriever();
             try {

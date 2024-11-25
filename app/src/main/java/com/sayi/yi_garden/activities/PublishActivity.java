@@ -1,19 +1,16 @@
 package com.sayi.yi_garden.activities;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
-import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -33,19 +30,21 @@ import androidx.core.content.ContextCompat;
 import com.sayi.MainApplication;
 import com.sayi.yi_garden.R;
 import com.sayi.yi_garden.databinding.ActivityPublishBinding;
+import com.sayi.yi_garden.entity.MediaItem;
+import com.sayi.yi_garden.entity.MediaUpload;
 import com.sayi.yi_garden.toolbarbutton.ImageButton;
 import com.sayi.yi_garden.utils.Dialog;
-import com.sayi.yi_garden.utils.DialogLoading;
-import com.sayi.yi_garden.utils.PicUIUploader;
 
 import org.wordpress.aztec.Aztec;
 import org.wordpress.aztec.ITextFormat;
 import org.wordpress.aztec.glideloader.GlideImageLoader;
 import org.wordpress.aztec.toolbar.IAztecToolbarClickListener;
 
-import java.net.URL;
+import java.io.File;
 import java.util.Map;
 import java.util.Objects;
+
+import retrofit2.Response;
 
 
 public class PublishActivity extends AppCompatActivity implements IAztecToolbarClickListener {
@@ -80,7 +79,6 @@ public class PublishActivity extends AppCompatActivity implements IAztecToolbarC
         requestPermissionsIfNeeded();
 
 
-
         Window window = getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
@@ -104,83 +102,90 @@ public class PublishActivity extends AppCompatActivity implements IAztecToolbarC
         imageSelectorLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    MainApplication.toast(result.toString());
                     if (result.getResultCode() == RESULT_OK) {
                         Intent data = result.getData();
-                        Uri uri = data.getData();
+                        if (data != null) {
+                            /*Uri uri = data.getData();
 
-                        DialogLoading.show(PublishActivity.this, "图片上传中...");
-                        //tvResult.setText(data.getStringExtra("result"));
-                        MainApplication.toast(getPathFromUri(PublishActivity.this, uri));
-                        //binding.visual.fromHtml("<img src = \"file:///android_asset/cover.jpg\"/>", false);
-
-                        /*String html = binding.visual.toHtml(true);
-                        Editable editable = binding.visual.getEditableText();
-
-                        editable.insert(curr, "<img src=\"https://cdn.bbs.66ccff.cc/2024/04/20240429180741291-0041.jpg\"/>");
-
-                        binding.visual.fromHtml(editable.toString(),false);
-*/
-                        PicUIUploader.upload(getPathFromUri(PublishActivity.this, uri), new PicUIUploader.OnCompleteListener() {
-                            @Override
-                            public void onComplete(String imgUrl) {
-                                String imgTag = "\n\n<img src=\"" + imgUrl + "\" />";
-
-                                //SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(binding.visual.getText());
-                                Drawable drawable = ContextCompat.getDrawable(PublishActivity.this, R.drawable.background); // 使用你自己的图像资源
-                                try {
-                                    drawable = Drawable.createFromStream(new URL(imgUrl).openStream(), "image.jpg");
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                            DialogLoading.show(PublishActivity.this, "图片上传中...");
+                            handleUploadFile(uri);*/
+                            ClipData clipData = data.getClipData();
+                            if (clipData != null && clipData.getItemCount() > 0) {
+                                for (int i = 0; i < clipData.getItemCount(); i++) {
+                                    ClipData.Item item = clipData.getItemAt(i);
+                                    Uri uri = item.getUri();
+                                    if (uri != null) {
+                                        handleUploadFile(uri);
+                                    }
                                 }
-                                int curr = binding.visual.getSelectionStart();
-
-
-                                SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(binding.visual.getText());
-                                int rate = drawable.getIntrinsicWidth() / drawable.getIntrinsicHeight();
-                                int width = binding.visual.getWidth();
-                                int height = width * drawable.getIntrinsicHeight() / drawable.getIntrinsicWidth();
-                                if (rate < 0.7) {
-                                    width /= 1.4;
-                                    height /= 1.4;
+                            } else {
+                                // 处理单选的情况
+                                Uri uri = data.getData();
+                                if (uri != null) {
+                                    handleUploadFile(uri);
+                                } else {
+                                    MainApplication.toast("未选择图片");
                                 }
-                                drawable.setBounds(0, 0, width, height);
-                                ImageSpan imageSpan = new ImageSpan(drawable, imgUrl);
-
-                                spannableStringBuilder.insert(curr, imgTag);
-                                spannableStringBuilder.setSpan(imageSpan, curr, curr + imgTag.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                                runOnUiThread(() -> binding.visual.setText(spannableStringBuilder));
-                                DialogLoading.dismiss(PublishActivity.this);
                             }
-
-                            @Override
-                            public void onFailure(String errorMsg) {
-                                MainApplication.toast("图片上传失败:" + errorMsg);
-                            }
-                        });
-
-                    } else if (result.getResultCode()==RESULT_CANCELED) {
+                        } else {
+                            MainApplication.toast("未选择图片");
+                        }
+                    } else if (result.getResultCode() == RESULT_CANCELED) {
                         MainApplication.toast("选择取消");
 
+                    } else {
+                        MainApplication.toast("操作失败");
                     }
                 }
         );
         Aztec.with(binding.visual, binding.formattingToolbar, this).setImageGetter(new GlideImageLoader(this));
         ImageButton imageButton = new ImageButton(binding.formattingToolbar);
         imageButton.setMediaToolbarButtonClickListener(view -> {
-            Intent intent = new Intent(Intent.ACTION_PICK);
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.setType("image/*");
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
             imageSelectorLauncher.launch(intent);
 
         });
         binding.formattingToolbar.addButton(imageButton);
 
 
-        binding.visual.fromHtml("<img src=\"https://cdn.bbs.66ccff.cc/2024/04/20240429180741291-0041.jpg\"/>", false);
+        binding.visual.fromHtml(source, false);
 
     }
 
+    String source="<img src=\"https://cdn.bbs.66ccff.cc/2024/04/20240429180741291-0041.jpg\"/>";
+
+    private void handleUploadFile(Uri uri) {
+        String path = getPathFromUri(PublishActivity.this, uri);
+        try {
+            MediaUpload.upload(new File(path), new MediaUpload.MediaUploadCallback() {
+                @Override
+                public void onSuccess(Response<MediaItem> response) {
+                    Log.d("responseBody", response.body().toString());
+                    MediaItem mediaItem = response.body();
+                    String url = mediaItem.getGuid().getRendered();
+                    MainApplication.toast(url);
+
+                    source+="<img src=\""+url+"\"/>";
+                    binding.visual.fromHtml(source, false);
+                }
+
+                @Override
+                public void onFailure(Throwable throwable) {
+
+                }
+
+                @Override
+                public void onParsedError() {
+
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     private void requestPermissionsIfNeeded() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
@@ -190,7 +195,7 @@ public class PublishActivity extends AppCompatActivity implements IAztecToolbarC
                     android.Manifest.permission.READ_MEDIA_VIDEO,
                     android.Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
             });
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.TIRAMISU) {
             // Android 13
             requestPermissions.launch(new String[]{
                     android.Manifest.permission.READ_MEDIA_IMAGES,
