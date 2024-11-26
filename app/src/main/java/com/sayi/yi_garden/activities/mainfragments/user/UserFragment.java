@@ -13,11 +13,15 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.sayi.yi_garden.activities.LoginActivity;
 import com.sayi.yi_garden.activities.SettingsActivity;
 import com.sayi.yi_garden.databinding.FragmentUserBinding;
+import com.sayi.yi_garden.entity.User;
+
+import java.text.MessageFormat;
 
 public class UserFragment extends Fragment {
 
@@ -31,8 +35,14 @@ public class UserFragment extends Fragment {
         binding = FragmentUserBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        //final TextView textView = binding.textUser;
-        //userViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        userViewModel.getUserData().observe(getViewLifecycleOwner(), user -> {
+            int id=user.getId();
+            binding.userId.setText(MessageFormat.format("{0}", id));
+            String name=user.getName();
+            binding.displayName.setText(name);
+        });
+        userViewModel.fetchUserData(0);
+
 
         binding.logout.setOnClickListener(v->{
             SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(sp_user_data, MODE_PRIVATE);

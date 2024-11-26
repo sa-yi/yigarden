@@ -15,7 +15,7 @@ import retrofit2.http.Query;
 public interface ApiService {
 
     @POST("api/v1/token")
-    Call<String> login(String username, String password);
+    Call<JwtToken> login(@Query("username") String username, @Query("password") String password);
 
     @GET("wp/v2/posts")
     Call<List<PostFeed>> getPosts();

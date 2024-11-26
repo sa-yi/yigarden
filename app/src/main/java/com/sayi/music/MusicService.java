@@ -93,7 +93,6 @@ public class MusicService extends Service implements Player.Listener {
                         Player.Listener.super.onMediaItemTransition(mediaItem, reason);
                     }
                 });
-                controller.prepare();
             }, MoreExecutors.directExecutor());
         });
     }
@@ -153,6 +152,11 @@ public class MusicService extends Service implements Player.Listener {
         boolean isLyricsShown = false;
 
         public MusicBinder() {
+            initWindow();
+        }
+
+
+        public void initWindow() {
             // 获取WindowManager
             windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
             // 创建布局参数
@@ -182,11 +186,6 @@ public class MusicService extends Service implements Player.Listener {
             lrcView.setSingleLine();
             lrcView.setText("");
             lrcView.setVisibility(View.GONE);
-            initWindow();
-        }
-
-
-        public void initWindow() {
             if (Settings.canDrawOverlays(MusicService.this)) {
                 windowManager.addView(lrcView, params);
             }
@@ -267,7 +266,6 @@ public class MusicService extends Service implements Player.Listener {
         }
 
         public Uri getMediaUri() {
-            //mediaItem=controller.getMediaItemAt(controller.getCurrentMediaItemIndex());
             mediaItem = controller.getCurrentMediaItem();
             Uri mediaUri = mediaItem.localConfiguration.uri;
             return mediaUri;
@@ -322,8 +320,8 @@ public class MusicService extends Service implements Player.Listener {
             Log.d("artworkUri", artworkUri + "");
             if (artworkUri == null)
                 return null;
-            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
             try {
+                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
                 retriever.setDataSource(MusicService.this, artworkUri);
                 byte[] albumArt = retriever.getEmbeddedPicture();
                 if (albumArt != null) {

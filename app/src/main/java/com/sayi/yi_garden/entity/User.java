@@ -3,6 +3,18 @@ package com.sayi.yi_garden.entity;
 import com.google.gson.annotations.SerializedName;
 
 public class User {
+    public AvatarUrls getAvatarUrls() {
+        return avatarUrls;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
     @SerializedName("id")
     private int id=-1;
 

@@ -1,5 +1,7 @@
 package com.sayi.music;
 
+import static android.view.KeyEvent.KEYCODE_BACK;
+
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -10,6 +12,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.SeekBar;
@@ -37,7 +40,7 @@ public class MusicActivity extends AppCompatActivity implements Player.Listener,
     String lyricPath = null;
     boolean isLrcViewScrolled = false;
     int lrcViewScrolledDelayedCount = 0;
-    ActivityResultLauncher resultLauncher;
+    ActivityResultLauncher<Intent> resultLauncher;
     boolean isInited = false;
     ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -128,7 +131,16 @@ public class MusicActivity extends AppCompatActivity implements Player.Listener,
 
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode==KEYCODE_BACK){
+            finish();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+
     void setupOnclickListener() {
         binding.playOrPause.setOnClickListener(v -> {
             binder.playOrPause();

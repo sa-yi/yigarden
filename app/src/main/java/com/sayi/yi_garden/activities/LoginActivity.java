@@ -5,13 +5,15 @@ import static com.sayi.yi_garden.Consts.sp_user_data;
 
 import android.annotation.SuppressLint;
 import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
-import android.content.ClipboardManager;
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -23,29 +25,29 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.Bundle;
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.HurlStack;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.sayi.MainApplication;
 import com.sayi.yi_garden.R;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.sayi.yi_garden.entity.ApiClient;
+import com.sayi.yi_garden.entity.ApiService;
+import com.sayi.yi_garden.entity.JwtToken;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import java.security.cert.X509Certificate;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -75,84 +77,77 @@ public class LoginActivity extends AppCompatActivity {
         login = findViewById(R.id.login);
         usernameV = findViewById(R.id.username);
         passwdV = findViewById(R.id.password);
-        retrieve_password =findViewById(R.id.retrieve_password);
+        retrieve_password = findViewById(R.id.retrieve_password);
 
+        login.setEnabled(false);
+        usernameV.addTextChangedListener(new InputTextWatcher(usernameV));
+        passwdV.addTextChangedListener(new InputTextWatcher(passwdV));
 
         login.setOnClickListener(v -> {
+            ApiService apiService = ApiClient.getRetrofitInstance().create(ApiService.class);
             String username = usernameV.getText().toString();
             String password = passwdV.getText().toString();
+            // 调用接口
+            Call<JwtToken> call = apiService.login(username, password);
+            call.enqueue(new Callback<>() {
+                @Override
+                public void onResponse(Call<JwtToken> call, Response<JwtToken> response) {
+                    if (response.isSuccessful()) {
+                        String jwt_token = response.body().getJwtToken();
+                        // 登录成功
+                        Log.d("LoginActivity", jwt_token);
 
-            // 创建JSON对象
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("username", username);
-                jsonObject.put("password", password);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            // 创建请求队列
-            RequestQueue requestQueue = Volley.newRequestQueue(LoginActivity.this, new AllTrustHurlStack());
-
-            // 创建请求
-            String url = "http://118.25.55.56/wp-json/api/v1/token"; // 本地服务器地址
-            JsonObjectRequest jsonObjectRequest =
-                    new JsonObjectRequest(Request.Method.POST, url, jsonObject,
-                            response -> {
-                                String jwt_token="";
-                                try {
-                                    jwt_token = (String) response.get("jwt_token");
-                                } catch (JSONException e) {
-                                    throw new RuntimeException(e);
-                                }
-                                // 登录成功
-                                Log.d("LoginActivity",jwt_token);
-
-                                SharedPreferences sharedPreferences = getSharedPreferences(sp_user_data, MODE_PRIVATE);
-                                SharedPreferences.Editor editor = sharedPreferences.edit();
-                                editor.putString(sp_token, jwt_token);
-                                editor.apply();
+                        SharedPreferences sharedPreferences = getSharedPreferences(sp_user_data, MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString(sp_token, jwt_token);
+                        editor.apply();
 
 
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        Log.d("LoginActivity", response.toString());
+                        MainApplication.toast("登录失败");
+                    }
+                }
 
-                                Intent intent=new Intent(this,MainActivity.class);
-                                startActivity(intent);
-                                finish();
-                            },
-                            error -> {
-                                // 登录失败
-                                Toast.makeText(LoginActivity.this, "Login Failed" + error.getMessage(), Toast.LENGTH_SHORT).show();
-                                Log.e("LoginActivity", error.getMessage()+"");
-                                //finish();
-                                Log.e("LoginActivity",error.toString()+"");
-                            });
-
-            // 添加请求到队列
-            requestQueue.add(jsonObjectRequest);
+                @Override
+                public void onFailure(Call<JwtToken> call, Throwable throwable) {
+                    if (throwable instanceof ConnectException) {
+                        Toast.makeText(LoginActivity.this, "网络连接失败", Toast.LENGTH_SHORT).show();
+                    }
+                    // 登录失败
+                    Toast.makeText(LoginActivity.this, "Login Failed" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e("LoginActivity", throwable.getMessage() + "");
+                    //finish();
+                    Log.e("LoginActivity", throwable.toString() + "");
+                }
+            });
         });
         jump_to_rig.setOnClickListener(v -> {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
             builder.setTitle("是否跳转至网站主页");
             builder.setPositiveButton("是", (dialog, which) -> {
-                Intent intent= new Intent();
+                Intent intent = new Intent();
                 intent.setAction("android.intent.action.VIEW");
-                Uri content_url = Uri.parse("http://118.25.55.56/");
+                Uri content_url = Uri.parse("http://sa-yi.cn/");
                 intent.setData(content_url);
                 startActivity(intent);
             }).setNeutralButton("复制网站链接", (dialog, which) -> {
-                String url = "http://118.25.55.56/";
+                String url = "http://sa-yi.cn/";
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("website", url);
                 clipboard.setPrimaryClip(clip);
-            }).setMessage("http://118.25.55.56/");
-            AlertDialog dialog= builder.create();
+            }).setMessage("http://sa-yi.cn/");
+            AlertDialog dialog = builder.create();
             dialog.show();
 
 
         });
-        retrieve_password.setOnClickListener(v->{
-            MainApplication.toast("开发中...");
+        retrieve_password.setOnClickListener(v -> {
+            MainApplication.toast("请前往网页端重置密码");
         });
 
     }
@@ -162,15 +157,16 @@ public class LoginActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-
     public static class AllTrustManager implements X509TrustManager {
         @SuppressLint("TrustAllX509TrustManager")
         @Override
-        public void checkClientTrusted(X509Certificate[] chain, String authType) {}
+        public void checkClientTrusted(X509Certificate[] chain, String authType) {
+        }
 
         @SuppressLint("TrustAllX509TrustManager")
         @Override
-        public void checkServerTrusted(X509Certificate[] chain, String authType) {}
+        public void checkServerTrusted(X509Certificate[] chain, String authType) {
+        }
 
         @Override
         public X509Certificate[] getAcceptedIssuers() {
@@ -198,6 +194,32 @@ public class LoginActivity extends AppCompatActivity {
                 ((HttpsURLConnection) httpURLConnection).setSSLSocketFactory(sslSocketFactory);
             }
             return httpURLConnection;
+        }
+    }
+
+    class InputTextWatcher implements TextWatcher {
+        private ArrayList<EditText> editTexts=new ArrayList<>();
+
+        public InputTextWatcher(EditText editText) {
+            editTexts.add(editText);
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            boolean enabled=true;
+            for(EditText editText:editTexts){
+                if(editText.getText().toString().isEmpty())
+                    enabled=false;
+            }
+            login.setEnabled(enabled);
         }
     }
 }
