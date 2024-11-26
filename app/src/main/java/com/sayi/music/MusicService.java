@@ -149,7 +149,7 @@ public class MusicService extends Service implements Player.Listener {
 
     public class MusicBinder extends Binder {
         MediaItem mediaItem;
-        boolean isLyricsShown = false;
+        private boolean isLyricsShown = false;
 
         public MusicBinder() {
             initWindow();
@@ -301,16 +301,24 @@ public class MusicService extends Service implements Player.Listener {
         }
 
         public void showLyrics() {
-            if (isLyricsShown)
-                lrcView.setVisibility(View.VISIBLE);
+            lrcView.setVisibility(View.VISIBLE);
+            isLyricsShown=true;
         }
 
         public void hideLyrics() {
             lrcView.setVisibility(View.GONE);
+            isLyricsShown=false;
         }
 
-        public boolean showOrHideLyrics() {
-            isLyricsShown = !isLyricsShown;
+        public void ifShouldShowLyrics(boolean ifShow) {
+            isLyricsShown=ifShow;
+            ifShouldShowLyrics=ifShow;
+        }
+        public boolean getIfShouldShowLyrics(){
+            return ifShouldShowLyrics;
+        }
+        boolean ifShouldShowLyrics=false;
+        public boolean isLyricsShown() {
             return isLyricsShown;
         }
 

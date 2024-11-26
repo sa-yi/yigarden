@@ -2,7 +2,6 @@ package com.sayi.music;
 
 import static android.view.KeyEvent.KEYCODE_BACK;
 
-import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -17,7 +16,6 @@ import android.view.View;
 import android.view.Window;
 import android.widget.SeekBar;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
@@ -36,12 +34,13 @@ public class MusicActivity extends AppCompatActivity implements Player.Listener,
     ActivityMusicBinding binding;
     MusicService.MusicBinder binder;
     boolean isSeekBarTracking = false;
-    String mediaPath = null;
-    String lyricPath = null;
     boolean isLrcViewScrolled = false;
     int lrcViewScrolledDelayedCount = 0;
     ActivityResultLauncher<Intent> resultLauncher;
     boolean isInited = false;
+
+    boolean showLyrics=false;
+
     ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -57,6 +56,12 @@ public class MusicActivity extends AppCompatActivity implements Player.Listener,
 
             setupOnclickListener();
             isInited = true;
+            if (binder.isLyricsShown()) {
+                binder.hideLyrics();
+                binding.showLyricsBtn.setTextColor(0xff66ccff);
+            } else {
+                binding.showLyricsBtn.setTextColor(0xff757575);
+            }
         }
 
         @Override
@@ -82,7 +87,7 @@ public class MusicActivity extends AppCompatActivity implements Player.Listener,
         if (DarkModeUtils.isDarkMode(this)) {
             //黑色状态栏文本
             window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-        }else {
+        } else {
             window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
 
@@ -108,12 +113,6 @@ public class MusicActivity extends AppCompatActivity implements Player.Listener,
             lrcViewScrolledDelayedCount = 2;
             Log.d("lrcViewScrollChange", "scrolled");
         });
-        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                moveTaskToBack(true);
-            }
-        });
     }
 
     @Override
@@ -127,19 +126,30 @@ public class MusicActivity extends AppCompatActivity implements Player.Listener,
     protected void onStop() {
         super.onStop();
         if (isInited)
-            binder.showLyrics();
+            if(showLyrics)
+                binder.showLyrics();
 
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode==KEYCODE_BACK){
+        if (keyCode == KEYCODE_BACK) {
+            if (showLyrics)
+                binder.showLyrics();
             finish();
             return true;
         }
         return super.onKeyDown(keyCode, event);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(binder!=null){
+            if(binder.getIfShouldShowLyrics())
+                binder.showLyrics();
+        }
+    }
 
     void setupOnclickListener() {
         binding.playOrPause.setOnClickListener(v -> {
@@ -173,12 +183,15 @@ public class MusicActivity extends AppCompatActivity implements Player.Listener,
         binding.back.setOnClickListener(v -> finish());
         binding.showLyricsBtn.setOnClickListener(v -> {
             if (Settings.canDrawOverlays(this)) {
-                boolean isLrcShown = binder.showOrHideLyrics();
+                boolean isLrcShown = binder.getIfShouldShowLyrics();
                 if (isLrcShown) {
+                    binder.ifShouldShowLyrics(false);
+                    binding.showLyricsBtn.setTextColor(0xff757575);
+                } else {
+                    binder.ifShouldShowLyrics(true);
                     binding.showLyricsBtn.setTextColor(0xff66ccff);
                     MainApplication.toast("悬浮歌词已开启，将在此界面外显示");
-                } else
-                    binding.showLyricsBtn.setTextColor(0xff757575);
+                }
             } else {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
                 resultLauncher.launch(intent);
@@ -207,8 +220,8 @@ public class MusicActivity extends AppCompatActivity implements Player.Listener,
         binding.lrcview.setLrcData(binder.getLyrics());
         binding.title.setText(binder.getTitle());
         binding.author.setText(binder.getAuthor());
-        Bitmap bitmap=binder.getAlbumCover();
-        if(bitmap!=null)
+        Bitmap bitmap = binder.getAlbumCover();
+        if (bitmap != null)
             binding.cover.setImageBitmap(bitmap);
     }
 

@@ -124,6 +124,7 @@ public class MusicFragment extends Fragment implements Player.Listener {
                                     .setData(Uri.fromParts("package", requireActivity().getPackageName(), null));
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             //TODO:权限申请startActivityForResult
+                            startActivity(intent);
                         })
                         .setNegativeButton("取消", null).show();
                 clickCount = 0;
