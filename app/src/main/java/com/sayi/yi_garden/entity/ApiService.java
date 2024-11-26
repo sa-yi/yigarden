@@ -18,7 +18,7 @@ public interface ApiService {
     Call<JwtToken> login(@Query("username") String username, @Query("password") String password);
 
     @GET("wp/v2/posts")
-    Call<List<PostFeed>> getPosts();
+    Call<List<PostFeed>> getPosts(@Query("page") int page);
 
     @GET("wp/v2/posts/{id}")
     Call<PostFeed> getPost(@Path("id") int id);

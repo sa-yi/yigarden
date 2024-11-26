@@ -1,12 +1,13 @@
 plugins {
     id("com.android.application")
+    id("org.jetbrains.kotlin.android")
 
 }
 
 
 android {
     namespace = "com.sayi.yi_garden"
-    compileSdk = 34
+    compileSdk = 35
 
 
     repositories {
@@ -15,9 +16,9 @@ android {
 
     defaultConfig {
         applicationId = "com.sayi.yi_garden"
-        compileSdk = 34
+        compileSdk = 35
         minSdk = 28
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -61,28 +62,34 @@ android {
             )
         }
     }
-
+    kotlinOptions {
+        jvmTarget = "17"
+    }
 }
 
 dependencies {
-    //implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.22")
+    /*implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.22"){
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-compiler-embeddable")
+    }*/
 
 
     implementation("com.google.android.material:material:1.12.0")
 
     implementation("com.android.volley:volley:1.2.1")
 
+
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
-    implementation("androidx.navigation:navigation-fragment:2.8.3")
-    implementation("androidx.navigation:navigation-ui:2.8.3")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.8.4")
+    implementation("androidx.navigation:navigation-ui-ktx:2.8.4")
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
 
-    implementation("androidx.media3:media3-exoplayer:1.4.1")
-    implementation("androidx.media3:media3-session:1.4.1")
-    implementation("androidx.media3:media3-ui:1.4.1")
+    implementation("androidx.media3:media3-exoplayer:1.5.0")
+    implementation("androidx.media3:media3-session:1.5.0")
+    implementation("androidx.media3:media3-ui:1.5.0")
 
 
     // Retrofit for network requests
@@ -95,7 +102,8 @@ dependencies {
     implementation("com.alibaba:fastjson:1.2.47")
 
     implementation("com.github.bumptech.glide:glide:4.15.1")
-    implementation("androidx.preference:preference:1.2.1")
+    implementation("androidx.preference:preference-ktx:1.2.1")
+    implementation("androidx.core:core-ktx:1.15.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 
     api("org.wordpress:aztec:v1.6.2")

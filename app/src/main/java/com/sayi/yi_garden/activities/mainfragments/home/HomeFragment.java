@@ -87,7 +87,7 @@ public class HomeFragment extends Fragment {
         });
 
         binding.nickPostView.setVisibility(View.GONE);
-        homeViewModel.fetchData(0);
+        homeViewModel.fetchData(1);
         binding.nickPostView.setVisibility(View.VISIBLE);
 
         announceAdapter = new AnnounceAdapter();

@@ -45,7 +45,7 @@ public class HomeViewModel extends ViewModel {
 
     public void fetchData(int page) {
         ApiService apiService = ApiClient.getRetrofitInstance().create(ApiService.class);
-        Call<List<PostFeed>> call = apiService.getPosts();
+        Call<List<PostFeed>> call = apiService.getPosts(page);
 
         call.enqueue(new Callback<>() {
             @Override
