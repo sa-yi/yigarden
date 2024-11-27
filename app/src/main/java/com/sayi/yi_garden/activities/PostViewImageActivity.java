@@ -50,7 +50,7 @@ public class PostViewImageActivity extends AppCompatActivity {
         int imageIndex = intent.getIntExtra("index", 0);
         GalleryAdapter adapter = new GalleryAdapter(this, imageUrls);
         binding.imageGallery.setAdapter(adapter);
-
+        binding.imageGallery.setCurrentItem(imageIndex-1,false);
 
     }
 
