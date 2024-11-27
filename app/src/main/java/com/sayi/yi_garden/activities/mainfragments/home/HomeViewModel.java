@@ -75,4 +75,9 @@ public class HomeViewModel extends ViewModel {
         });
     }
 
+    public void fetchData(){
+        fetchData(page);
+        page++;
+    }
+    private int page=1;
 }

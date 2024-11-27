@@ -39,12 +39,20 @@ import com.sayi.yi_garden.activities.SearchActivity;
 import com.sayi.yi_garden.databinding.FragmentHomeBinding;
 import com.sayi.yi_garden.databinding.NickPostBinding;
 import com.sayi.yi_garden.entity.Announcement;
+import com.sayi.yi_garden.entity.ApiClient;
+import com.sayi.yi_garden.entity.ApiService;
 import com.sayi.yi_garden.entity.PostFeed;
+import com.sayi.yi_garden.entity.User;
 import com.sayi.yi_garden.utils.Dialog;
 import com.sayi.yi_garden.utils.Statusbar;
 import com.sayi.yi_garden.utils.Ticker;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class HomeFragment extends Fragment {
 
@@ -66,7 +74,7 @@ public class HomeFragment extends Fragment {
         return root;
     }
 
-    @SuppressLint("NotifyDataSetChanged")
+    //@SuppressLint("NotifyDataSetChanged")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -80,15 +88,23 @@ public class HomeFragment extends Fragment {
         postFeedAdapter = new PostFeedAdapter();
         binding.nickPostView.setAdapter(postFeedAdapter);
         homeViewModel.postFeedsDataList.observe(getViewLifecycleOwner(), apiPostFeeds -> {
-            for (PostFeed apiPostFeed : apiPostFeeds)
+            binding.loadMore.setVisibility(View.GONE);
+            for (PostFeed apiPostFeed : apiPostFeeds) {
                 Log.d("fetching posts", apiPostFeed.toString());
-            postFeedAdapter.setPostFeeds(apiPostFeeds);
-            postFeedAdapter.notifyDataSetChanged();
+                postFeedAdapter.addPostFeed(apiPostFeed);
+                postFeedAdapter.notifyItemChanged(postFeedAdapter.getItemCount());
+            }
+            if(apiPostFeeds.size()==10)
+                binding.loadMore.setVisibility(View.VISIBLE);
         });
 
         binding.nickPostView.setVisibility(View.GONE);
-        homeViewModel.fetchData(1);
+        homeViewModel.fetchData();
         binding.nickPostView.setVisibility(View.VISIBLE);
+
+        binding.loadMore.setOnClickListener(v->
+                homeViewModel.fetchData()
+        );
 
         announceAdapter = new AnnounceAdapter();
         binding.announceBar.setAdapter(announceAdapter);
@@ -101,7 +117,7 @@ public class HomeFragment extends Fragment {
         });
 
 
-        binding.upload.setOnClickListener(v -> {
+        binding.publish.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), PublishActivity.class);
             startActivity(intent);
         });
@@ -187,10 +203,15 @@ public class HomeFragment extends Fragment {
     }
 
     class PostFeedAdapter extends RecyclerView.Adapter<PostFeedViewHolder> {
-        private List<PostFeed> postFeeds;
+        private List<PostFeed> postFeeds = new ArrayList<>();
+
 
         public void setPostFeeds(List<PostFeed> postFeeds) {
             this.postFeeds = postFeeds;
+        }
+
+        public void addPostFeed(PostFeed postFeed) {
+            postFeeds.add(postFeed);
         }
 
         @NonNull
@@ -213,6 +234,7 @@ public class HomeFragment extends Fragment {
         }
 
     }
+    ApiService service= ApiClient.getRetrofitInstance().create(ApiService.class);
 
     class PostFeedViewHolder extends RecyclerView.ViewHolder {
         public NickPostBinding binding;
@@ -225,7 +247,7 @@ public class HomeFragment extends Fragment {
         public void bind(PostFeed postFeed) {
             //binding.avator.setImageResource(postFeed.getAvatarResourceId());
             Log.d("onBinding", postFeed.toString());
-            binding.userName.setText(postFeed.getAuthor()+"");
+            binding.userName.setText(postFeed.getAuthor() + "");
             binding.sendTime.setText(postFeed.getDate());
             binding.title.setText(postFeed.getTitle().getRendered());
             postFeed.getAvatarUrl(url -> {
@@ -244,6 +266,24 @@ public class HomeFragment extends Fragment {
                         return false; // 返回false表示你不想处理这个事件
                     }
                 }).placeholder(R.drawable.default_avator).into(binding.avator);
+            });
+
+            Call<User> call=service.getUser(postFeed.getAuthor());
+            call.enqueue(new Callback<>() {
+                @Override
+                public void onResponse(Call<User> call, Response<User> response) {
+                    if(response.isSuccessful()){
+                        if(response.body()!=null){
+                            User user= response.body();
+                            binding.userName.setText(user.getName());
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<User> call, Throwable throwable) {
+
+                }
             });
 
             Spanned expert = Html.fromHtml(postFeed.getExcerpt().getRendered(), FROM_HTML_MODE_LEGACY);
