@@ -53,12 +53,12 @@ android {
     sourceSets {
         getByName("main") {
             res.srcDirs(
-                "src/main/res/layout/activity",
-                "src/main/res/layout/fragmentlayout",
-                "src/main/res/layout/fragments",
-                "src/main/res/layout/common",
-                "src/main/res/layout/items",
-                "src/main/res"
+                "src/main/res/activity",
+                "src/main/res/fragmentlayout",
+                "src/main/res/fragments",
+                "src/main/res/common",
+                "src/main/res/items",
+                "src/main/res/legacy"
             )
         }
     }
