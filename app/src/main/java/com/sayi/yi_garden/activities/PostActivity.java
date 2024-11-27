@@ -95,7 +95,8 @@ public class PostActivity extends AppCompatActivity {
             userBanner.setSendTime(date);
 
             String content = postFeed.getContent().getRendered();
-            LinearLayout htmlToAndroidLayout = HtmlToAndroidLayout.processHtml(PostActivity.this, content);
+            HtmlToAndroidLayout processor=new HtmlToAndroidLayout();
+            LinearLayout htmlToAndroidLayout = processor.processHtml(PostActivity.this, content);
             binding.content.addView(htmlToAndroidLayout);
 
 

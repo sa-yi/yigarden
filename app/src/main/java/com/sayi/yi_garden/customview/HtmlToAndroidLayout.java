@@ -1,6 +1,7 @@
 package com.sayi.yi_garden.customview;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -32,6 +33,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.sayi.MainApplication;
+import com.sayi.yi_garden.activities.PostViewImageActivity;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -40,10 +42,12 @@ import org.jsoup.nodes.Element;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class HtmlToAndroidLayout {
 
-    public static LinearLayout processHtml(Context context,String html) {
+    ArrayList<String> imageUrls=new ArrayList<>();
+    public LinearLayout processHtml(Context context,String html) {
         LinearLayout layout = new LinearLayout(context);
         layout.setOrientation(LinearLayout.VERTICAL);
         Document document = Jsoup.parse(html);
@@ -56,8 +60,7 @@ public class HtmlToAndroidLayout {
         }
         return layout;
     }
-
-    private static View baseProcess(Element element, Context context) {
+    private View baseProcess(Element element, Context context) {
         Log.d("htmltag", element.tagName());
         if (!element.ownText().isEmpty()) {
             Log.d("text", element.toString());
@@ -116,6 +119,7 @@ public class HtmlToAndroidLayout {
             case "img":
                 ImageView imageView = new ImageView(context);
                 String imageUrl = element.attr("src");
+                imageUrls.add(imageUrl);
 
                 LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(
                         ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -147,8 +151,13 @@ public class HtmlToAndroidLayout {
                     }
                 }).into(imageView);
 
+                int index= imageUrls.size();
                 imageView.setOnClickListener(v -> {
                     MainApplication.toast("clicked");
+                    Intent intent=new Intent(context,PostViewImageActivity.class);
+                    intent.putExtra("imagelist",imageUrls);
+                    intent.putExtra("index",index);
+                    context.startActivity(intent);
                 });
 
                 return imageView;
