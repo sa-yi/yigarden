@@ -2,6 +2,8 @@ package com.sayi.yi_garden.activities;
 
 import static com.sayi.yi_garden.Consts.sp_token;
 import static com.sayi.yi_garden.Consts.sp_user_data;
+import static com.sayi.yi_garden.Consts.sp_user_id;
+import static com.sayi.yi_garden.Consts.sp_user_name;
 
 import android.annotation.SuppressLint;
 import android.content.ClipData;
@@ -31,6 +33,7 @@ import com.sayi.yi_garden.R;
 import com.sayi.yi_garden.entity.ApiClient;
 import com.sayi.yi_garden.entity.ApiService;
 import com.sayi.yi_garden.entity.JwtToken;
+import com.sayi.yi_garden.entity.User;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -102,10 +105,31 @@ public class LoginActivity extends AppCompatActivity {
                         editor.putString(sp_token, jwt_token);
                         editor.apply();
 
+                        Call<User> userCall=apiService.getMe();
+                        userCall.enqueue(new Callback<>() {
+                            @Override
+                            public void onResponse(Call<User> call, Response<User> response) {
+                                if(response.isSuccessful()){
+                                    int uid=response.body().getId();
+                                    String name=response.body().getName();
 
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
+                                    editor.putInt(sp_user_id,uid);
+                                    editor.putString(sp_user_name,name);
+                                    editor.apply();
+
+                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }else {
+                                    Log.e("Logging",response.errorBody().toString());
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<User> call, Throwable throwable) {
+                                Log.e("Logging",throwable.toString());
+                            }
+                        });
                     } else {
                         Log.d("LoginActivity", response.toString());
                         MainApplication.toast("登录失败");

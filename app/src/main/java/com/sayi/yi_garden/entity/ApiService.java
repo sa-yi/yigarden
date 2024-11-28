@@ -29,6 +29,9 @@ public interface ApiService {
     @GET("wp/v2/users/{id}")
     Call<User> getUser(@Path("id") int id);
 
+    @GET("wp/v2/users/me")
+    Call<User> getMe();
+
     @Multipart
     @POST("wp/v2/media")
     Call<MediaItem> uploadMedia(@Part MultipartBody.Part file);

@@ -3,6 +3,8 @@ package com.sayi.yi_garden.activities.mainfragments.user;
 import static android.content.Context.MODE_PRIVATE;
 import static com.sayi.yi_garden.Consts.sp_token;
 import static com.sayi.yi_garden.Consts.sp_user_data;
+import static com.sayi.yi_garden.Consts.sp_user_id;
+import static com.sayi.yi_garden.Consts.sp_user_name;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -41,11 +43,13 @@ public class UserFragment extends Fragment {
             String name=user.getName();
             binding.displayName.setText(name);
         });
-        userViewModel.fetchUserData(0);
-
+        SharedPreferences sharedPreferences=requireActivity().getSharedPreferences(sp_user_data,MODE_PRIVATE);
+        String user_name=sharedPreferences.getString(sp_user_name,"");
+        int uid=sharedPreferences.getInt(sp_user_id,-1);
+        binding.userId.setText(uid + "");
+        binding.displayName.setText(user_name);
 
         binding.logout.setOnClickListener(v->{
-            SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(sp_user_data, MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString(sp_token,"");
             editor.apply();

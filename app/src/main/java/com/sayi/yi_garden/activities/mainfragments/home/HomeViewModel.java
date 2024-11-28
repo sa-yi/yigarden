@@ -28,6 +28,7 @@ public class HomeViewModel extends ViewModel {
 
     public HomeViewModel() {
         retrofit=ApiClient.buildRetrofitInstance();
+        apiService = retrofit.create(ApiService.class);
 
         postFeedsDataList = new MutableLiveData<>(new ArrayList<>());
 
@@ -45,8 +46,8 @@ public class HomeViewModel extends ViewModel {
 
     }
     Retrofit retrofit;
+    ApiService apiService;
     public void fetchData(int page) {
-        ApiService apiService = retrofit.create(ApiService.class);
         Call<List<PostFeed>> call = apiService.getPosts(page);
 
         call.enqueue(new Callback<>() {
@@ -63,8 +64,7 @@ public class HomeViewModel extends ViewModel {
                     }
 
                 } else {
-                    Log.e("failed", "Failed to retrieve posts");
-                    Log.e("failed", response.toString());
+                    Log.e("failed", "Failed to retrieve posts,error response:"+response);
                     MainApplication.toast("获取帖子失败");
                 }
             }
