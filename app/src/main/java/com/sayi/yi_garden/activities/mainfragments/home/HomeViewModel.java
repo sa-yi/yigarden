@@ -18,6 +18,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class HomeViewModel extends ViewModel {
 
@@ -26,6 +27,7 @@ public class HomeViewModel extends ViewModel {
     public MutableLiveData<List<Announcement>> announcementsDataList;
 
     public HomeViewModel() {
+        retrofit=ApiClient.buildRetrofitInstance();
 
         postFeedsDataList = new MutableLiveData<>(new ArrayList<>());
 
@@ -42,9 +44,9 @@ public class HomeViewModel extends ViewModel {
         announcementsDataList.setValue(announcements);
 
     }
-
+    Retrofit retrofit;
     public void fetchData(int page) {
-        ApiService apiService = ApiClient.getRetrofitInstance().create(ApiService.class);
+        ApiService apiService = retrofit.create(ApiService.class);
         Call<List<PostFeed>> call = apiService.getPosts(page);
 
         call.enqueue(new Callback<>() {

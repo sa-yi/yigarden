@@ -1,6 +1,7 @@
 package com.sayi.yi_garden.entity;
 
-import android.util.Log;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.webkit.WebSettings;
 
 import androidx.annotation.NonNull;
@@ -29,15 +30,17 @@ public class ApiClient {
 
     public static Retrofit getRetrofitInstance() {
         if (retrofit == null) {
-            retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .client(getUnsafeOkHttpClient())
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
+            retrofit = buildRetrofitInstance();
         }
         return retrofit;
     }
-
+    public static Retrofit buildRetrofitInstance(){
+        return new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .client(getUnsafeOkHttpClient())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
 
     @NonNull
     private static OkHttpClient getUnsafeOkHttpClient() {
@@ -81,6 +84,29 @@ public class ApiClient {
         }
     }
 
+    private static String getAppVersion() {
+        try {
+            PackageManager packageManager = MainApplication.getContext().getPackageManager();
+            PackageInfo packageInfo = packageManager.getPackageInfo(MainApplication.getContext().getPackageName(), 0);
+            return packageInfo.versionName;  // 或者使用 versionCode，如果你需要整型值
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return "unknown"; // 如果获取失败，返回未知
+    }
+
+    private static String getAppCode() {
+        long appCode = -1;
+        try {
+            PackageManager packageManager = MainApplication.getContext().getPackageManager();
+            PackageInfo packageInfo = packageManager.getPackageInfo(MainApplication.getContext().getPackageName(), 0);
+            appCode = packageInfo.getLongVersionCode();  // 或者使用 versionCode，如果你需要整型值
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return String.valueOf(appCode);
+    }
+
     public static class CustomHeaderInterceptor implements Interceptor {
         @NonNull
         @Override
@@ -92,7 +118,9 @@ public class ApiClient {
             Request.Builder builder = originalRequest.newBuilder();
             builder.removeHeader("User-Agent");
             builder.addHeader("User-Agent", WebSettings.getDefaultUserAgent(MainApplication.getContext()));
-            builder.addHeader("Authorization","Bearer "+token);
+            builder.addHeader("Authorization", "Bearer " + token);
+            builder.addHeader("Version-Name", getAppVersion());
+            builder.addHeader("Version-Code", getAppCode());
             Request newRequest = builder.build();
             return chain.proceed(newRequest);
         }

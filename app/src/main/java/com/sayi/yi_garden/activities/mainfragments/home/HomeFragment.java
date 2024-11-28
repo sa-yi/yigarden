@@ -2,7 +2,6 @@ package com.sayi.yi_garden.activities.mainfragments.home;
 
 import static android.text.Html.FROM_HTML_MODE_LEGACY;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
