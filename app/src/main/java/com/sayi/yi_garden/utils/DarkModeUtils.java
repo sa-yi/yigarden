@@ -30,7 +30,7 @@ public class DarkModeUtils {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         setNightModel(context, AppCompatDelegate.MODE_NIGHT_YES);
     }
- 
+
     /**
      * 应用日间模式
      */

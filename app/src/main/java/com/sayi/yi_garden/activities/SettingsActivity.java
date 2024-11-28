@@ -15,14 +15,18 @@ import androidx.preference.PreferenceManager;
 import com.sayi.MainApplication;
 import com.sayi.yi_garden.R;
 import com.sayi.yi_garden.databinding.ActivitySettingsBinding;
+import com.sayi.yi_garden.utils.DarkModeUtils;
+
+import java.util.Objects;
 
 public class SettingsActivity extends AppCompatActivity {
     ActivitySettingsBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        binding=ActivitySettingsBinding.inflate(getLayoutInflater());
+        binding = ActivitySettingsBinding.inflate(getLayoutInflater());
         setSupportActionBar(binding.toolbar);
         if (savedInstanceState == null) {
             getSupportFragmentManager()
@@ -35,12 +39,20 @@ public class SettingsActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle("设置");
         }
-        SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(this);
-        boolean isNightMode=sharedPreferences.getBoolean("theme",false);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isNightMode = sharedPreferences.getBoolean("theme", false);
         sharedPreferences.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
                 MainApplication.toast(key);
+                if (Objects.equals(key, "theme")) {
+                    boolean ifDark = sharedPreferences.getBoolean("theme", false);
+                    if (ifDark) {
+                        DarkModeUtils.applyNightMode(SettingsActivity.this);
+                    } else {
+                        DarkModeUtils.applyDayMode(SettingsActivity.this);
+                    }
+                }
             }
         });
 
