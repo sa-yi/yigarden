@@ -1,17 +1,12 @@
 package com.sayi.music.fragments;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.os.*;
+import android.view.*;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.annotation.*;
+import androidx.fragment.app.*;
 
-import com.sayi.music.MusicActivity;
-import com.sayi.yi_garden.databinding.MusicBarBinding;
+import com.sayi.vdim.databinding.*;
 
 public class MusicBarFragment extends Fragment {
     MusicBarBinding binding;

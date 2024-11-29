@@ -152,7 +152,7 @@
 
                         </LinearLayout>
                     </LinearLayout-->
-                    <fragment android:name="com.sayi.yi_garden.activities.fragments.UserBannerFragment"
+                    <fragment android:name="com.sayi.vdim.activities.fragments.UserBannerFragment"
                         android:id="@+id/banner"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -164,12 +164,11 @@
                         android:layout_marginVertical="8dp"
                         android:background="@android:color/darker_gray" />
 
-                    <LinearLayout
+                    <TextView
                         android:id="@+id/content"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="10dp"
-                        android:orientation="vertical"/>
+                        android:padding="10dp"/>
 
                     <androidx.cardview.widget.CardView
                         android:layout_width="wrap_content"

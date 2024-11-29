@@ -28,7 +28,7 @@ import com.google.common.util.concurrent.MoreExecutors;
 import com.hw.lrcviewlib.LrcDataBuilder;
 import com.hw.lrcviewlib.LrcRow;
 import com.sayi.music.util.lrcparser.LrcParser;
-import com.sayi.yi_garden.utils.Ticker;
+import com.sayi.vdim.utils.Ticker;
 
 import java.io.File;
 import java.io.IOException;

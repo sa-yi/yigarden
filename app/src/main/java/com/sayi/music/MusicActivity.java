@@ -24,10 +24,10 @@ import androidx.media3.common.MediaItem;
 import androidx.media3.common.Player;
 
 import com.sayi.MainApplication;
-import com.sayi.yi_garden.R;
-import com.sayi.yi_garden.databinding.ActivityMusicBinding;
-import com.sayi.yi_garden.utils.DarkModeUtils;
-import com.sayi.yi_garden.utils.Ticker;
+import com.sayi.vdim.R;
+import com.sayi.vdim.databinding.ActivityMusicBinding;
+import com.sayi.vdim.utils.DarkModeUtils;
+import com.sayi.vdim.utils.Ticker;
 
 public class MusicActivity extends AppCompatActivity implements Player.Listener, Ticker.OnTickListener {
     Ticker ticker;

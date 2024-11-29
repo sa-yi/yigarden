@@ -1,19 +1,15 @@
 package com.sayi;
 
-import static com.sayi.yi_garden.Consts.sp_token;
-import static com.sayi.yi_garden.Consts.sp_user_data;
+import static com.sayi.vdim.Consts.sp_token;
+import static com.sayi.vdim.Consts.sp_user_data;
 
 import android.app.Application;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
 
-import com.sayi.yi_garden.utils.DarkModeUtils;
-
-import java.io.FileWriter;
-import java.io.IOException;
+import com.sayi.vdim.utils.DarkModeUtils;
 
 public class MainApplication extends Application {
     private static MainApplication mContext;

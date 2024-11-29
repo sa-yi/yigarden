@@ -7,8 +7,8 @@ import android.view.Window;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.sayi.yi_garden.R;
-import com.sayi.yi_garden.utils.DarkModeUtils;
+import com.sayi.vdim.R;
+import com.sayi.vdim.utils.DarkModeUtils;
 
 public class MusicSettingsActivity extends AppCompatActivity {
     @Override

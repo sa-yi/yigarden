@@ -6,7 +6,7 @@ plugins {
 
 
 android {
-    namespace = "com.sayi.yi_garden"
+    namespace = "com.sayi.vdim"
     compileSdk = 35
 
 
@@ -15,7 +15,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.sayi.yi_garden"
+        applicationId = "com.sayi.vdim"
         compileSdk = 35
         minSdk = 28
         targetSdk = 35
