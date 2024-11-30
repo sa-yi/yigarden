@@ -7,7 +7,7 @@ import retrofit2.http.*;
 
 public interface DzService {
     @GET("index.php?version=4&module=hotthread")
-    Call<ThreadResponse> getHotThreads(@Query("page") int page);
+    Call<ThreadsResponse> getHotThreads(@Query("page") int page);
 
     @GET("index.php?version=4&module=viewthread")
     Call<ThreadData> getThread(@Query("tid") int tid);

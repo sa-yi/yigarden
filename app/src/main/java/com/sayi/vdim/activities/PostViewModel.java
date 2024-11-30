@@ -41,6 +41,7 @@ public class PostViewModel extends ViewModel {
             @Override
             public void onResponse(Call<ThreadData> call, Response<ThreadData> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    Log.d(TAG,response.body().toString());
                     postLiveData.postValue(response.body());
                 } else {
                     errorMessage.postValue("Failed to fetch post");

@@ -1,34 +1,24 @@
 package com.sayi.vdim.dz_entity;
 
-import com.google.gson.annotations.SerializedName;
-import java.util.List;
+import com.google.gson.annotations.*;
 
-public class ThreadResponse {
-
+public class BaseResponse {
     @SerializedName("Version")
     private String version;
 
     @SerializedName("Charset")
     private String charset;
 
-    @SerializedName("Variables")
-    private Variables variables;
-
-    @Override
-    public String toString() {
-        return "ThreadResponse{" +
-                "version='" + version + '\'' +
-                ", charset='" + charset + '\'' +
-                ", variables=" + variables +
-                '}';
-    }
-
-    public Variables getVariables(){
+    public BaseVariables getVariables() {
         return variables;
     }
 
-    public static class Variables {
+    @Expose(serialize = false, deserialize = false)
+    private BaseVariables variables;
 
+
+
+    public static class BaseVariables {
         @SerializedName("cookiepre")
         private String cookiepre;
 
@@ -62,16 +52,34 @@ public class ThreadResponse {
         @SerializedName("notice")
         private Notice notice;
 
-        public List<ThreadData> getData() {
-            return data;
-        }
+        public static class Notice {
 
-        @SerializedName("data")
-        private List<ThreadData> data;
+            @SerializedName("newpush")
+            private String newpush;
+
+            @SerializedName("newpm")
+            private String newpm;
+
+            @SerializedName("newprompt")
+            private String newprompt;
+
+            @SerializedName("newmypost")
+            private String newmypost;
+
+            @Override
+            public String toString() {
+                return "Notice{" +
+                        "newpush='" + newpush + '\'' +
+                        ", newpm='" + newpm + '\'' +
+                        ", newprompt='" + newprompt + '\'' +
+                        ", newmypost='" + newmypost + '\'' +
+                        '}';
+            }
+        }
 
         @Override
         public String toString() {
-            return "Variables{" +
+            return "BaseVariables{" +
                     "cookiepre='" + cookiepre + '\'' +
                     ", auth='" + auth + '\'' +
                     ", saltkey='" + saltkey + '\'' +
@@ -83,8 +91,9 @@ public class ThreadResponse {
                     ", ismoderator='" + ismoderator + '\'' +
                     ", readaccess='" + readaccess + '\'' +
                     ", notice=" + notice +
-                    ", data=" + data +
                     '}';
         }
     }
+
+
 }

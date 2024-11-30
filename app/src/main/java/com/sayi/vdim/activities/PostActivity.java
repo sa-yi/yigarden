@@ -33,6 +33,7 @@ import com.sayi.vdim.activities.fragments.UserBannerFragment;
 import com.sayi.vdim.customview.HtmlToAndroidLayout;
 import com.sayi.vdim.databinding.ActivityPostBinding;
 import com.sayi.vdim.databinding.PostCommentBinding;
+import com.sayi.vdim.dz_entity.*;
 import com.sayi.vdim.entity.PostComment;
 import com.sayi.vdim.utils.DialogLoading;
 
@@ -84,7 +85,8 @@ public class PostActivity extends AppCompatActivity {
 
         viewModel=new ViewModelProvider(this).get(PostViewModel.class);
 
-        viewModel.getPostLiveData().observe(this, postFeed -> {
+        viewModel.getPostLiveData().observe(this, postFeedData -> {
+            ThreadData.Variables postFeed = postFeedData.getVariables();
             Log.d("post", postFeed.toString());
             Objects.requireNonNull(getSupportActionBar()).setTitle(postFeed.getSubject());
 
@@ -103,8 +105,13 @@ public class PostActivity extends AppCompatActivity {
             DialogLoading.dismiss(PostActivity.this);
             setupUI();
         });
-
+        viewModel.getErrorMessage().observe(this,errorMsg->{
+            DialogLoading.dismiss(PostActivity.this);
+            Toast.makeText(this, errorMsg, Toast.LENGTH_SHORT).show();
+        });
         viewModel.fetchPost(id);
+
+
 
         CommentAdapter commentAdapter=new CommentAdapter();
         binding.commentList.setAdapter(commentAdapter);

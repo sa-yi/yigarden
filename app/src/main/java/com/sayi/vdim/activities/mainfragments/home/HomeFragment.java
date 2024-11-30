@@ -72,7 +72,7 @@ public class HomeFragment extends Fragment {
         binding.nickPostView.setAdapter(dzDataAdapter);
         homeViewModel.dzDataList.observe(getViewLifecycleOwner(), dzDatalist -> {
             binding.loadMore.setVisibility(View.GONE);
-            for (ThreadData dzThreadData : dzDatalist) {
+            for (ThreadData.Variables dzThreadData : dzDatalist) {
                 Log.d("dz_data", dzThreadData.toString());
                 dzDataAdapter.addData(dzThreadData);
                 dzDataAdapter.notifyItemChanged(dzDataAdapter.getItemCount());
@@ -84,7 +84,6 @@ public class HomeFragment extends Fragment {
 
 
         binding.nickPostView.setVisibility(View.GONE);
-
         homeViewModel.fetchDzData(page);
         binding.nickPostView.setVisibility(View.VISIBLE);
 
@@ -189,9 +188,9 @@ public class HomeFragment extends Fragment {
     }
 
     class DzDataAdapter extends RecyclerView.Adapter<DzDataViewHolder> {
-        private List<ThreadData> dzThreadDataList = new ArrayList<>();
+        private List<ThreadData.Variables> dzThreadDataList = new ArrayList<>();
 
-        public void addData(ThreadData threadData) {
+        public void addData(ThreadData.Variables threadData) {
             dzThreadDataList.add(threadData);
         }
 
@@ -205,7 +204,7 @@ public class HomeFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull DzDataViewHolder holder, int position) {
-            ThreadData threadData = dzThreadDataList.get(position);
+            ThreadData.Variables threadData = dzThreadDataList.get(position);
             holder.bind(threadData);
         }
 
@@ -223,7 +222,7 @@ public class HomeFragment extends Fragment {
             this.binding = binding;
         }
 
-        public void bind(ThreadData threadData) {
+        public void bind(ThreadData.Variables threadData) {
             binding.userName.setText(threadData.getAuthor());
             String sendTime=threadData.getLastpost();
             sendTime=sendTime.replace("&nbsp;"," ");

@@ -50,28 +50,33 @@ public class HomeViewModel extends ViewModel {
 
     }
 
-    public MutableLiveData<List<ThreadData>> dzDataList;
+    public MutableLiveData<List<ThreadData.Variables>> dzDataList;
 
     public void fetchDzData(int page){
         DzService dzService=DzClient.getRetrofitInstance().create(DzService.class);
-        Call<ThreadResponse> call=dzService.getHotThreads(page);
+        Call<ThreadsResponse> call=dzService.getHotThreads(page);
         call.enqueue(new Callback<>() {
             @Override
-            public void onResponse(Call<ThreadResponse> call, Response<ThreadResponse> response) {
-                ThreadResponse threadResponse= response.body();
-                ThreadResponse.Variables variables=threadResponse.getVariables();
+            public void onResponse(Call<ThreadsResponse> call, Response<ThreadsResponse> response) {
+                if(response.isSuccessful()) {
+                    Log.d("dz",response.body().toString());
+                    ThreadsResponse threadsResponse = response.body();
+                    ThreadsResponse.Variables variables = threadsResponse.getVariables();
 
-                List<ThreadData> data=variables.getData();
-                for(ThreadData datus:data){
-                    Log.d("dz_data",data.toString());
+                    List<ThreadData.Variables> data = variables.getData();
+                    for (ThreadData.Variables datus : data) {
+                        Log.d("dz_data", data.toString());
+                    }
+                    dzDataList.postValue(data);
+                }else {
+                    Log.e("dz",response.toString());
+                    MainApplication.toast("读取帖子失败");
                 }
-                dzDataList.postValue(data);
-
             }
 
             @Override
-            public void onFailure(Call<ThreadResponse> call, Throwable throwable) {
-                Log.e("dz",throwable.toString());
+            public void onFailure(Call<ThreadsResponse> call, Throwable throwable) {
+                Log.e("dz_error",throwable.toString());
                 MainApplication.toast("获取帖子失败");
             }
         });
