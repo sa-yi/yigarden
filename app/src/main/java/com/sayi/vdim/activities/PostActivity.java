@@ -86,8 +86,8 @@ public class PostActivity extends AppCompatActivity {
         viewModel=new ViewModelProvider(this).get(PostViewModel.class);
 
         viewModel.getPostLiveData().observe(this, postFeedData -> {
-            ThreadData.Variables postFeed = postFeedData.getVariables();
-            Log.d("post", postFeed.toString());
+            ThreadData.Variables postFeed = postFeedData.getVariables().getSingleVariable();
+            Log.d("post", postFeedData.toString());
             Objects.requireNonNull(getSupportActionBar()).setTitle(postFeed.getSubject());
 
             String author = postFeed.getAuthor();

@@ -1,13 +1,9 @@
 package com.sayi.vdim.activities.mainfragments.home;
 
-import static android.text.Html.*;
-
 import android.content.*;
 import android.graphics.*;
-import android.graphics.drawable.*;
 import android.net.*;
 import android.os.*;
-import android.text.*;
 import android.util.*;
 import android.view.*;
 import android.widget.*;
@@ -19,13 +15,7 @@ import androidx.lifecycle.*;
 import androidx.recyclerview.widget.*;
 import androidx.viewpager2.widget.*;
 
-import com.bumptech.glide.*;
-import com.bumptech.glide.load.*;
-import com.bumptech.glide.load.engine.*;
-import com.bumptech.glide.request.*;
-import com.bumptech.glide.request.target.*;
-import com.sayi.*;
-import com.sayi.vdim.R;
+import com.sayi.vdim.*;
 import com.sayi.vdim.activities.*;
 import com.sayi.vdim.databinding.*;
 import com.sayi.vdim.dz_entity.*;
@@ -34,8 +24,6 @@ import com.sayi.vdim.utils.*;
 
 import java.util.*;
 
-import retrofit2.*;
-
 public class HomeFragment extends Fragment {
 
     Ticker ticker;
@@ -43,7 +31,7 @@ public class HomeFragment extends Fragment {
     DzDataAdapter dzDataAdapter;
     View root;
     HomeViewModel homeViewModel;
-    ApiService service = ApiClient.getRetrofitInstance().create(ApiService.class);
+    int page = 1;
     private FragmentHomeBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -77,7 +65,7 @@ public class HomeFragment extends Fragment {
                 dzDataAdapter.addData(dzThreadData);
                 dzDataAdapter.notifyItemChanged(dzDataAdapter.getItemCount());
             }
-            Log.d("dz_data_size", dzDatalist.size()+"");
+            Log.d("dz_data_size", dzDatalist.size() + "");
             if (dzDatalist.size() == 25)
                 binding.loadMore.setVisibility(View.VISIBLE);
         });
@@ -119,7 +107,7 @@ public class HomeFragment extends Fragment {
         ticker.start();
 
     }
-    int page=1;
+
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
@@ -224,8 +212,8 @@ public class HomeFragment extends Fragment {
 
         public void bind(ThreadData.Variables threadData) {
             binding.userName.setText(threadData.getAuthor());
-            String sendTime=threadData.getLastpost();
-            sendTime=sendTime.replace("&nbsp;"," ");
+            String sendTime = threadData.getLastpost();
+            sendTime = sendTime.replace("&nbsp;", " ");
             binding.sendTime.setText(sendTime);
             binding.title.setText(threadData.getSubject());
             binding.expert.setText(threadData.getMessage());

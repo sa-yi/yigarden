@@ -21,7 +21,7 @@
 #-renamesourcefileattribute SourceFile
 
 # 保留 com.sayi.yi_garden.entity 包下的所有类及其字段
--keep class com.sayi.vdim.entity.** { *; }
+-keep class com.sayi.vdim.dz_entity.** { *; }
 
 -optimizationpasses 5
 

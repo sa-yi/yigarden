@@ -2,7 +2,7 @@ package com.sayi.vdim.dz_entity;
 
 import com.google.gson.annotations.*;
 
-public class BaseResponse {
+public abstract class BaseResponse {
     @SerializedName("Version")
     private String version;
 
