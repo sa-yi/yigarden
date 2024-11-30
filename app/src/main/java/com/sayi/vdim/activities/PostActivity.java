@@ -96,10 +96,14 @@ public class PostActivity extends AppCompatActivity {
             userBanner.setAuthorName(author);
             userBanner.setSendTime(date);
 
-            String content = postFeed.getMessage();
+            ArrayList<ThreadData.Variables.Post> posts=postFeedData.getVariables().getPost();
+            ThreadData.Variables.Post firstPost=posts.remove(0);
+
+            String content = firstPost.getMessage();
             //HtmlToAndroidLayout processor=new HtmlToAndroidLayout();
             //LinearLayout htmlToAndroidLayout = processor.processHtml(PostActivity.this, content);
             binding.content.setText(content);
+
 
 
             DialogLoading.dismiss(PostActivity.this);

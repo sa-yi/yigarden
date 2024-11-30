@@ -56,24 +56,4 @@ public class PostViewModel extends ViewModel {
             }
         });
     }
-
-    /*public void fetchComments(int postId) {
-        dzService.getComments(postId).enqueue(new Callback<List<PostComment>>() {
-            @Override
-            public void onResponse(Call<List<PostComment>> call, Response<List<PostComment>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    commentsLiveData.postValue(response.body());
-                } else {
-                    errorMessage.postValue("Failed to fetch comments");
-                    Log.e(TAG, "Failed to fetch comments");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<PostComment>> call, Throwable t) {
-                errorMessage.postValue(t.getMessage());
-                Log.e(TAG, "Error fetching comments", t);
-            }
-        });
-    }*/
 }

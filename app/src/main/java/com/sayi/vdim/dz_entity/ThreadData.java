@@ -4,6 +4,8 @@ import androidx.annotation.*;
 
 import com.google.gson.annotations.*;
 
+import java.util.*;
+
 public class ThreadData extends BaseResponse {
 
     @SerializedName("Variables")
@@ -25,10 +27,10 @@ public class ThreadData extends BaseResponse {
 
 
         @SerializedName("thread")
-        private SingleVariables singleVariable;
+        private Variables singleVariable;
 
 
-        public SingleVariables getSingleVariable() {
+        public Variables getSingleVariable() {
             return singleVariable;
         }
 
@@ -244,9 +246,63 @@ public class ThreadData extends BaseResponse {
                     '}';
         }
 
+        public ArrayList<Post> getPost() {
+            return post;
+        }
+
+        @SerializedName("postlist")
+        private ArrayList<Post> post;
+
+        public static class Post{
+            @SerializedName("pid")
+            private int pid;
+            @SerializedName("tid")
+            private int tid;
+            @SerializedName("first")
+            private int first;
+            @SerializedName("author")
+            private String author;
+            @SerializedName("authorid")
+            private int authorid;
+            @SerializedName("dateline")
+            private String dateline;
+
+            public String getMessage() {
+                return message;
+            }
+
+            @SerializedName("message")
+            private String message;
+            @SerializedName("anonymous")
+            private int anonymous;
+            @SerializedName("attachment")
+            private Object attachment;
+            @SerializedName("status")
+            private int status;
+            @SerializedName("replycredit")
+            private int replycredit;
+            @SerializedName("position")
+            private int position;
+            @SerializedName("username")
+            private String username;
+            @SerializedName("adminid")
+            private int adminid;
+            @SerializedName("groupid")
+            private int groupid;
+            @SerializedName("memberstatus")
+            private int memberstatus;
+            @SerializedName("number")
+            private int number;
+            @SerializedName("dbdateline")
+            private int dbdateline;
+            @SerializedName("attachments")
+            private Object attachments;
+            @SerializedName("imagelist")
+            private ArrayList<Integer> imagelist;
+            @SerializedName("groupiconid")
+            private String groupiconid;
+        }
+
     }
 
-    public static class SingleVariables extends Variables{
-
-    }
 }
