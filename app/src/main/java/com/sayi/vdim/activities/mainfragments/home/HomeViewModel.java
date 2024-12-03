@@ -64,10 +64,12 @@ public class HomeViewModel extends ViewModel {
                     ThreadsResponse.Variables variables = threadsResponse.getVariables();
 
                     List<ThreadData.Variables> data = variables.getData();
-                    for (ThreadData.Variables datus : data) {
-                        Log.d("dz_data", data.toString());
+                    if ((data!=null)) {
+                        for (ThreadData.Variables datus : data) {
+                            Log.d("dz_data", data.toString());
+                        }
+                        dzDataList.postValue(data);
                     }
-                    dzDataList.postValue(data);
                 }else {
                     Log.e("dz",response.toString());
                     MainApplication.toast("读取帖子失败");

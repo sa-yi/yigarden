@@ -45,7 +45,6 @@ public class HomeFragment extends Fragment {
         return root;
     }
 
-    //@SuppressLint("NotifyDataSetChanged")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -66,8 +65,8 @@ public class HomeFragment extends Fragment {
                 dzDataAdapter.notifyItemChanged(dzDataAdapter.getItemCount());
             }
             Log.d("dz_data_size", dzDatalist.size() + "");
-            if (dzDatalist.size() == 25)
-                binding.loadMore.setVisibility(View.VISIBLE);
+            //if (dzDatalist.size() == 20)
+            //binding.loadMore.setVisibility(View.VISIBLE);
         });
 
 

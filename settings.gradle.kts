@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "LoginTest"
+rootProject.name = "V次元"
 
 include(":app")

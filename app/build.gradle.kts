@@ -102,8 +102,10 @@ dependencies {
     implementation("com.alibaba:fastjson:1.2.47")
 
     implementation("com.github.bumptech.glide:glide:4.15.1")
+    implementation("com.github.bumptech.glide:okhttp3-integration:4.15.1")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("androidx.core:core-ktx:1.15.0")
+    implementation("androidx.activity:activity-ktx:1.9.3")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 
     api("org.wordpress:aztec:v1.6.2")
@@ -119,5 +121,5 @@ dependencies {
         exclude(group = "aQute.bnd")
     }
 
-
+    implementation("com.github.ceneax:QRScan:1.0.1")
 }

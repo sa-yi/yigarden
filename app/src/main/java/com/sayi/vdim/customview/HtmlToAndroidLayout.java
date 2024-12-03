@@ -51,7 +51,7 @@ public class HtmlToAndroidLayout {
         int a = 0;
         for (Element element : document.body().children()) {
             a++;
-            Log.d("element",element+""+a);
+            //Log.d("element",element+""+a);
             View view = baseProcess(element, context);
             layout.addView(view);
         }

@@ -30,6 +30,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.toolbox.HurlStack;
 import com.sayi.MainApplication;
 import com.sayi.vdim.R;
+import com.sayi.vdim.databinding.*;
 import com.sayi.vdim.entity.ApiClient;
 import com.sayi.vdim.entity.ApiService;
 import com.sayi.vdim.entity.JwtToken;
@@ -54,9 +55,8 @@ import retrofit2.Response;
 
 
 public class LoginActivity extends AppCompatActivity {
-    TextView jump_to_rig, retrieve_password;
-    Button login;
-    EditText usernameV, passwdV;
+    ActivityLoginBinding binding;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,22 +74,17 @@ public class LoginActivity extends AppCompatActivity {
         window.getDecorView().setSystemUiVisibility(flags);
         window.setStatusBarColor(Color.TRANSPARENT);
 
-        setContentView(R.layout.activity_login);
-        jump_to_rig = findViewById(R.id.jump_to_rig);
+        binding=ActivityLoginBinding.inflate(getLayoutInflater());
 
-        login = findViewById(R.id.login);
-        usernameV = findViewById(R.id.username);
-        passwdV = findViewById(R.id.password);
-        retrieve_password = findViewById(R.id.retrieve_password);
+        setContentView(binding.getRoot());
+        binding.login.setEnabled(false);
+        binding.username.addTextChangedListener(new InputTextWatcher(binding.username));
+        binding.password.addTextChangedListener(new InputTextWatcher(binding.password));
 
-        login.setEnabled(false);
-        usernameV.addTextChangedListener(new InputTextWatcher(usernameV));
-        passwdV.addTextChangedListener(new InputTextWatcher(passwdV));
-
-        login.setOnClickListener(v -> {
+        binding.login.setOnClickListener(v -> {
             ApiService apiService = ApiClient.getRetrofitInstance().create(ApiService.class);
-            String username = usernameV.getText().toString();
-            String password = passwdV.getText().toString();
+            String username = binding.username.getText().toString();
+            String password = binding.password.getText().toString();
             // 调用接口
             Call<JwtToken> call = apiService.login(username, password);
             call.enqueue(new Callback<>() {
@@ -149,7 +144,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
         });
-        jump_to_rig.setOnClickListener(v -> {
+        binding.jumpToRig.setOnClickListener(v -> {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
             builder.setTitle("是否跳转至网站主页");
@@ -170,8 +165,12 @@ public class LoginActivity extends AppCompatActivity {
 
 
         });
-        retrieve_password.setOnClickListener(v -> {
+        binding.retrievePassword.setOnClickListener(v -> {
             MainApplication.toast("请前往网页端重置密码");
+        });
+        binding.webLogin.setOnClickListener(v->{
+            Intent intent=new Intent(LoginActivity.this, WebLoginActivity.class);
+            startActivity(intent);
         });
 
     }
@@ -243,7 +242,7 @@ public class LoginActivity extends AppCompatActivity {
                 if(editText.getText().toString().isEmpty())
                     enabled=false;
             }
-            login.setEnabled(enabled);
+            binding.login.setEnabled(enabled);
         }
     }
 }

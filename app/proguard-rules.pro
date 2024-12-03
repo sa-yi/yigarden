@@ -20,7 +20,7 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
-# 保留 com.sayi.yi_garden.entity 包下的所有类及其字段
+# 保留 com.sayi.vdim.dz_entity 包下的所有类及其字段
 -keep class com.sayi.vdim.dz_entity.** { *; }
 
 -optimizationpasses 5
@@ -35,8 +35,6 @@
 -dontwarn okio.**
 -dontwarn retrofit2.**
 -keep class retrofit2.** { *; }
--keepattributes Signature
--keepattributes *Annotation*
 
 -keep class javax.xml.stream.** { *; }
 -keep class org.apache.tika.** { *; }
@@ -65,3 +63,13 @@
 -dontwarn org.osgi.framework.ServiceReference
 -dontwarn org.osgi.util.tracker.ServiceTracker
 -dontwarn org.osgi.util.tracker.ServiceTrackerCustomizer
+
+
+-assumenosideeffects class android.util.Log {
+    public static boolean isLoggable(java.lang.String, int);
+    public static int v(...);
+    public static int i(...);
+    public static int w(...);
+    public static int d(...);
+    public static int e(...);
+}

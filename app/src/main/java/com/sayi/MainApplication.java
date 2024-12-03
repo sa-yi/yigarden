@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
 
+import com.sayi.vdim.*;
 import com.sayi.vdim.utils.DarkModeUtils;
 
 public class MainApplication extends Application {
@@ -19,6 +20,18 @@ public class MainApplication extends Application {
         SharedPreferences sharedPreferences = getSharedPreferences(sp_user_data, MODE_PRIVATE);
         token = sharedPreferences.getString(sp_token,"");
         return token;
+    }
+
+    public void putDzCookie(String dzCookie){
+        SharedPreferences sharedPreferences=getSharedPreferences(DzConsts.COOKIE_PREFS,MODE_PRIVATE);
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        editor.putString(DzConsts.COOKIE,dzCookie);
+        editor.apply();
+    }
+
+    public String getDzCookie(){
+        SharedPreferences sharedPreferences=getSharedPreferences(DzConsts.COOKIE_PREFS,MODE_PRIVATE);
+        return sharedPreferences.getString(DzConsts.COOKIE,"");
     }
 
     public static void toast(final String str) {
@@ -36,6 +49,9 @@ public class MainApplication extends Application {
         mContext = getApplication();
         CrashHandler.getInstance().init(mContext);
         DarkModeUtils.init(this);
+
+
+
     }
 
     @Override

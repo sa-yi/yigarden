@@ -260,8 +260,18 @@ public class ThreadData extends BaseResponse {
             private int tid;
             @SerializedName("first")
             private int first;
+
+            public String getAuthor() {
+                return author;
+            }
+
             @SerializedName("author")
             private String author;
+
+            public int getAuthorid() {
+                return authorid;
+            }
+
             @SerializedName("authorid")
             private int authorid;
             @SerializedName("dateline")
@@ -295,14 +305,209 @@ public class ThreadData extends BaseResponse {
             private int number;
             @SerializedName("dbdateline")
             private int dbdateline;
+
+            public Map<Integer, Attachment> getAttachments() {
+                return attachments;
+            }
+
             @SerializedName("attachments")
-            private Object attachments;
+            private Map<Integer,Attachment> attachments;
+
+            public ArrayList<Integer> getImagelist() {
+                return imagelist;
+            }
+
             @SerializedName("imagelist")
             private ArrayList<Integer> imagelist;
             @SerializedName("groupiconid")
             private String groupiconid;
+
+            @Override
+            public String toString() {
+                return "Post{" +
+                        "pid=" + pid +
+                        ", tid=" + tid +
+                        ", first=" + first +
+                        ", author='" + author + '\'' +
+                        ", authorid=" + authorid +
+                        ", dateline='" + dateline + '\'' +
+                        ", message='" + message + '\'' +
+                        ", anonymous=" + anonymous +
+                        ", attachment=" + attachment +
+                        ", status=" + status +
+                        ", replycredit=" + replycredit +
+                        ", position=" + position +
+                        ", username='" + username + '\'' +
+                        ", adminid=" + adminid +
+                        ", groupid=" + groupid +
+                        ", memberstatus=" + memberstatus +
+                        ", number=" + number +
+                        ", dbdateline=" + dbdateline +
+                        ", attachments=" + attachments +
+                        ", imagelist=" + imagelist +
+                        ", groupiconid='" + groupiconid + '\'' +
+                        '}';
+            }
         }
 
+        public static class Attachment {
+            @SerializedName("aid")
+            private String aid;
+
+            @SerializedName("tid")
+            private String tid;
+
+            @SerializedName("pid")
+            private String pid;
+
+            @SerializedName("uid")
+            private String uid;
+
+            @SerializedName("dateline")
+            private String dateline;
+
+            @SerializedName("filename")
+            private String filename;
+
+            @SerializedName("filesize")
+            private int filesize;
+
+            @SerializedName("attachment")
+            private String attachment;
+
+            @SerializedName("remote")
+            private int remote;
+
+            @SerializedName("description")
+            private String description;
+
+            @SerializedName("readperm")
+            private int readperm;
+
+            @SerializedName("price")
+            private int price;
+
+            @SerializedName("isimage")
+            private int isimage;
+
+            @SerializedName("width")
+            private int width;
+
+            @SerializedName("height")
+            private int height;
+
+            @SerializedName("thumb")
+            private int thumb;
+
+            @SerializedName("picid")
+            private int picid;
+
+            @SerializedName("ext")
+            private String ext;
+
+            @SerializedName("imgalt")
+            private String imgalt;
+
+            @SerializedName("attachicon")
+            private String attachicon;
+
+            @SerializedName("attachsize")
+            private String attachsize;
+
+            @SerializedName("attachimg")
+            private int attachimg;
+
+            @SerializedName("payed")
+            private int payed;
+
+            @SerializedName("url")
+            private String url;
+
+            @SerializedName("dbdateline")
+            private long dbdateline;
+
+            @SerializedName("aidencode")
+            private String aidencode;
+
+            @SerializedName("downloads")
+            private int downloads;
+
+            @Override
+            public String toString() {
+                return "Attachment{" +
+                        "aid='" + aid + '\'' +
+                        ", tid='" + tid + '\'' +
+                        ", pid='" + pid + '\'' +
+                        ", uid='" + uid + '\'' +
+                        ", dateline='" + dateline + '\'' +
+                        ", filename='" + filename + '\'' +
+                        ", filesize=" + filesize +
+                        ", attachment='" + attachment + '\'' +
+                        ", remote=" + remote +
+                        ", description='" + description + '\'' +
+                        ", readperm=" + readperm +
+                        ", price=" + price +
+                        ", isimage=" + isimage +
+                        ", width=" + width +
+                        ", height=" + height +
+                        ", thumb=" + thumb +
+                        ", picid=" + picid +
+                        ", ext='" + ext + '\'' +
+                        ", imgalt='" + imgalt + '\'' +
+                        ", attachicon='" + attachicon + '\'' +
+                        ", attachsize='" + attachsize + '\'' +
+                        ", attachimg=" + attachimg +
+                        ", payed=" + payed +
+                        ", url='" + url + '\'' +
+                        ", dbdateline=" + dbdateline +
+                        ", aidencode='" + aidencode + '\'' +
+                        ", downloads=" + downloads +
+                        '}';
+            }
+        }
+
+
+        public SpecialPoll getSpecialPoll() {
+            return specialPoll;
+        }
+
+        @SerializedName("special_poll")
+        private SpecialPoll specialPoll;
+        public static class SpecialPoll{
+            @SerializedName("polloptions")
+            private Map<Integer,PollOption> pollOptions;
+
+            public static class PollOption{
+                @SerializedName("polloptionid")
+                private int polloptionId;
+                @SerializedName("polloption")
+                private String polloption;
+                @SerializedName("votes")
+                private int votes;
+                @SerializedName("width")
+                private String width;
+                @SerializedName("percent")
+                private float percent;
+                @SerializedName("color")
+                private String color;
+                @SerializedName("imginfo")
+                private List imginfo;
+            }
+        }
+        @SerializedName("expirations")
+        private long expirations;
+        @SerializedName("multiple")
+        private int multiple;
+        @SerializedName("maxchoices")
+        private int maxchoices;
+        @SerializedName("voterscount")
+        private int voterscount;
+        @SerializedName("visiblepoll")
+        private int visiblepoll;
+        @SerializedName("allowvote")
+        private int allowvote;
+        @SerializedName("remaintime")
+        private List<Integer> remaintime;
     }
 
 }
