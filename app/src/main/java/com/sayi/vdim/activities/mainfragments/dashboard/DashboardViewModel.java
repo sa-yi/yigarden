@@ -15,7 +15,10 @@ import retrofit2.*;
 public class DashboardViewModel extends ViewModel {
     String TAG="DashboardViewModel";
 
+    private LiveData<ArrayList<Forum>> forumCategory;
+
     public DashboardViewModel() {
+        forumCategory =new MutableLiveData<>(new ArrayList<>());
 
         DzService dzService=DzClient.getRetrofitInstance().create(DzService.class);
         Call<ForumNav> call=dzService.getNav();

@@ -326,7 +326,7 @@ public class PostActivity extends AppCompatActivity {
         if (!isLast) {
             View splitter = new View(this);
             splitter.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 2));
-            splitter.setBackgroundColor(R.color.default_gray);
+            splitter.setBackgroundColor(getResources().getColor(R.color.default_gray,getTheme()));
             binding.commentContainer.addView(splitter);
         }
     }
