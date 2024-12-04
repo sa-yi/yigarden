@@ -75,10 +75,10 @@ public class PostActivity extends AppCompatActivity {
         viewModel.getPostLiveData().observe(this, postFeedData -> {
             ThreadData.Variables postFeed = postFeedData.getSingleVariable();
             Log.d("post", postFeedData.toString());
-            Objects.requireNonNull(getSupportActionBar()).setTitle(postFeedData.getSubject());
+            Objects.requireNonNull(getSupportActionBar()).setTitle(postFeed.getSubject());
 
-            String author = postFeedData.getAuthor();
-            String date = postFeedData.getLastpost();
+            String author = postFeed.getAuthor();
+            String date = postFeed.getLastpost();
 
             userBanner.setAuthorName(author);
             userBanner.setSendTime(date);
