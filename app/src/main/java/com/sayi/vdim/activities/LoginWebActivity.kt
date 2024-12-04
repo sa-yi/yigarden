@@ -3,9 +3,11 @@ package com.sayi.vdim.activities
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
+import android.net.http.SslError
 import android.os.Bundle
 import android.util.Log
 import android.webkit.CookieManager
+import android.webkit.SslErrorHandler
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
@@ -64,6 +66,14 @@ class WebLoginActivity : AppCompatActivity() {
                         finish()
                     }
                 }
+            }
+
+            override fun onReceivedSslError(
+                view: WebView?,
+                handler: SslErrorHandler?,
+                error: SslError?
+            ) {
+                handler?.proceed()
             }
         }
         binding.refresh.setOnClickListener{

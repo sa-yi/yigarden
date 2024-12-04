@@ -274,6 +274,11 @@ public class ThreadData extends BaseResponse {
 
             @SerializedName("authorid")
             private int authorid;
+
+            public String getDateline() {
+                return dateline;
+            }
+
             @SerializedName("dateline")
             private String dateline;
 
@@ -286,7 +291,7 @@ public class ThreadData extends BaseResponse {
             @SerializedName("anonymous")
             private int anonymous;
             @SerializedName("attachment")
-            private Object attachment;
+            private int attachment;
             @SerializedName("status")
             private int status;
             @SerializedName("replycredit")
@@ -306,12 +311,12 @@ public class ThreadData extends BaseResponse {
             @SerializedName("dbdateline")
             private int dbdateline;
 
-            public Map<Integer, Attachment> getAttachments() {
+            public Map<Integer, ThreadAttachment> getAttachments() {
                 return attachments;
             }
 
             @SerializedName("attachments")
-            private Map<Integer,Attachment> attachments;
+            private Map<Integer,ThreadAttachment> attachments;
 
             public ArrayList<Integer> getImagelist() {
                 return imagelist;
@@ -350,121 +355,6 @@ public class ThreadData extends BaseResponse {
             }
         }
 
-        public static class Attachment {
-            @SerializedName("aid")
-            private String aid;
-
-            @SerializedName("tid")
-            private String tid;
-
-            @SerializedName("pid")
-            private String pid;
-
-            @SerializedName("uid")
-            private String uid;
-
-            @SerializedName("dateline")
-            private String dateline;
-
-            @SerializedName("filename")
-            private String filename;
-
-            @SerializedName("filesize")
-            private int filesize;
-
-            @SerializedName("attachment")
-            private String attachment;
-
-            @SerializedName("remote")
-            private int remote;
-
-            @SerializedName("description")
-            private String description;
-
-            @SerializedName("readperm")
-            private int readperm;
-
-            @SerializedName("price")
-            private int price;
-
-            @SerializedName("isimage")
-            private int isimage;
-
-            @SerializedName("width")
-            private int width;
-
-            @SerializedName("height")
-            private int height;
-
-            @SerializedName("thumb")
-            private int thumb;
-
-            @SerializedName("picid")
-            private int picid;
-
-            @SerializedName("ext")
-            private String ext;
-
-            @SerializedName("imgalt")
-            private String imgalt;
-
-            @SerializedName("attachicon")
-            private String attachicon;
-
-            @SerializedName("attachsize")
-            private String attachsize;
-
-            @SerializedName("attachimg")
-            private int attachimg;
-
-            @SerializedName("payed")
-            private int payed;
-
-            @SerializedName("url")
-            private String url;
-
-            @SerializedName("dbdateline")
-            private long dbdateline;
-
-            @SerializedName("aidencode")
-            private String aidencode;
-
-            @SerializedName("downloads")
-            private int downloads;
-
-            @Override
-            public String toString() {
-                return "Attachment{" +
-                        "aid='" + aid + '\'' +
-                        ", tid='" + tid + '\'' +
-                        ", pid='" + pid + '\'' +
-                        ", uid='" + uid + '\'' +
-                        ", dateline='" + dateline + '\'' +
-                        ", filename='" + filename + '\'' +
-                        ", filesize=" + filesize +
-                        ", attachment='" + attachment + '\'' +
-                        ", remote=" + remote +
-                        ", description='" + description + '\'' +
-                        ", readperm=" + readperm +
-                        ", price=" + price +
-                        ", isimage=" + isimage +
-                        ", width=" + width +
-                        ", height=" + height +
-                        ", thumb=" + thumb +
-                        ", picid=" + picid +
-                        ", ext='" + ext + '\'' +
-                        ", imgalt='" + imgalt + '\'' +
-                        ", attachicon='" + attachicon + '\'' +
-                        ", attachsize='" + attachsize + '\'' +
-                        ", attachimg=" + attachimg +
-                        ", payed=" + payed +
-                        ", url='" + url + '\'' +
-                        ", dbdateline=" + dbdateline +
-                        ", aidencode='" + aidencode + '\'' +
-                        ", downloads=" + downloads +
-                        '}';
-            }
-        }
 
 
         public SpecialPoll getSpecialPoll() {

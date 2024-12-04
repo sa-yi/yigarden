@@ -38,9 +38,9 @@ public class HomeViewModel extends ViewModel {
 
 
         List<Announcement> announcements = new ArrayList<>();
-        Announcement announcement = new Announcement("aaa", "a", "d");
+        Announcement announcement = new Announcement("这里是公告", "公告的内容", "跳转的链接");
         announcements.add(announcement);
-        Announcement announcement1 = new Announcement("114514", "a", "d");
+        Announcement announcement1 = new Announcement("这是另一个公告", "a", "d");
         announcements.add(announcement1);
         announcementsDataList = new MutableLiveData<>(new ArrayList<>());
         announcementsDataList.setValue(announcements);
@@ -53,25 +53,28 @@ public class HomeViewModel extends ViewModel {
     public MutableLiveData<List<ThreadData.Variables>> dzDataList;
 
     public void fetchDzData(int page){
+
         DzService dzService=DzClient.getRetrofitInstance().create(DzService.class);
         Call<ThreadsResponse> call=dzService.getHotThreads(page);
         call.enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<ThreadsResponse> call, Response<ThreadsResponse> response) {
                 if(response.isSuccessful()) {
-                    Log.d("dz",response.body().toString());
+                    //Log.d("dz",response.body().toString());
                     ThreadsResponse threadsResponse = response.body();
                     ThreadsResponse.Variables variables = threadsResponse.getVariables();
 
                     List<ThreadData.Variables> data = variables.getData();
                     if ((data!=null)) {
                         for (ThreadData.Variables datus : data) {
-                            Log.d("dz_data", data.toString());
+                            //Log.d("dz_data", data.toString());
                         }
                         dzDataList.postValue(data);
+                    }else {
+
                     }
                 }else {
-                    Log.e("dz",response.toString());
+                    Log.e("dz_failed",response.toString());
                     MainApplication.toast("读取帖子失败");
                 }
             }

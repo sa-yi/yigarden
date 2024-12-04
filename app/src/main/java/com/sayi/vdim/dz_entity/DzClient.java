@@ -70,24 +70,34 @@ public class DzClient {
         @Override
         public List<Cookie> loadForRequest(HttpUrl url) {
             // 加载保存的Cookie
-            List<Cookie> cookies = cookieStore.get(url.host());
-            cookies=new ArrayList<>();
-            String cookieString=MainApplication.getContext().getDzCookie();
+            List<Cookie> unmodifiableCookies = cookieStore.get(url.host());
+            List<Cookie> modifiableCookies = new ArrayList<>(); // 创建一个新的可修改列表
+
+            // 如果存在不可修改的Cookie列表，则复制到新的可修改列表中
+            if (unmodifiableCookies != null) {
+                modifiableCookies.addAll(unmodifiableCookies);
+            }
+
+            // 获取其他来源的Cookie字符串
+            String cookieString = MainApplication.getContext().getDzCookie();
             String[] cookiePairs = cookieString.split(";");
             for (String cookiePair : cookiePairs) {
                 String[] nameValue = cookiePair.trim().split("=", 2);
                 if (nameValue.length == 2) {
                     String name = nameValue[0];
                     String value = nameValue[1];
-                    // 创建Cookie对象并添加到列表中
+                    // 创建Cookie对象并添加到新的可修改列表中
                     Cookie cookie = Cookie.parse(url, name + "=" + value);
                     if (cookie != null) {
-                        cookies.add(cookie);
+                        modifiableCookies.add(cookie);
                     }
                 }
             }
-            return cookies;
+
+            // 返回新的可修改列表
+            return modifiableCookies;
         }
+
     };
 
     @NonNull
@@ -170,12 +180,18 @@ public class DzClient {
             Request.Builder builder = originalRequest.newBuilder();
             //builder.removeHeader("User-Agent");//带cookie时不带ua也能过
             builder.addHeader("User-Agent", WebSettings.getDefaultUserAgent(MainApplication.getContext()));
+
+            builder.addHeader("Referer","https://i.lty.fan/");
+
             builder.addHeader("Version-Name", getAppVersion());
             builder.addHeader("Version-Code", getAppCode());
+
+            builder.addHeader("Package-Name",MainApplication.getContext().getPackageName());
 
 
             String dzCookie=MainApplication.getContext().getDzCookie();
             if(!Objects.equals(dzCookie, "")){
+                builder.removeHeader("Cookie");
                 builder.addHeader("Cookie",dzCookie);
             }
 
@@ -184,6 +200,10 @@ public class DzClient {
 
             Response response = chain.proceed(newRequest);
 
+
+            Log.d("Request",response.toString());
+            Headers headers=response.headers();
+            Log.d("Cookie",headers.names().toString());
             return response;
         }
     }

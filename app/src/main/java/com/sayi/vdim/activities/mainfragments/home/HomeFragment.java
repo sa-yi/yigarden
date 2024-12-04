@@ -65,8 +65,8 @@ public class HomeFragment extends Fragment {
                 dzDataAdapter.notifyItemChanged(dzDataAdapter.getItemCount());
             }
             Log.d("dz_data_size", dzDatalist.size() + "");
-            //if (dzDatalist.size() == 20)
-            //binding.loadMore.setVisibility(View.VISIBLE);
+            if (dzDatalist.size() == 15)
+                binding.loadMore.setVisibility(View.VISIBLE);
         });
 
 

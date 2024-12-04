@@ -18,7 +18,6 @@ import androidx.appcompat.app.*;
 import androidx.core.content.*;
 import androidx.core.text.*;
 import androidx.lifecycle.*;
-import androidx.recyclerview.widget.*;
 
 import com.bumptech.glide.*;
 import com.bumptech.glide.request.target.*;
@@ -26,12 +25,9 @@ import com.bumptech.glide.request.transition.*;
 import com.sayi.*;
 import com.sayi.vdim.R;
 import com.sayi.vdim.activities.fragments.*;
-import com.sayi.vdim.customview.*;
 import com.sayi.vdim.databinding.*;
 import com.sayi.vdim.dz_entity.*;
 import com.sayi.vdim.utils.*;
-
-import android.text.Html;
 
 import java.util.*;
 
@@ -40,7 +36,6 @@ public class PostActivity extends AppCompatActivity {
     ActivityPostBinding binding;
 
     PostViewModel viewModel;
-    CommentAdapter commentAdapter = new CommentAdapter();
     private int post_id = -1;
 
     @Override
@@ -72,10 +67,6 @@ public class PostActivity extends AppCompatActivity {
         Objects.requireNonNull(binding.toolbar.getOverflowIcon()).setColorFilter(ContextCompat.getColor(PostActivity.this, R.color.default_gray), PorterDuff.Mode.SRC_ATOP);
 
 
-        binding.commentList
-                .setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-
-
         UserBannerFragment userBanner = (UserBannerFragment) getSupportFragmentManager().findFragmentById(R.id.banner);
 
 
@@ -102,47 +93,43 @@ public class PostActivity extends AppCompatActivity {
             //HtmlToAndroidLayout processor = new HtmlToAndroidLayout();
             //LinearLayout htmlToAndroidLayout = processor.processHtml(PostActivity.this, content);
             //binding.content.addView(htmlToAndroidLayout);
-            Spanned sp=Html.fromHtml(content, HtmlCompat.FROM_HTML_MODE_LEGACY, source -> {
-                final LevelListDrawable drawable = new LevelListDrawable();
-
-                // 占位图片
-                Drawable empty = PostActivity.this.getDrawable(R.drawable.background);
-                drawable.addLevel(0, 0, empty);
-                drawable.setBounds(0, 0, empty.getIntrinsicWidth(), empty.getIntrinsicHeight());
-
-                // 使用 Glide 加载图片
-                Glide.with(PostActivity.this)
-                        .load(source)
-                        .into(new CustomTarget<Drawable>() {
-                            @Override
-                            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                                // 设置加载后的图片
-                                drawable.addLevel(1, 1, resource);
-                                drawable.setBounds(0, 0, resource.getIntrinsicWidth(), resource.getIntrinsicHeight());
-                                drawable.setLevel(1);
-
-                                // 更新 TextView 的内容
-                                binding.content.setText(binding.content.getText());
-                            }
-
-                            @Override
-                            public void onLoadCleared(@Nullable Drawable placeholder) {
-                                // 清理资源时的回调
-                            }
-                        });
-
-                return drawable;
-            }, null);
-            SpannableString spannableString = new SpannableString(sp);
+            Spanned sp = getFormattedHtml(content, binding.content);
+            //SpannableString spannableString = new SpannableString(sp);
             //TextView textView=new TextView(this);
             //textView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             //textView.setText(spannableString);
             //binding.content.addView(textView);
-            binding.content.setText(spannableString);
+            binding.content.setText(sp);
 
-            for (ThreadData.Variables.Post post : posts)
-                commentAdapter.addComment(post);
+            /*for(ThreadData.Variables.Post postComment:posts) {
+                addCommentView(postComment);
+            }*/
+            for (int i = 0; i < posts.size(); i++) {
+                ThreadData.Variables.Post post = posts.get(i);
 
+                addCommentView(post, (i==posts.size()-1));
+            }
+
+            if(firstPost.getAttachments()!=null) {
+                Log.d("Attachments", firstPost.getAttachments().toString());
+                for (int key : firstPost.getAttachments().keySet()) {
+                    ThreadAttachment attachment = firstPost.getAttachments().get(key);
+                    if (attachment == null) return;
+                    if (attachment.getIsimage() == 1) {
+                        String image_url = attachment.getUrl() + attachment.getAttachment();
+                        Log.d("Attachment image", image_url);
+                        attachmentImages.add(image_url);
+                        ImageView imageView = new ImageView(this);
+                        LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                        layoutParams.setMargins(10,10,10,10);
+                        imageView.setLayoutParams(layoutParams);
+                        Glide.with(imageView).load(image_url).into(imageView);
+                        binding.contentContainer.addView(imageView);
+                    } else {
+                        Log.d("Attachment not image", attachment.toString());
+                    }
+                }
+            }
             DialogLoading.dismiss(PostActivity.this);
             setupUI();
         });
@@ -152,17 +139,95 @@ public class PostActivity extends AppCompatActivity {
         });
         viewModel.fetchPost(post_id);
 
-
-        binding.commentList.setAdapter(commentAdapter);
-
-        //viewModel.getCommentsLiveData().observe(this, commentAdapter::setComments);
-        //viewModel.fetchComments(id);
-
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this,
-                DividerItemDecoration.VERTICAL);
-        binding.commentList.addItemDecoration(dividerItemDecoration);
     }
 
+    private ArrayList<String> attachmentImages=new ArrayList<>();
+
+
+    private SpannableString getFormattedHtml(String content, TextView textView) {
+        content=content.replace("&gt;",">")
+                .replace("&lt;","<");
+        Spanned sp = Html.fromHtml(content, HtmlCompat.FROM_HTML_MODE_LEGACY, source -> {
+            final LevelListDrawable drawable = new LevelListDrawable();
+
+            // 占位图片
+            Drawable empty = PostActivity.this.getDrawable(R.drawable.background);
+            drawable.addLevel(0, 0, empty);
+            drawable.setBounds(0, 0, 1920, 1080);
+
+            // 使用 Glide 加载图片
+            Glide.with(PostActivity.this)
+                    .load(source)
+                    .into(new CustomTarget<Drawable>() {
+                        @Override
+                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                            // 设置加载后的图片
+                            drawable.addLevel(1, 1, resource);
+                            if(source.contains("smiley"))
+                                drawable.setBounds(0, 0, 100, 100);
+                            else {
+                                int width=binding.content.getWidth();
+                                int intrinsicWidth=drawable.getIntrinsicWidth();
+                                int intrinsicHeight=drawable.getIntrinsicHeight();
+
+                                float rate= (float) width /intrinsicWidth;
+
+                                int height= (int) (intrinsicHeight*rate);
+
+                                drawable.setBounds(0, 0, width,height);
+                            }
+                            drawable.setLevel(1);
+
+
+                            // 更新 TextView 的内容
+                            textView.setText(textView.getText());
+                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+                            // 清理资源时的回调
+                        }
+                    });
+
+            return drawable;
+        }, null);
+        SpannableString spannableString = new SpannableString(sp);
+        setLinksClickable(spannableString, textView);
+
+        return spannableString;
+    }
+    private void setLinksClickable(SpannableString spannableString, TextView textView) {
+        // 使用 URLSpan 处理超链接
+        URLSpan[] spans = spannableString.getSpans(0, spannableString.length(), URLSpan.class);
+        for (URLSpan span : spans) {
+            int start = spannableString.getSpanStart(span);
+            int end = spannableString.getSpanEnd(span);
+
+            // 创建新的 ClickableSpan 并重写 onClick 方法
+            spannableString.setSpan(new ClickableSpan() {
+                @Override
+                public void onClick(View widget) {
+                    Dialog.init(PostActivity.this).setupDialog("是否跳转链接",span.getURL()).setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(span.getURL()));
+                            startActivity(intent);
+                        }
+                    }).setPositiveButton("取消",null);
+                }
+
+                @Override
+                public void updateDrawState(android.text.TextPaint ds) {
+                    super.updateDrawState(ds);
+                    //ds.setColor(Color.BLUE);  // 设置链接的颜色
+                    ds.setUnderlineText(true);  // 设置下划线
+                }
+            }, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        // 使得链接可点击
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
+    }
     void setupUI() {
         binding.postComment.setOnClickListener(v -> {
 
@@ -255,62 +320,44 @@ public class PostActivity extends AppCompatActivity {
         textView.setHighlightColor(Color.TRANSPARENT);
     }
 
-    class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.PostCommentViewHolder> {
-        private List<ThreadData.Variables.Post> postComments = new ArrayList<>();
 
-        public void setComments(List<ThreadData.Variables.Post> postComments) {
-            Log.d("get comments", postComments.toString());
-            this.postComments = postComments;
-            notifyDataSetChanged();
+    void addCommentView(ThreadData.Variables.Post comment, boolean isLast) {
+        addCommentView(comment);
+        if (!isLast) {
+            View splitter = new View(this);
+            splitter.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 2));
+            splitter.setBackgroundColor(R.color.default_gray);
+            binding.commentContainer.addView(splitter);
         }
+    }
 
-        public void addComment(ThreadData.Variables.Post comment) {
-            postComments.add(comment);
-            notifyItemChanged(-1);
-        }
+    void addCommentView(ThreadData.Variables.Post comment) {
+        PostCommentBinding commentBinding;
+        commentBinding = PostCommentBinding.inflate(getLayoutInflater());
 
-        @NonNull
-        @Override
-        public PostCommentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            LayoutInflater inflater = LayoutInflater.from(PostActivity.this);
-            PostCommentBinding postCommentBinding = PostCommentBinding.inflate(inflater, parent, false);
-            return new PostCommentViewHolder(postCommentBinding);
-        }
+        commentBinding.userName.setText(comment.getAuthor());
+        commentBinding.userName.setTextColor(ContextCompat.getColor(this, R.color.tianyi_blue));
 
-        @Override
-        public void onBindViewHolder(@NonNull PostCommentViewHolder holder, int position) {
-            ThreadData.Variables.Post postComment = postComments.get(position);
-            Log.d("bindingview holder", postComment.toString());
-            holder.bind(postComment);
-        }
+        String sendTime = comment.getDateline();
+        sendTime = sendTime.replace("&nbsp;", " ");
+        commentBinding.sendTime.setText(sendTime);
 
-        @Override
-        public int getItemCount() {
-            return postComments.size();
-        }
+        Log.d("comment", comment.getMessage());
+        SpannableString spannableString = getFormattedHtml(comment.getMessage(), commentBinding.content);
+        commentBinding.content.setText(spannableString);
 
-        class PostCommentViewHolder extends RecyclerView.ViewHolder {
-            private PostCommentBinding binding;
 
-            public PostCommentViewHolder(PostCommentBinding binding) {
-                super(binding.getRoot());
-                this.binding = binding;
+        ArrayList<Integer> imagelist=comment.getImagelist();
+        if(comment.getAttachments()!=null)
+            for(int attachmentId:comment.getAttachments().keySet()){
+                if(imagelist.contains(attachmentId)){
+                    //TODO 带图评论的图片
+                }
             }
 
-            public void bind(ThreadData.Variables.Post postComment) {
-                Log.d("onBindingComment", postComment.toString());
-                binding.userName.setText(postComment.getAuthor());
-                binding.content.setText(postComment.getMessage());
-
-                int authorid = postComment.getAuthorid();
 
 
-                String avator_url = "https://i.lty.fan/uc_server/avatar.php?uid=%s&size=small&ts=1";
+        binding.commentContainer.addView(commentBinding.getRoot());
 
-                avator_url = String.format(avator_url, authorid);
-                Log.d("avator", avator_url);
-                //Glide.with(PostActivity.this).load(avator_url).into(binding.avator);
-            }
-        }
     }
 }
