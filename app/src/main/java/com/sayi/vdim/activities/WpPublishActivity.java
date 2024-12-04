@@ -30,8 +30,8 @@ import androidx.core.content.ContextCompat;
 import com.sayi.MainApplication;
 import com.sayi.vdim.R;
 import com.sayi.vdim.databinding.ActivityPublishBinding;
-import com.sayi.vdim.entity.MediaItem;
-import com.sayi.vdim.entity.MediaUpload;
+import com.sayi.vdim.dz_entity.WpMediaItem;
+import com.sayi.vdim.dz_entity.DzMediaUpload;
 import com.sayi.vdim.toolbarbutton.ImageButton;
 import com.sayi.vdim.utils.Dialog;
 
@@ -47,7 +47,7 @@ import java.util.Objects;
 import retrofit2.Response;
 
 
-public class PublishActivity extends AppCompatActivity implements IAztecToolbarClickListener {
+public class WpPublishActivity extends AppCompatActivity implements IAztecToolbarClickListener {
     ActivityPublishBinding binding;
     private ActivityResultLauncher<Intent> imageSelectorLauncher;
 
@@ -158,13 +158,13 @@ public class PublishActivity extends AppCompatActivity implements IAztecToolbarC
     String source="<img src=\"https://cdn.bbs.66ccff.cc/2024/04/20240429180741291-0041.jpg\"/>";
 
     private void handleUploadFile(Uri uri) {
-        String path = getPathFromUri(PublishActivity.this, uri);
+        String path = getPathFromUri(WpPublishActivity.this, uri);
         try {
-            MediaUpload.upload(new File(path), new MediaUpload.MediaUploadCallback() {
+            DzMediaUpload.upload(new File(path), new DzMediaUpload.MediaUploadCallback() {
                 @Override
-                public void onSuccess(Response<MediaItem> response) {
+                public void onSuccess(Response<WpMediaItem> response) {
                     Log.d("responseBody", response.body().toString());
-                    MediaItem mediaItem = response.body();
+                    WpMediaItem mediaItem = response.body();
                     String url = mediaItem.getGuid().getRendered();
                     MainApplication.toast(url);
 

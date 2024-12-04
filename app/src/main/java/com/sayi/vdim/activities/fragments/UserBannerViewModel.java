@@ -1,17 +1,6 @@
 package com.sayi.vdim.activities.fragments;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
-
-import com.sayi.vdim.entity.ApiClient;
-import com.sayi.vdim.entity.ApiService;
-import com.sayi.vdim.entity.User;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import androidx.lifecycle.*;
 
 public class UserBannerViewModel extends ViewModel {
 
@@ -35,26 +24,5 @@ public class UserBannerViewModel extends ViewModel {
     }
 
     public void fetchUserData(int id) {
-        ApiService apiService = ApiClient.getRetrofitInstance().create(ApiService.class);
-        Call<User> call = apiService.getUser(id);
-
-        call.enqueue(new Callback<>() {
-            @Override
-            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
-                if (response.isSuccessful()) {
-                    User user = response.body();
-                    if (user != null) {
-                        setUserName(user.getName());
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable throwable) {
-
-            }
-        });
-
-        setSendTime("2024-11-17");
     }
 }

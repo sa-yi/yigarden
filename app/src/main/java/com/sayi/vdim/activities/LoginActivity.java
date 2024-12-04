@@ -1,57 +1,28 @@
 package com.sayi.vdim.activities;
 
-import static com.sayi.vdim.Consts.sp_token;
-import static com.sayi.vdim.Consts.sp_user_data;
-import static com.sayi.vdim.Consts.sp_user_id;
-import static com.sayi.vdim.Consts.sp_user_name;
-
-import android.annotation.SuppressLint;
-import android.content.ClipData;
+import android.annotation.*;
 import android.content.ClipboardManager;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.View;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.content.*;
+import android.graphics.*;
+import android.net.*;
+import android.os.*;
+import android.text.*;
+import android.view.*;
+import android.widget.*;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.*;
 
-import com.android.volley.toolbox.HurlStack;
-import com.sayi.MainApplication;
-import com.sayi.vdim.R;
+import com.android.volley.toolbox.*;
+import com.sayi.*;
+import com.sayi.vdim.*;
 import com.sayi.vdim.databinding.*;
-import com.sayi.vdim.entity.ApiClient;
-import com.sayi.vdim.entity.ApiService;
-import com.sayi.vdim.entity.JwtToken;
-import com.sayi.vdim.entity.User;
 
-import java.io.IOException;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
+import java.io.*;
+import java.net.*;
+import java.security.cert.*;
+import java.util.*;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import javax.net.ssl.*;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -74,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
         window.getDecorView().setSystemUiVisibility(flags);
         window.setStatusBarColor(Color.TRANSPARENT);
 
-        binding=ActivityLoginBinding.inflate(getLayoutInflater());
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
 
         setContentView(binding.getRoot());
         binding.login.setEnabled(false);
@@ -82,67 +53,7 @@ public class LoginActivity extends AppCompatActivity {
         binding.password.addTextChangedListener(new InputTextWatcher(binding.password));
 
         binding.login.setOnClickListener(v -> {
-            ApiService apiService = ApiClient.getRetrofitInstance().create(ApiService.class);
-            String username = binding.username.getText().toString();
-            String password = binding.password.getText().toString();
-            // 调用接口
-            Call<JwtToken> call = apiService.login(username, password);
-            call.enqueue(new Callback<>() {
-                @Override
-                public void onResponse(Call<JwtToken> call, Response<JwtToken> response) {
-                    if (response.isSuccessful()) {
-                        String jwt_token = response.body().getJwtToken();
-                        // 登录成功
-                        Log.d("LoginActivity", jwt_token);
-
-                        SharedPreferences sharedPreferences = getSharedPreferences(sp_user_data, MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString(sp_token, jwt_token);
-                        editor.apply();
-
-                        Call<User> userCall=apiService.getMe();
-                        userCall.enqueue(new Callback<>() {
-                            @Override
-                            public void onResponse(Call<User> call, Response<User> response) {
-                                if(response.isSuccessful()){
-                                    int uid=response.body().getId();
-                                    String name=response.body().getName();
-
-                                    editor.putInt(sp_user_id,uid);
-                                    editor.putString(sp_user_name,name);
-                                    editor.apply();
-
-                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                    startActivity(intent);
-                                    finish();
-                                }else {
-                                    Log.e("Logging",response.errorBody().toString());
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<User> call, Throwable throwable) {
-                                Log.e("Logging",throwable.toString());
-                            }
-                        });
-                    } else {
-                        Log.d("LoginActivity", response.toString());
-                        MainApplication.toast("登录失败");
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<JwtToken> call, Throwable throwable) {
-                    if (throwable instanceof ConnectException) {
-                        Toast.makeText(LoginActivity.this, "网络连接失败", Toast.LENGTH_SHORT).show();
-                    }
-                    // 登录失败
-                    Toast.makeText(LoginActivity.this, "Login Failed" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.e("LoginActivity", throwable.getMessage() + "");
-                    //finish();
-                    Log.e("LoginActivity", throwable.toString() + "");
-                }
-            });
+            MainApplication.toast("开发中...");
         });
         binding.jumpToRig.setOnClickListener(v -> {
 
@@ -151,15 +62,15 @@ public class LoginActivity extends AppCompatActivity {
             builder.setPositiveButton("是", (dialog, which) -> {
                 Intent intent = new Intent();
                 intent.setAction("android.intent.action.VIEW");
-                Uri content_url = Uri.parse("http://sa-yi.cn/");
+                Uri content_url = Uri.parse(Consts.website_url);
                 intent.setData(content_url);
                 startActivity(intent);
             }).setNeutralButton("复制网站链接", (dialog, which) -> {
-                String url = "http://sa-yi.cn/";
+                String url = Consts.website_url;
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("website", url);
                 clipboard.setPrimaryClip(clip);
-            }).setMessage("http://sa-yi.cn/");
+            }).setMessage(Consts.website_url);
             AlertDialog dialog = builder.create();
             dialog.show();
 
@@ -168,8 +79,8 @@ public class LoginActivity extends AppCompatActivity {
         binding.retrievePassword.setOnClickListener(v -> {
             MainApplication.toast("请前往网页端重置密码");
         });
-        binding.webLogin.setOnClickListener(v->{
-            Intent intent=new Intent(LoginActivity.this, WebLoginActivity.class);
+        binding.webLogin.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, WebLoginActivity.class);
             startActivity(intent);
         });
 
@@ -221,7 +132,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     class InputTextWatcher implements TextWatcher {
-        private ArrayList<EditText> editTexts=new ArrayList<>();
+        private ArrayList<EditText> editTexts = new ArrayList<>();
 
         public InputTextWatcher(EditText editText) {
             editTexts.add(editText);
@@ -237,10 +148,10 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         public void afterTextChanged(Editable s) {
-            boolean enabled=true;
-            for(EditText editText:editTexts){
-                if(editText.getText().toString().isEmpty())
-                    enabled=false;
+            boolean enabled = true;
+            for (EditText editText : editTexts) {
+                if (editText.getText().toString().isEmpty())
+                    enabled = false;
             }
             binding.login.setEnabled(enabled);
         }

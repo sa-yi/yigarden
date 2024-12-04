@@ -19,7 +19,6 @@ import com.sayi.vdim.*;
 import com.sayi.vdim.activities.*;
 import com.sayi.vdim.databinding.*;
 import com.sayi.vdim.dz_entity.*;
-import com.sayi.vdim.entity.*;
 import com.sayi.vdim.utils.*;
 
 import java.util.*;
@@ -90,7 +89,7 @@ public class HomeFragment extends Fragment {
 
 
         binding.publish.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), PublishActivity.class);
+            Intent intent = new Intent(getContext(), WpPublishActivity.class);
             startActivity(intent);
         });
         binding.message.setOnClickListener(v -> {
@@ -210,6 +209,7 @@ public class HomeFragment extends Fragment {
         }
 
         public void bind(ThreadData.Variables threadData) {
+
             binding.userName.setText(threadData.getAuthor());
             String sendTime = threadData.getLastpost();
             sendTime = sendTime.replace("&nbsp;", " ");

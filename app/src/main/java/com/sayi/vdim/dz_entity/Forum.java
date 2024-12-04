@@ -11,8 +11,12 @@ public class Forum extends BaseResponse{
         return variables.getForums();
     }
 
-    @Override
-    public Variables getVariables() {
+    public ArrayList<Category> getCategories(){
+        return variables.getCategories();
+    }
+
+
+    private Variables getVariables() {
         return variables;
     }
 
@@ -34,12 +38,16 @@ public class Forum extends BaseResponse{
     }
 
     public static class Variables extends BaseVariables {
-        public ArrayList<Forum> getForums() {
+        private ArrayList<Forum> getForums() {
             return forums;
         }
 
         @SerializedName("forumlist")
         private ArrayList<Forum> forums;
+
+        private ArrayList<Category> getCategories() {
+            return categories;
+        }
 
         @SerializedName("catlist")
         private ArrayList<Category> categories;
@@ -55,6 +63,11 @@ public class Forum extends BaseResponse{
 
     @SerializedName("fid")
     private int fid;
+
+    public String getName() {
+        return name;
+    }
+
     @SerializedName("name")
     private String name;
     @SerializedName("threads")
@@ -71,9 +84,14 @@ public class Forum extends BaseResponse{
 
 
 
-    public class Category{
+    public static class Category{
         @SerializedName("fid")
         private int fid;
+
+        public String getName() {
+            return name;
+        }
+
         @SerializedName("name")
         private String name;
         @SerializedName("forums")

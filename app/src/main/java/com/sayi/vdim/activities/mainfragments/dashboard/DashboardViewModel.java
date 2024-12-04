@@ -15,31 +15,17 @@ import retrofit2.*;
 public class DashboardViewModel extends ViewModel {
     String TAG="DashboardViewModel";
 
-    private LiveData<ArrayList<Forum>> forumCategory;
+    public LiveData<ArrayList<Forum>> getForumCategory() {
+        return forumCategory;
+    }
+
+    private MutableLiveData<ArrayList<Forum>> forumCategory;
 
     public DashboardViewModel() {
         forumCategory =new MutableLiveData<>(new ArrayList<>());
 
         DzService dzService=DzClient.getRetrofitInstance().create(DzService.class);
-        Call<ForumNav> call=dzService.getNav();
-        /*call.enqueue(new Callback<>() {
-            @Override
-            public void onResponse(Call<ForumNav> call, Response<ForumNav> response) {
-                Log.d(TAG,response.body().toString());
-                ForumNav forumNav=response.body();
-                ArrayList<ForumNav> forumNavs=forumNav.getVariables().getForumNavs();
-                if(!forumNavs.isEmpty()) {
-                    for (ForumNav nav : forumNavs) {
-                        Log.d(TAG, nav.toString());
-                    }
-                }
-            }
 
-            @Override
-            public void onFailure(Call<ForumNav> call, Throwable throwable) {
-                Log.e(TAG,throwable.getMessage());
-            }
-        });*/
         Call<Forum> call2=dzService.getForum();
         call2.enqueue(new Callback<>() {
             @Override
@@ -48,9 +34,7 @@ public class DashboardViewModel extends ViewModel {
                 Forum forumRes=response.body();
                 ArrayList<Forum> forums=forumRes.getForums();
                 if(!forums.isEmpty()) {
-                    for (Forum forum : forums) {
-                        Log.d(TAG, forum.toString());
-                    }
+                    forumCategory.postValue(forums);
                 }
             }
 

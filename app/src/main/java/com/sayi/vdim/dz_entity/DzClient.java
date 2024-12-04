@@ -8,6 +8,7 @@ import android.webkit.*;
 import androidx.annotation.*;
 
 import com.google.gson.*;
+import com.ihsanbal.logging.*;
 import com.sayi.*;
 
 import java.io.*;
@@ -139,6 +140,9 @@ public class DzClient {
             // Add the interceptor for custom headers
             builder.addInterceptor(new CustomHeaderInterceptor());
             builder.cookieJar(cookieJar);
+
+
+            //builder.addInterceptor(new LoggingInterceptor.Builder().build());
 
             return builder.build();
 

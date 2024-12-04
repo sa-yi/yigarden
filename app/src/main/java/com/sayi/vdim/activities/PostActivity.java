@@ -73,18 +73,18 @@ public class PostActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this).get(PostViewModel.class);
 
         viewModel.getPostLiveData().observe(this, postFeedData -> {
-            ThreadData.Variables postFeed = postFeedData.getVariables().getSingleVariable();
+            ThreadData.Variables postFeed = postFeedData.getSingleVariable();
             Log.d("post", postFeedData.toString());
-            Objects.requireNonNull(getSupportActionBar()).setTitle(postFeed.getSubject());
+            Objects.requireNonNull(getSupportActionBar()).setTitle(postFeedData.getSubject());
 
-            String author = postFeed.getAuthor();
-            String date = postFeed.getLastpost();
+            String author = postFeedData.getAuthor();
+            String date = postFeedData.getLastpost();
 
             userBanner.setAuthorName(author);
             userBanner.setSendTime(date);
 
-            ArrayList<ThreadData.Variables.Post> posts = postFeedData.getVariables().getPost();
-            ThreadData.Variables.Post firstPost = posts.remove(0);
+            ArrayList<ThreadData.Post> posts = postFeedData.getPost();
+            ThreadData.Post firstPost = posts.remove(0);
 
             binding.replyCount.setText(posts.size() + "");
 
@@ -105,7 +105,7 @@ public class PostActivity extends AppCompatActivity {
                 addCommentView(postComment);
             }*/
             for (int i = 0; i < posts.size(); i++) {
-                ThreadData.Variables.Post post = posts.get(i);
+                ThreadData.Post post = posts.get(i);
 
                 addCommentView(post, (i==posts.size()-1));
             }
@@ -321,7 +321,7 @@ public class PostActivity extends AppCompatActivity {
     }
 
 
-    void addCommentView(ThreadData.Variables.Post comment, boolean isLast) {
+    void addCommentView(ThreadData.Post comment, boolean isLast) {
         addCommentView(comment);
         if (!isLast) {
             View splitter = new View(this);
@@ -331,7 +331,7 @@ public class PostActivity extends AppCompatActivity {
         }
     }
 
-    void addCommentView(ThreadData.Variables.Post comment) {
+    void addCommentView(ThreadData.Post comment) {
         PostCommentBinding commentBinding;
         commentBinding = PostCommentBinding.inflate(getLayoutInflater());
 

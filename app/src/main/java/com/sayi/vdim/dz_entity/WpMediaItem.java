@@ -1,11 +1,11 @@
-package com.sayi.vdim.entity;
+package com.sayi.vdim.dz_entity;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 import java.util.Map;
 
-public class MediaItem {
+public class WpMediaItem {
 
     @SerializedName("_links")
     private Map<String, List<Link>> links;

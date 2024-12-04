@@ -14,6 +14,7 @@ import androidx.lifecycle.*;
 import com.sayi.*;
 import com.sayi.vdim.activities.*;
 import com.sayi.vdim.databinding.*;
+import com.sayi.vdim.dz_entity.*;
 
 import java.text.*;
 
@@ -29,10 +30,11 @@ public class UserFragment extends Fragment {
         binding = FragmentUserBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        userViewModel.getUserData().observe(getViewLifecycleOwner(), user -> {
-            int id = user.getId();
+        userViewModel.getUserData().observe(getViewLifecycleOwner(), userEntity -> {
+            DzUser.Space user=userEntity.getSpace();
+            int id = user.getUid();
             binding.userId.setText(MessageFormat.format("{0}", id));
-            String name = user.getName();
+            String name = user.getUsername();
             binding.displayName.setText(name);
         });
         SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(sp_user_data, MODE_PRIVATE);

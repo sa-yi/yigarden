@@ -121,5 +121,10 @@ dependencies {
         exclude(group = "aQute.bnd")
     }
 
+    implementation("com.github.ihsanbal:LoggingInterceptor:3.1.0") {//httplogger
+        exclude(group= "org.json", module= "json")
+    }
+
+
     implementation("com.github.ceneax:QRScan:1.0.1")
 }

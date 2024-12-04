@@ -13,16 +13,11 @@ public class ThreadsResponse extends BaseResponse{
         return super.toString() + variables;
     }
 
-    @Override
-    public Variables getVariables(){
-        return variables;
+    public List<ThreadData.Variables> getData() {
+        return variables.data;
     }
 
     public static class Variables extends BaseVariables{
-
-        public List<ThreadData.Variables> getData() {
-            return data;
-        }
 
         @SerializedName("data")
         private List<ThreadData.Variables> data;
@@ -32,6 +27,5 @@ public class ThreadsResponse extends BaseResponse{
             return super.toString()+
                     ", data=" + data ;
         }
-
     }
 }

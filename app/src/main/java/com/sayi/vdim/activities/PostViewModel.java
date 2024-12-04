@@ -1,36 +1,24 @@
 package com.sayi.vdim.activities;
 
-import android.util.Log;
+import android.util.*;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.*;
 
 import com.sayi.vdim.dz_entity.*;
-import com.sayi.vdim.entity.PostComment;
-import com.sayi.vdim.entity.PostFeed;
 
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import retrofit2.*;
 
 public class PostViewModel extends ViewModel {
     private static final String TAG = "PostViewModel";
     private final DzService dzService = DzClient.getRetrofitInstance().create(DzService.class);
 
     private final MutableLiveData<ThreadData> postLiveData = new MutableLiveData<>();
-    private final MutableLiveData<List<PostComment>> commentsLiveData = new MutableLiveData<>();
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
 
     public LiveData<ThreadData> getPostLiveData() {
         return postLiveData;
     }
 
-    public LiveData<List<PostComment>> getCommentsLiveData() {
-        return commentsLiveData;
-    }
 
     public LiveData<String> getErrorMessage() {
         return errorMessage;
@@ -41,7 +29,7 @@ public class PostViewModel extends ViewModel {
             @Override
             public void onResponse(Call<ThreadData> call, Response<ThreadData> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Log.d(TAG,response.body().toString());
+                    Log.d(TAG, response.body().toString());
                     postLiveData.postValue(response.body());
                 } else {
                     errorMessage.postValue("Failed to fetch post");

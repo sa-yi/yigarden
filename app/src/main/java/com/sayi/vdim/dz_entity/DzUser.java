@@ -14,6 +14,14 @@ public class DzUser extends BaseResponse {
     private Space space;
 
     public static class Space {
+        public int getUid() {
+            return uid;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
         @SerializedName("uid")
         private int uid;
         @SerializedName("username")

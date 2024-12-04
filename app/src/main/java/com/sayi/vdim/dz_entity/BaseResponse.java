@@ -9,7 +9,7 @@ public abstract class BaseResponse {
     @SerializedName("Charset")
     private String charset;
 
-    public BaseVariables getVariables() {
+    private BaseVariables getVariables() {
         return variables;
     }
 

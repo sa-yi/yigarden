@@ -1,4 +1,4 @@
-package com.sayi.vdim.entity;
+package com.sayi.vdim.dz_entity;
 
 public class Announcement {
     public String title="默认标题";
