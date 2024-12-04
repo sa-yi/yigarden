@@ -10,26 +10,6 @@ public class ThreadData extends BaseResponse {
     @SerializedName("Variables")
     private Variables variables;
 
-    public String getSubject() {
-        return variables.subject;
-    }
-
-    public String getTid() {
-        return variables.tid;
-    }
-
-    public String getAuthor() {
-        return variables.author;
-    }
-
-    public String getAuthorId() {
-        return variables.authorId;
-    }
-
-    public String getLastpost() {
-        return variables.lastpost;
-    }
-
     public ArrayList<Post> getPost() {
         return variables.post;
     }
@@ -47,8 +27,14 @@ public class ThreadData extends BaseResponse {
 
 
     public static class Variables extends BaseVariables {
+
+
         @SerializedName("thread")
         private Variables singleVariable;
+        public Variables getSingleVariable() {
+            return singleVariable;
+        }
+
         @SerializedName("tid")
         private String tid;
         @SerializedName("fid")
@@ -168,11 +154,9 @@ public class ThreadData extends BaseResponse {
         @SerializedName("message")
         private String message;
         @SerializedName("postlist")
-        private ArrayList<ThreadData.Post> post;
-
-
-        //@SerializedName("attachmentImagePreviewList")
-        //private List<String> attachmentImagePreviewList;
+        private ArrayList<Post> post;
+        @SerializedName("attachmentImagePreviewList")
+        private List<Object> attachmentImagePreviewList;
         @SerializedName("special_poll")
         private SpecialPoll specialPoll;
         @SerializedName("expirations")
@@ -189,85 +173,6 @@ public class ThreadData extends BaseResponse {
         private int allowvote;
         @SerializedName("remaintime")
         private List<Integer> remaintime;
-
-        public Variables getSingleVariable() {
-            return singleVariable;
-        }
-
-
-        @Override
-        public String toString() {
-            return "Variables{" +
-                    "tid='" + tid + '\'' +
-                    ", fid='" + fid + '\'' +
-                    ", posttableid='" + posttableid + '\'' +
-                    ", typeid='" + typeid + '\'' +
-                    ", sortid='" + sortid + '\'' +
-                    ", readperm='" + readperm + '\'' +
-                    ", price='" + price + '\'' +
-                    ", author='" + author + '\'' +
-                    ", authorId='" + authorId + '\'' +
-                    ", subject='" + subject + '\'' +
-                    ", dateline='" + dateline + '\'' +
-                    ", lastpost='" + lastpost + '\'' +
-                    ", lastposter='" + lastposter + '\'' +
-                    ", views='" + views + '\'' +
-                    ", replies='" + replies + '\'' +
-                    ", displayorder='" + displayorder + '\'' +
-                    ", highlight='" + highlight + '\'' +
-                    ", digest='" + digest + '\'' +
-                    ", rate='" + rate + '\'' +
-                    ", special='" + special + '\'' +
-                    ", attachment='" + attachment + '\'' +
-                    ", moderated='" + moderated + '\'' +
-                    ", closed='" + closed + '\'' +
-                    ", stickreply='" + stickreply + '\'' +
-                    ", recommends='" + recommends + '\'' +
-                    ", recommendAdd='" + recommendAdd + '\'' +
-                    ", recommendSub='" + recommendSub + '\'' +
-                    ", heats='" + heats + '\'' +
-                    ", status='" + status + '\'' +
-                    ", isgroup='" + isgroup + '\'' +
-                    ", favtimes='" + favtimes + '\'' +
-                    ", sharetimes='" + sharetimes + '\'' +
-                    ", stamp='" + stamp + '\'' +
-                    ", icon='" + icon + '\'' +
-                    ", pushedaid='" + pushedaid + '\'' +
-                    ", cover='" + cover + '\'' +
-                    ", replycredit='" + replycredit + '\'' +
-                    ", relatebytag='" + relatebytag + '\'' +
-                    ", maxposition='" + maxposition + '\'' +
-                    ", bgcolor='" + bgcolor + '\'' +
-                    ", comments='" + comments + '\'' +
-                    ", hidden='" + hidden + '\'' +
-                    ", lastposterenc='" + lastposterenc + '\'' +
-                    ", multipage='" + multipage + '\'' +
-                    ", recommendicon='" + recommendicon + '\'' +
-                    ", isNew='" + isNew + '\'' +
-                    ", heatlevel='" + heatlevel + '\'' +
-                    ", moved='" + moved + '\'' +
-                    ", icontid='" + icontid + '\'' +
-                    ", folder='" + folder + '\'' +
-                    ", dbdateline='" + dbdateline + '\'' +
-                    ", weeknew='" + weeknew + '\'' +
-                    ", isToday='" + isToday + '\'' +
-                    ", dblastpost='" + dblastpost + '\'' +
-                    ", id='" + id + '\'' +
-                    ", rushreply='" + rushreply + '\'' +
-                    ", avatar='" + avatar + '\'' +
-                    ", attachmentImageNumber='" + attachmentImageNumber + '\'' +
-                    ", message='" + message + '\'' +
-                    '}';
-        }
-
-        public ArrayList<ThreadData.Post> getPost() {
-            return post;
-        }
-
-        public SpecialPoll getSpecialPoll() {
-            return specialPoll;
-        }
-
 
         public String getSubject() {
             return subject;
@@ -292,9 +197,8 @@ public class ThreadData extends BaseResponse {
             return message;
         }
     }
-    public String getMessage() {
-        return variables.message;
-    }
+
+
 
     public static class SpecialPoll {
         @SerializedName("polloptions")
