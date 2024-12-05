@@ -139,7 +139,7 @@ public class ThreadAttachment implements Serializable {
         return price;
     }
 
-    public int getIsimage() {
+    public int getIsImage() {
         return isimage;
     }
 

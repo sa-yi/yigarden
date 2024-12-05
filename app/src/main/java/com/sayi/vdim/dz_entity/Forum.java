@@ -61,6 +61,10 @@ public class Forum extends BaseResponse{
         }
     }
 
+    public int getFid() {
+        return fid;
+    }
+
     @SerializedName("fid")
     private int fid;
 
@@ -94,6 +98,11 @@ public class Forum extends BaseResponse{
 
         @SerializedName("name")
         private String name;
+
+        public ArrayList<Integer> getForums() {
+            return forums;
+        }
+
         @SerializedName("forums")
         private ArrayList<Integer> forums;
     }

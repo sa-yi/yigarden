@@ -15,14 +15,22 @@ import retrofit2.*;
 public class DashboardViewModel extends ViewModel {
     String TAG="DashboardViewModel";
 
-    public LiveData<ArrayList<Forum>> getForumCategory() {
+    public LiveData<ArrayList<Forum.Category>> getForumCategory() {
         return forumCategory;
     }
+    private MutableLiveData<ArrayList<Forum.Category>> forumCategory;
 
-    private MutableLiveData<ArrayList<Forum>> forumCategory;
+
+    public MutableLiveData<ArrayList<Forum>> getForums() {
+        return forums;
+    }
+
+    private MutableLiveData<ArrayList<Forum>> forums;
+
 
     public DashboardViewModel() {
         forumCategory =new MutableLiveData<>(new ArrayList<>());
+        forums=new MutableLiveData<>(new ArrayList<>());
 
         DzService dzService=DzClient.getRetrofitInstance().create(DzService.class);
 
@@ -32,9 +40,13 @@ public class DashboardViewModel extends ViewModel {
             public void onResponse(Call<Forum> call, Response<Forum> response) {
                 Log.d(TAG,response.body().toString());
                 Forum forumRes=response.body();
-                ArrayList<Forum> forums=forumRes.getForums();
-                if(!forums.isEmpty()) {
-                    forumCategory.postValue(forums);
+                ArrayList<Forum> forumsRes=forumRes.getForums();
+                if(!forumsRes.isEmpty()){
+                    forums.postValue(forumsRes);
+                }
+                ArrayList<Forum.Category> forumCategoriesRes=forumRes.getCategories();
+                if(!forumCategoriesRes.isEmpty()) {
+                    forumCategory.postValue(forumCategoriesRes);
                 }
             }
 

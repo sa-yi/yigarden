@@ -14,7 +14,7 @@ public class ThreadData extends BaseResponse {
         return variables.post;
     }
 
-    public Variables getSingleVariable() {
+    public Variables getFinalData() {
         return variables.getSingleVariable();
     }
 
@@ -30,7 +30,7 @@ public class ThreadData extends BaseResponse {
 
 
         @SerializedName("thread")
-        private Variables singleVariable;
+        private Variables singleVariable;//如果是查看单个帖子的情况会有thread字段
         public Variables getSingleVariable() {
             return singleVariable;
         }

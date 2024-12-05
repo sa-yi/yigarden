@@ -32,7 +32,7 @@ import com.sayi.vdim.databinding.ModalBottomSheetContentBinding;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
+import java.util.*;
 
 public class PostViewImageActivity extends AppCompatActivity {
     ActivityViewPostImageBinding binding;
@@ -45,12 +45,31 @@ public class PostViewImageActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         Intent intent = getIntent();
-        List<String> imageUrls = intent.getStringArrayListExtra("imagelist");
-        Log.d(TAG, imageUrls.toString());
-        int imageIndex = intent.getIntExtra("index", 0);
+
+        ArrayList<String> imageUrls=new ArrayList<>();
+
+        int imageIndex = intent.getIntExtra("index",-1);
+        Log.d(TAG,imageIndex+"");
+        int index=0;
+        for(String key:intent.getExtras().keySet()){
+            Log.d(TAG,key+":"+intent.getExtras().get(key));
+            if(!Objects.equals(key, "index")) {
+                imageUrls.add(String.valueOf(intent.getExtras().get(key)));
+            }
+        }
+        for(String key:intent.getExtras().keySet()){
+            if(!Objects.equals(key, "index")) {
+                if(Integer.valueOf(key)==imageIndex){
+                    break;
+                }else
+                    index++;
+            }
+        }
+        Log.d(TAG,index+"");
+
         GalleryAdapter adapter = new GalleryAdapter(this, imageUrls);
         binding.imageGallery.setAdapter(adapter);
-        binding.imageGallery.setCurrentItem(imageIndex-1,false);
+        binding.imageGallery.setCurrentItem(index,false);
 
     }
 
@@ -99,6 +118,7 @@ public class PostViewImageActivity extends AppCompatActivity {
             ModalBottomSheetContentBinding sheetBinding = ModalBottomSheetContentBinding.inflate(inflater);
             sheetBinding.save.setOnClickListener(v -> {
                 saveImage(imageUrl);
+                dismiss();
             });
             sheetBinding.share.setOnClickListener(v->{
                 MainApplication.toast("share");

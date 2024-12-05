@@ -3,6 +3,7 @@ package com.sayi.vdim.activities.mainfragments.dashboard;
 import android.os.*;
 import android.util.*;
 import android.view.*;
+import android.widget.*;
 
 import androidx.annotation.*;
 import androidx.core.content.*;
@@ -42,12 +43,16 @@ public class DashboardFragment extends Fragment {
         navAdapter = new NavAdapter();
         binding.navView.setLayoutManager(new LinearLayoutManager(requireActivity(),LinearLayoutManager.VERTICAL,false));
         binding.navView.setAdapter(navAdapter);
-        dashboardViewModel.getForumCategory().observe(getViewLifecycleOwner(), forums -> {
-            for (Forum forum : forums) {
-                Log.d("Forum", forum.toString());
-            }
+        dashboardViewModel.getForums().observe(getViewLifecycleOwner(),forums -> {
             navAdapter.setForums(forums);
-            navAdapter.notifyItemMoved(0, forums.size());
+
+        });
+        dashboardViewModel.getForumCategory().observe(getViewLifecycleOwner(), forumCategories -> {
+            for (Forum.Category category : forumCategories) {
+                Log.d("Category", category.toString());
+            }
+            navAdapter.setCategories(forumCategories);
+            navAdapter.notifyItemMoved(0, forumCategories.size());
         });
     }
 
@@ -57,13 +62,16 @@ public class DashboardFragment extends Fragment {
         binding = null;
     }
 
-    class NavAdapter extends RecyclerView.Adapter<ForumViewHolder> {
-        private List<Forum> forums = new ArrayList<>();
+    class NavAdapter extends RecyclerView.Adapter<NavAdapter.ForumViewHolder> {
+        private List<Forum.Category> categories = new ArrayList<>();
+        private List<Forum> forums=new ArrayList<>();
 
 
-        public void setForums(List<Forum> forums) {
-            this.forums = forums;
-            Log.d("Adapter",forums.toString());
+        public void setCategories(List<Forum.Category> categories) {
+            this.categories = categories;
+        }
+        public void setForums(List<Forum> forums){
+            this.forums=forums;
         }
 
         @NonNull
@@ -76,26 +84,36 @@ public class DashboardFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull ForumViewHolder holder, int position) {
-            Forum forum = forums.get(position);
+            Forum.Category forum = categories.get(position);
             holder.bind(forum);
         }
 
         @Override
         public int getItemCount() {
-            return forums.size();
-        }
-    }
-
-    public class ForumViewHolder extends RecyclerView.ViewHolder {
-        private NavBlcockBinding binding;
-
-        public ForumViewHolder(NavBlcockBinding binding) {
-            super(binding.getRoot());
-            this.binding = binding;
+            return categories.size();
         }
 
-        public void bind(Forum forum) {
-            binding.category.setText(forum.getName());
+
+        public class ForumViewHolder extends RecyclerView.ViewHolder {
+            private NavBlcockBinding binding;
+
+            public ForumViewHolder(NavBlcockBinding binding) {
+                super(binding.getRoot());
+                this.binding = binding;
+            }
+
+            public void bind(Forum.Category category) {
+                binding.category.setText(category.getName());
+
+
+                for(Forum forum:forums) {
+                    if(category.getForums().contains(forum.getFid())) {
+                        NavGridItemBinding gridItemBinding=NavGridItemBinding.inflate(getLayoutInflater());
+                        gridItemBinding.name.setText(forum.getName());
+                        binding.grid.addView(gridItemBinding.getRoot());
+                    }
+                }
+            }
         }
     }
 }
