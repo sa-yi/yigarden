@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.*;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -19,10 +20,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.*;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.*;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.sayi.MainApplication;
@@ -30,8 +32,7 @@ import com.sayi.vdim.R;
 import com.sayi.vdim.databinding.ActivityViewPostImageBinding;
 import com.sayi.vdim.databinding.ModalBottomSheetContentBinding;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.*;
 
 public class PostViewImageActivity extends AppCompatActivity {
@@ -104,6 +105,44 @@ public class PostViewImageActivity extends AppCompatActivity {
                     }
                 });
     }
+    private static void shareImage(String imageUrl){
+        Glide.with(getContext())
+                .asBitmap()
+                .load(imageUrl)
+                .into(new CustomTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        // 将Bitmap保存到文件中
+                        File imageFile = new File(getContext().getCacheDir(), "shared_image.png");
+                        try (FileOutputStream outputStream = new FileOutputStream(imageFile)) {
+                            resource.compress(Bitmap.CompressFormat.PNG, 90, outputStream);
+                            // 获取图片文件的Uri
+                            Uri imageUri = FileProvider.getUriForFile(
+                                    getContext(),
+                                    "com.sayi.vdim.fileprovider", // 使用你在AndroidManifest.xml中定义的authorities
+                                    imageFile);
+
+                            // 创建分享 Intent
+                            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                            shareIntent.setType("image/png"); // 使用 PNG 格式
+                            shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+                            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                            // 启动分享 Intent
+                            Intent chooser = Intent.createChooser(shareIntent, "分享图片");
+                            chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            getContext().startActivity(chooser);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+                        // 可以在这里处理加载清除后的逻辑
+                    }
+                });
+    }
 
     public static class ModalBottomSheet extends BottomSheetDialogFragment {
         public static final String TAG = "ModalBottomSheet";
@@ -122,6 +161,7 @@ public class PostViewImageActivity extends AppCompatActivity {
             });
             sheetBinding.share.setOnClickListener(v->{
                 MainApplication.toast("share");
+                shareImage(imageUrl);
             });
             return sheetBinding.getRoot();
         }
