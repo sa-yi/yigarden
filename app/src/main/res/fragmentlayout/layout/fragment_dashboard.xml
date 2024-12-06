@@ -3,10 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
     android:orientation="vertical"
     tools:context=".activities.mainfragments.dashboard.DashboardFragment">
-
     <TextView
         android:id="@+id/statusbar_placeholder"
         android:layout_width="match_parent"
@@ -15,5 +13,6 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/navView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        tools:listitem="@layout/nav_blcock"/>
 </LinearLayout>

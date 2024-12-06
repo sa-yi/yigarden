@@ -93,7 +93,7 @@ public class MusicFragment extends Fragment implements Player.Listener {
 
         playBtnDrawable = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_play);
         pauseBtnDrawable = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_pause);
-        requestPermission();
+        //requestPermission();
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -108,8 +108,9 @@ public class MusicFragment extends Fragment implements Player.Listener {
         binding.statusbarPlaceholder.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white_blue));
         binding.toolbarTitle.setText("音乐");
         binding.musicSettings.setOnClickListener(v -> {
-            Intent intent = new Intent(requireActivity(), MusicSettingsActivity.class);
-            startActivity(intent);
+            //TODO 音乐的设置界面
+            //Intent intent = new Intent(requireActivity(), MusicSettingsActivity.class);
+            //startActivity(intent);
         });
 
         binding.reqMediaPerm.setOnClickListener(v -> {

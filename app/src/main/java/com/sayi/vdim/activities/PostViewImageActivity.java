@@ -50,24 +50,28 @@ public class PostViewImageActivity extends AppCompatActivity {
         ArrayList<String> imageUrls=new ArrayList<>();
 
         int imageIndex = intent.getIntExtra("index",-1);
-        Log.d(TAG,imageIndex+"");
-        int index=0;
-        for(String key:intent.getExtras().keySet()){
-            Log.d(TAG,key+":"+intent.getExtras().get(key));
-            if(!Objects.equals(key, "index")) {
-                imageUrls.add(String.valueOf(intent.getExtras().get(key)));
-            }
-        }
-        for(String key:intent.getExtras().keySet()){
-            if(!Objects.equals(key, "index")) {
-                if(Integer.valueOf(key)==imageIndex){
-                    break;
-                }else
-                    index++;
-            }
-        }
-        Log.d(TAG,index+"");
 
+        int index = 0;
+        if(imageIndex==-1){
+            imageUrls.add(intent.getStringExtra("url"));
+        }else {
+            Log.d(TAG, imageIndex + "");
+            for (String key : intent.getExtras().keySet()) {
+                Log.d(TAG, key + ":" + intent.getExtras().get(key));
+                if (!Objects.equals(key, "index")) {
+                    imageUrls.add(String.valueOf(intent.getExtras().get(key)));
+                }
+            }
+            for (String key : intent.getExtras().keySet()) {
+                if (!Objects.equals(key, "index")) {
+                    if (Integer.valueOf(key) == imageIndex) {
+                        break;
+                    } else
+                        index++;
+                }
+            }
+            Log.d(TAG, index + "");
+        }
         GalleryAdapter adapter = new GalleryAdapter(this, imageUrls);
         binding.imageGallery.setAdapter(adapter);
         binding.imageGallery.setCurrentItem(index,false);

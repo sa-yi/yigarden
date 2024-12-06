@@ -8,7 +8,6 @@ import android.webkit.*;
 import androidx.annotation.*;
 
 import com.google.gson.*;
-import com.ihsanbal.logging.*;
 import com.sayi.*;
 
 import java.io.*;
@@ -23,9 +22,60 @@ import retrofit2.*;
 import retrofit2.converter.gson.*;
 
 public class DzClient {
+    // 创建一个Cookie存储容器
+    final static Map<String, List<Cookie>> cookieStore = new HashMap<>();
     private static final String BASE_URL = "https://i.lty.fan/api/mobile/";
-    private static Retrofit retrofit;
+    // 实现CookieJar接口
+    static CookieJar cookieJar = new CookieJar() {
+        @Override
+        public void saveFromResponse(HttpUrl url, @NonNull List<Cookie> cookies) {
+            // 保存服务器返回的Cookie
+            cookieStore.put(url.host(), cookies);
+            if (url.host().equals("i.lty.fan")) {
+                StringBuilder finalCookieBuilder = new StringBuilder();
+                for (Cookie cookie : cookies) {
+                    Log.d("Cookie", cookie.toString());
+                    finalCookieBuilder.append(cookie.name()).append("=").append(cookie.value()).append(";");
+                }
+                String finalCookie = finalCookieBuilder.toString();
+                Log.d("finalCookie", finalCookie);
+                MainApplication.getContext().putDzCookie(finalCookie);
+            }
 
+        }
+
+        @NonNull
+        @Override
+        public List<Cookie> loadForRequest(HttpUrl url) {
+            // 加载保存的Cookie
+            List<Cookie> unmodifiableCookies = cookieStore.get(url.host());
+            List<Cookie> modifiableCookies = new ArrayList<>(); // 创建一个新的可修改列表
+
+            // 如果存在不可修改的Cookie列表，则复制到新的可修改列表中
+            if (unmodifiableCookies != null) {
+                modifiableCookies.addAll(unmodifiableCookies);
+            }
+
+            // 获取其他来源的Cookie字符串
+            String cookieString = MainApplication.getContext().getDzCookie();
+            String[] cookiePairs = cookieString.split(";");
+            for (String cookiePair : cookiePairs) {
+                String[] nameValue = cookiePair.trim().split("=", 2);
+                if (nameValue.length == 2) {
+                    Cookie cookie = Cookie.parse(url, nameValue[0] + "=" + nameValue[1]);
+                    if (cookie != null) {
+                        modifiableCookies.add(cookie);
+                    }
+                }
+            }
+
+
+            // 返回新的可修改列表
+            return modifiableCookies;
+        }
+
+    };
+    private static Retrofit retrofit;
 
     public static Retrofit getRetrofitInstance() {
         if (retrofit == null) {
@@ -44,62 +94,6 @@ public class DzClient {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
     }
-
-
-    // 创建一个Cookie存储容器
-    final static Map<String, List<Cookie>> cookieStore = new HashMap<>();
-
-    // 实现CookieJar接口
-    static CookieJar cookieJar = new CookieJar() {
-        @Override
-        public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-            // 保存服务器返回的Cookie
-            cookieStore.put(url.host(), cookies);
-            if(url.host().equals("i.lty.fan")){
-                StringBuilder finalCookieBuilder= new StringBuilder();
-                for(Cookie cookie:cookies){
-                    Log.d("Cookie",cookie.toString());
-                    finalCookieBuilder.append(cookie.name()).append("=").append(cookie.value()).append(";");
-                }
-                String finalCookie=finalCookieBuilder.toString();
-                Log.d("finalCookie",finalCookie);
-                MainApplication.getContext().putDzCookie(finalCookie);
-            }
-
-        }
-
-        @Override
-        public List<Cookie> loadForRequest(HttpUrl url) {
-            // 加载保存的Cookie
-            List<Cookie> unmodifiableCookies = cookieStore.get(url.host());
-            List<Cookie> modifiableCookies = new ArrayList<>(); // 创建一个新的可修改列表
-
-            // 如果存在不可修改的Cookie列表，则复制到新的可修改列表中
-            if (unmodifiableCookies != null) {
-                modifiableCookies.addAll(unmodifiableCookies);
-            }
-
-            // 获取其他来源的Cookie字符串
-            String cookieString = MainApplication.getContext().getDzCookie();
-            String[] cookiePairs = cookieString.split(";");
-            for (String cookiePair : cookiePairs) {
-                String[] nameValue = cookiePair.trim().split("=", 2);
-                if (nameValue.length == 2) {
-                    String name = nameValue[0];
-                    String value = nameValue[1];
-                    // 创建Cookie对象并添加到新的可修改列表中
-                    Cookie cookie = Cookie.parse(url, name + "=" + value);
-                    if (cookie != null) {
-                        modifiableCookies.add(cookie);
-                    }
-                }
-            }
-
-            // 返回新的可修改列表
-            return modifiableCookies;
-        }
-
-    };
 
     @NonNull
     public static OkHttpClient getUnsafeOkHttpClient() {
@@ -185,18 +179,18 @@ public class DzClient {
             //builder.removeHeader("User-Agent");//带cookie时不带ua也能过
             builder.addHeader("User-Agent", WebSettings.getDefaultUserAgent(MainApplication.getContext()));
 
-            builder.addHeader("Referer","https://i.lty.fan/");
+            builder.addHeader("Referer", "https://i.lty.fan/");
 
             builder.addHeader("Version-Name", getAppVersion());
             builder.addHeader("Version-Code", getAppCode());
 
-            builder.addHeader("Package-Name",MainApplication.getContext().getPackageName());
+            builder.addHeader("Package-Name", MainApplication.getContext().getPackageName());
 
 
-            String dzCookie=MainApplication.getContext().getDzCookie();
-            if(!Objects.equals(dzCookie, "")){
+            String dzCookie = MainApplication.getContext().getDzCookie();
+            if (!Objects.equals(dzCookie, "")) {
                 builder.removeHeader("Cookie");
-                builder.addHeader("Cookie",dzCookie);
+                builder.addHeader("Cookie", dzCookie);
             }
 
 
@@ -205,9 +199,9 @@ public class DzClient {
             Response response = chain.proceed(newRequest);
 
 
-            Log.d("Request",response.toString());
-            Headers headers=response.headers();
-            Log.d("Cookie",headers.names().toString());
+            Log.d("Request", response.toString());
+            Headers headers = response.headers();
+            Log.d("Cookie", headers.names().toString());
             return response;
         }
     }

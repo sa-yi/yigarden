@@ -73,3 +73,7 @@
     public static int d(...);
     public static int e(...);
 }
+-assumenosideeffects class java.io.PrintStream {
+    public *** println(...);
+    public *** print(...);
+}

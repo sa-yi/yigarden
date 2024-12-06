@@ -15,6 +15,7 @@ import androidx.lifecycle.*;
 import androidx.recyclerview.widget.*;
 import androidx.viewpager2.widget.*;
 
+import com.sayi.MainApplication;
 import com.sayi.vdim.*;
 import com.sayi.vdim.activities.*;
 import com.sayi.vdim.databinding.*;
@@ -54,6 +55,7 @@ public class HomeFragment extends Fragment {
         binding.announceBar.setPageTransformer(new AnnounceVerticalPageTransformer());
 
 
+        Objects.requireNonNull(binding.toolbar.toolbar.getTabAt(2)).select();
         dzDataAdapter = new DzDataAdapter();
         binding.nickPostView.setAdapter(dzDataAdapter);
         homeViewModel.dzDataList.observe(getViewLifecycleOwner(), dzDatalist -> {
@@ -76,6 +78,12 @@ public class HomeFragment extends Fragment {
         binding.loadMore.setOnClickListener(v ->
                 homeViewModel.fetchDzData(++page)
         );
+        homeViewModel.getFailedData().observe(getViewLifecycleOwner(),failedData->{
+            MainApplication.toast("获取帖子失败，正在重新获取cookie...");
+            Intent intent=new Intent(requireActivity(),WebLoginActivity.class);
+            startActivity(intent);
+            requireActivity().finish();
+        });
 
         announceAdapter = new AnnounceAdapter();
         binding.announceBar.setAdapter(announceAdapter);
@@ -89,8 +97,9 @@ public class HomeFragment extends Fragment {
 
 
         binding.publish.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), WpPublishActivity.class);
-            startActivity(intent);
+            //TODO 发布帖子界面暂时不开启
+            //Intent intent = new Intent(getContext(), WpPublishActivity.class);
+            //startActivity(intent);
         });
         binding.message.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), NotifyActivity.class);

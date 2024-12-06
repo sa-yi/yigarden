@@ -61,9 +61,9 @@ class WebLoginActivity : AppCompatActivity() {
                         editor.putString(DzConsts.COOKIE,newCookieString)
                         editor.apply()
                         MainApplication.toast("登录成功，正在跳转")
+                        finish()
                         intent=Intent(this@WebLoginActivity,MainActivity::class.java)
                         startActivity(intent)
-                        finish()
                     }
                 }
             }
@@ -82,10 +82,13 @@ class WebLoginActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         binding.web.stopLoading()
         binding.web.clearCache(true)
+        binding.web.clearHistory()
+        binding.web.loadUrl("about:blank")
+        binding.web.destroy()
         binding.root.removeAllViews()
+        super.onDestroy()
     }
     private lateinit var intent: Intent
 

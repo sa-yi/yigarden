@@ -82,6 +82,11 @@ public class Forum extends BaseResponse{
     private int toadyPosts;
     @SerializedName("description")
     private String description;
+
+    public String getIconUrl() {
+        return iconUrl;
+    }
+
     @SerializedName("icon")
     private String iconUrl;
 

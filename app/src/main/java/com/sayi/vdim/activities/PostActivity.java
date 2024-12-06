@@ -16,6 +16,7 @@ import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.*;
+import androidx.appcompat.content.res.*;
 import androidx.core.content.*;
 import androidx.core.text.*;
 import androidx.lifecycle.*;
@@ -35,6 +36,8 @@ import org.xml.sax.*;
 
 import java.util.*;
 
+import retrofit2.*;
+
 public class PostActivity extends AppCompatActivity {
     static String TAG = "POST-ACTIVITY";
     ActivityPostBinding binding;
@@ -42,13 +45,13 @@ public class PostActivity extends AppCompatActivity {
     PostViewModel viewModel;
     private int post_id = -1;
     private ArrayMap<String, String> attachmentImages = new ArrayMap<>();
-
+    UserBannerFragment userBanner;
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);//实现状态栏图标和文字颜色为暗色
-
+        //TODO 切换夜间模式时会触发重复添加fragment的错误
         DialogLoading.show(this, "加载中", true, dialog -> finish());
         Intent intent = getIntent();
         if (intent == null) {
@@ -67,18 +70,12 @@ public class PostActivity extends AppCompatActivity {
                 + ",path:" + uri.getPath()
                 + ",id:" + post_id);
 
-        binding = ActivityPostBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-        setSupportActionBar(binding.toolbar);
-        Objects.requireNonNull(binding.toolbar.getOverflowIcon()).setColorFilter(ContextCompat.getColor(PostActivity.this, R.color.default_gray), PorterDuff.Mode.SRC_ATOP);
-
-
-        UserBannerFragment userBanner = (UserBannerFragment) getSupportFragmentManager().findFragmentById(R.id.banner);
-
 
         viewModel = new ViewModelProvider(this).get(PostViewModel.class);
 
         viewModel.getPostLiveData().observe(this, postFeedData -> {
+            setupUI();
+
             ThreadData.Variables postFeed = postFeedData.getFinalData();
             Log.d("post", postFeedData.toString());
             Objects.requireNonNull(getSupportActionBar()).setTitle(postFeed.getSubject());
@@ -142,7 +139,6 @@ public class PostActivity extends AppCompatActivity {
                 }
             }
             DialogLoading.dismiss(PostActivity.this);
-            setupUI();
         });
         viewModel.getErrorMessage().observe(this, errorMsg -> {
             DialogLoading.dismiss(PostActivity.this);
@@ -160,9 +156,9 @@ public class PostActivity extends AppCompatActivity {
             final LevelListDrawable drawable = new LevelListDrawable();
 
             // 占位图片
-            Drawable empty = PostActivity.this.getDrawable(R.drawable.background);
+            Drawable empty = AppCompatResources.getDrawable(PostActivity.this,R.drawable.baseline_image_24);
             drawable.addLevel(0, 0, empty);
-            drawable.setBounds(0, 0, 1920, 1080);
+            drawable.setBounds(0, 0, 71, 71);
 
             // 使用 Glide 加载图片
             Glide.with(PostActivity.this)
@@ -240,6 +236,14 @@ public class PostActivity extends AppCompatActivity {
     }
 
     void setupUI() {
+        binding = ActivityPostBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        setSupportActionBar(binding.toolbar);
+        Objects.requireNonNull(binding.toolbar.getOverflowIcon()).setColorFilter(ContextCompat.getColor(PostActivity.this, R.color.default_gray), PorterDuff.Mode.SRC_ATOP);
+
+
+        userBanner = (UserBannerFragment) getSupportFragmentManager().findFragmentById(R.id.banner);
+
         binding.postComment.setMaxLines(1);
         binding.postComment.setOnEditorActionListener((v, actionId, keyEvent) -> {
             if (keyEvent != null && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER
@@ -371,11 +375,56 @@ public class PostActivity extends AppCompatActivity {
                 ClickableSpan clickableSpan = new ClickableSpan() {
                     @Override
                     public void onClick(@NonNull View widget) {
-                        Toast.makeText(PostActivity.this, imageSource, Toast.LENGTH_SHORT).show();
+                        if(!imageSource.contains("smiley")) {//带smiley的为论坛表情
+                            //Toast.makeText(PostActivity.this, imageSource, Toast.LENGTH_SHORT).show();
+                            Intent galleryIntent = new Intent(PostActivity.this, PostViewImageActivity.class);
+
+                            galleryIntent.putExtra("url", imageSource);
+                            galleryIntent.putExtra("index", -1);
+                            startActivity(galleryIntent);
+                        }
                     }
                 };
                 output.setSpan(clickableSpan, len - 1, len, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
+        }
+    }
+
+    public static class PostViewModel extends ViewModel {
+        private static final String TAG = "PostViewModel";
+        private final DzService dzService = DzClient.getRetrofitInstance().create(DzService.class);
+
+        private final MutableLiveData<ThreadData> postLiveData = new MutableLiveData<>();
+        private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
+
+        public LiveData<ThreadData> getPostLiveData() {
+            return postLiveData;
+        }
+
+
+        public LiveData<String> getErrorMessage() {
+            return errorMessage;
+        }
+
+        public void fetchPost(int postId) {
+            dzService.getThread(postId).enqueue(new Callback<>() {
+                @Override
+                public void onResponse(Call<ThreadData> call, Response<ThreadData> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        Log.d(TAG, response.body().toString());
+                        postLiveData.postValue(response.body());
+                    } else {
+                        errorMessage.postValue("Failed to fetch post");
+                        Log.e(TAG, "Failed to fetch post");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ThreadData> call, Throwable t) {
+                    errorMessage.postValue(t.getMessage());
+                    Log.e(TAG, "Error fetching post", t);
+                }
+            });
         }
     }
 }

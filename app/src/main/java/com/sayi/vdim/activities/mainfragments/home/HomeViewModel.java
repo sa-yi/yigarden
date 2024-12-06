@@ -39,17 +39,11 @@ public class HomeViewModel extends ViewModel {
             @Override
             public void onResponse(Call<ThreadsResponse> call, Response<ThreadsResponse> response) {
                 if (response.isSuccessful()) {
-                    //Log.d("dz",response.body().toString());
                     ThreadsResponse threadsResponse = response.body();
 
                     List<ThreadData.Variables> data = threadsResponse.getData();
                     if ((data != null)) {
-                        for (ThreadData.Variables datus : data) {
-                            //Log.d("dz_data", data.toString());
-                        }
                         dzDataList.postValue(data);
-                    } else {
-
                     }
                 } else {
                     Log.e("dz_failed", response.toString());
@@ -60,8 +54,14 @@ public class HomeViewModel extends ViewModel {
             @Override
             public void onFailure(Call<ThreadsResponse> call, Throwable throwable) {
                 Log.e("dz_error", throwable.toString());
-                MainApplication.toast("获取帖子失败");
+                failed.postValue("error");
             }
         });
     }
+
+    public MutableLiveData<String> getFailedData() {
+        return failed;
+    }
+
+    private MutableLiveData<String> failed= new MutableLiveData<>();
 }

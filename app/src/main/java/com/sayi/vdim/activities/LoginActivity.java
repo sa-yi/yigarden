@@ -82,6 +82,7 @@ public class LoginActivity extends AppCompatActivity {
         binding.webLogin.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, WebLoginActivity.class);
             startActivity(intent);
+            finish();
         });
 
     }

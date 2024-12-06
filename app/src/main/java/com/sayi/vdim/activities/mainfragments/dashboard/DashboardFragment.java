@@ -3,7 +3,6 @@ package com.sayi.vdim.activities.mainfragments.dashboard;
 import android.os.*;
 import android.util.*;
 import android.view.*;
-import android.widget.*;
 
 import androidx.annotation.*;
 import androidx.core.content.*;
@@ -11,7 +10,9 @@ import androidx.fragment.app.*;
 import androidx.lifecycle.*;
 import androidx.recyclerview.widget.*;
 
-import com.sayi.vdim.*;
+import com.bumptech.glide.Glide;
+import com.sayi.MainApplication;
+import com.sayi.vdim.R;
 import com.sayi.vdim.databinding.*;
 import com.sayi.vdim.dz_entity.*;
 import com.sayi.vdim.utils.*;
@@ -41,9 +42,9 @@ public class DashboardFragment extends Fragment {
         dashboardViewModel = new ViewModelProvider(this).get(DashboardViewModel.class);
 
         navAdapter = new NavAdapter();
-        binding.navView.setLayoutManager(new LinearLayoutManager(requireActivity(),LinearLayoutManager.VERTICAL,false));
+        binding.navView.setLayoutManager(new LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false));
         binding.navView.setAdapter(navAdapter);
-        dashboardViewModel.getForums().observe(getViewLifecycleOwner(),forums -> {
+        dashboardViewModel.getForums().observe(getViewLifecycleOwner(), forums -> {
             navAdapter.setForums(forums);
 
         });
@@ -64,14 +65,15 @@ public class DashboardFragment extends Fragment {
 
     class NavAdapter extends RecyclerView.Adapter<NavAdapter.ForumViewHolder> {
         private List<Forum.Category> categories = new ArrayList<>();
-        private List<Forum> forums=new ArrayList<>();
+        private List<Forum> forums = new ArrayList<>();
 
 
         public void setCategories(List<Forum.Category> categories) {
             this.categories = categories;
         }
-        public void setForums(List<Forum> forums){
-            this.forums=forums;
+
+        public void setForums(List<Forum> forums) {
+            this.forums = forums;
         }
 
         @NonNull
@@ -104,13 +106,17 @@ public class DashboardFragment extends Fragment {
 
             public void bind(Forum.Category category) {
                 binding.category.setText(category.getName());
-
-
-                for(Forum forum:forums) {
-                    if(category.getForums().contains(forum.getFid())) {
-                        NavGridItemBinding gridItemBinding=NavGridItemBinding.inflate(getLayoutInflater());
+                for (Forum forum : forums) {
+                    if (category.getForums().contains(forum.getFid())) {
+                        NavGridItemBinding gridItemBinding = NavGridItemBinding.inflate(getLayoutInflater());
                         gridItemBinding.name.setText(forum.getName());
+
+                        Glide.with(requireActivity()).load(forum.getIconUrl()).override(240, 240).into(gridItemBinding.icon);
+
                         binding.grid.addView(gridItemBinding.getRoot());
+                        gridItemBinding.getRoot().setOnClickListener(v -> {
+                            MainApplication.toast(gridItemBinding.name.getText().toString());
+                        });
                     }
                 }
             }
