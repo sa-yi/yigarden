@@ -60,8 +60,7 @@ public class HomeFragment extends Fragment {
         binding.nickPostView.setAdapter(dzDataAdapter);
         homeViewModel.dzDataList.observe(getViewLifecycleOwner(), dzDatalist -> {
             binding.loadMore.setVisibility(View.GONE);
-            for (ThreadData.Variables dzThreadData : dzDatalist) {
-                Log.d("dz_data", dzThreadData.toString());
+            for (ThreadData dzThreadData : dzDatalist) {
                 dzDataAdapter.addData(dzThreadData);
                 dzDataAdapter.notifyItemChanged(dzDataAdapter.getItemCount());
             }
@@ -183,9 +182,9 @@ public class HomeFragment extends Fragment {
     }
 
     class DzDataAdapter extends RecyclerView.Adapter<DzDataViewHolder> {
-        private List<ThreadData.Variables> dzThreadDataList = new ArrayList<>();
+        private List<ThreadData> dzThreadDataList = new ArrayList<>();
 
-        public void addData(ThreadData.Variables threadData) {
+        public void addData(ThreadData threadData) {
             dzThreadDataList.add(threadData);
         }
 
@@ -199,7 +198,7 @@ public class HomeFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull DzDataViewHolder holder, int position) {
-            ThreadData.Variables threadData = dzThreadDataList.get(position);
+            ThreadData threadData = dzThreadDataList.get(position);
             holder.bind(threadData);
         }
 
@@ -217,7 +216,7 @@ public class HomeFragment extends Fragment {
             this.binding = binding;
         }
 
-        public void bind(ThreadData.Variables threadData) {
+        public void bind(ThreadData threadData) {
 
             binding.userName.setText(threadData.getAuthor());
             String sendTime = threadData.getLastpost();

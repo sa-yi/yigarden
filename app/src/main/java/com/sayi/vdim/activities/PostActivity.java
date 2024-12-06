@@ -76,7 +76,7 @@ public class PostActivity extends AppCompatActivity {
         viewModel.getPostLiveData().observe(this, postFeedData -> {
             setupUI();
 
-            ThreadData.Variables postFeed = postFeedData.getFinalData();
+            ThreadData postFeed = postFeedData.getFinalData();
             Log.d("post", postFeedData.toString());
             Objects.requireNonNull(getSupportActionBar()).setTitle(postFeed.getSubject());
 
@@ -347,15 +347,15 @@ public class PostActivity extends AppCompatActivity {
         sendTime = sendTime.replace("&nbsp;", " ");
         commentBinding.sendTime.setText(sendTime);
 
-        Log.d("comment", comment.getMessage());
+
         SpannableString spannableString = getFormattedHtml(comment.getMessage(), commentBinding.content);
         commentBinding.content.setText(spannableString);
 
 
-        ArrayList<Integer> imagelist = comment.getImagelist();
+        ArrayList<Integer> imageList = comment.getImagelist();
         if (comment.getAttachments() != null)
             for (int attachmentId : comment.getAttachments().keySet()) {
-                if (imagelist.contains(attachmentId)) {
+                if (imageList.contains(attachmentId)) {
                     //TODO 带图评论的图片
                 }
             }

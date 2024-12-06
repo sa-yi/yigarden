@@ -14,7 +14,7 @@ import retrofit2.*;
 public class HomeViewModel extends ViewModel {
 
     public MutableLiveData<List<Announcement>> announcementsDataList;
-    public MutableLiveData<List<ThreadData.Variables>> dzDataList;
+    public MutableLiveData<List<ThreadData>> dzDataList;
 
     public HomeViewModel() {
 
@@ -41,7 +41,7 @@ public class HomeViewModel extends ViewModel {
                 if (response.isSuccessful()) {
                     ThreadsResponse threadsResponse = response.body();
 
-                    List<ThreadData.Variables> data = threadsResponse.getData();
+                    List<ThreadData> data = threadsResponse.getData();
                     if ((data != null)) {
                         dzDataList.postValue(data);
                     }
