@@ -31,6 +31,7 @@ import androidx.media3.common.Player;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.sayi.MainApplication;
 import com.sayi.music.MusicActivity;
 import com.sayi.music.MusicScanner;
 import com.sayi.music.MusicService;
@@ -73,7 +74,6 @@ public class MusicFragment extends Fragment implements Player.Listener {
         } else {
             callPermissionRequest.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
         }
-
     }
 
     @Override
@@ -93,7 +93,7 @@ public class MusicFragment extends Fragment implements Player.Listener {
 
         playBtnDrawable = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_play);
         pauseBtnDrawable = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_pause);
-        //requestPermission();
+        requestPermission();
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -111,6 +111,7 @@ public class MusicFragment extends Fragment implements Player.Listener {
             //TODO 音乐的设置界面
             //Intent intent = new Intent(requireActivity(), MusicSettingsActivity.class);
             //startActivity(intent);
+            MainApplication.toast("开发中");
         });
 
         binding.reqMediaPerm.setOnClickListener(v -> {

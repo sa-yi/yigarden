@@ -1,5 +1,6 @@
 package com.sayi.vdim.activities.mainfragments.dashboard;
 
+import android.content.*;
 import android.os.*;
 import android.util.*;
 import android.view.*;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.*;
 import com.bumptech.glide.Glide;
 import com.sayi.MainApplication;
 import com.sayi.vdim.R;
+import com.sayi.vdim.activities.*;
 import com.sayi.vdim.databinding.*;
 import com.sayi.vdim.dz_entity.*;
 import com.sayi.vdim.utils.*;
@@ -116,6 +118,10 @@ public class DashboardFragment extends Fragment {
                         binding.grid.addView(gridItemBinding.getRoot());
                         gridItemBinding.getRoot().setOnClickListener(v -> {
                             MainApplication.toast(gridItemBinding.name.getText().toString());
+                            Intent intent=new Intent(requireActivity(), ForumActivity.class);
+
+                            intent.putExtra("fid",forum.getFid());
+                            startActivity(intent);
                         });
                     }
                 }
