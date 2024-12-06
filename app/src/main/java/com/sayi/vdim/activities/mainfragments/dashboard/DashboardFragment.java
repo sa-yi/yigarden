@@ -117,7 +117,6 @@ public class DashboardFragment extends Fragment {
 
                         binding.grid.addView(gridItemBinding.getRoot());
                         gridItemBinding.getRoot().setOnClickListener(v -> {
-                            MainApplication.toast(gridItemBinding.name.getText().toString());
                             Intent intent=new Intent(requireActivity(), ForumActivity.class);
 
                             intent.putExtra("fid",forum.getFid());

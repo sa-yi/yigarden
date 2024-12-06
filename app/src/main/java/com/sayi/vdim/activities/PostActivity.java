@@ -150,6 +150,7 @@ public class PostActivity extends AppCompatActivity {
 
 
     private SpannableString getFormattedHtml(String content, TextView textView) {
+        content=content.replace("&amp;","&");
         content = content.replace("&gt;", ">")
                 .replace("&lt;", "<");
         Spanned sp = Html.fromHtml(content, HtmlCompat.FROM_HTML_MODE_LEGACY, source -> {
@@ -257,9 +258,6 @@ public class PostActivity extends AppCompatActivity {
                 return true;
             }
             return false;
-        });
-        binding.thumb.setOnClickListener(v -> {
-
         });
         binding.like.setOnClickListener(v -> {
 

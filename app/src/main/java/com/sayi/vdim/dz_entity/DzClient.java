@@ -34,11 +34,11 @@ public class DzClient {
             if (url.host().equals("i.lty.fan")) {
                 StringBuilder finalCookieBuilder = new StringBuilder();
                 for (Cookie cookie : cookies) {
-                    Log.d("Cookie", cookie.toString());
+                    //Log.d("Cookie", cookie.toString());
                     finalCookieBuilder.append(cookie.name()).append("=").append(cookie.value()).append(";");
                 }
                 String finalCookie = finalCookieBuilder.toString();
-                Log.d("finalCookie", finalCookie);
+                //Log.d("finalCookie", finalCookie);
                 MainApplication.getContext().putDzCookie(finalCookie);
             }
 
@@ -199,9 +199,9 @@ public class DzClient {
             Response response = chain.proceed(newRequest);
 
 
-            Log.d("Request", response.toString());
+            //Log.d("Request", response.toString());
             Headers headers = response.headers();
-            Log.d("Cookie", headers.names().toString());
+            //Log.d("Cookie", headers.names().toString());
             return response;
         }
     }

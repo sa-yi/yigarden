@@ -61,6 +61,9 @@ public class UserFragment extends Fragment {
             Intent intent=new Intent(getContext(), QRScanActivity.class);
             startActivityForResult(intent,1);
         });*/
+        binding.exit.setOnClickListener(v->{
+            requireActivity().finish();
+        });
 
         return root;
     }

@@ -7,17 +7,25 @@ import com.google.gson.annotations.*;
 import java.util.*;
 
 public class ForumDetailed extends BaseResponse{
+    public Forum getForum() {
+        return variables.forum;
+    }
+    public ArrayList<ThreadData> getThreadData() {
+        return variables.threadData;
+    }
 
     @SerializedName("Variables")
     private Variables variables;
 
     class Variables extends BaseVariables{
+
         @SerializedName("forum")
         private Forum forum;
         @SerializedName("group")
         private Group group;
+
         @SerializedName("forum_threadlist")
-        private ArrayList<ThreadData.Variables> threadData;
+        private ArrayList<ThreadData> threadData;
 
         @SerializedName("groupiconid")
         private ArrayMap<Integer,String> groupIconIdList;
@@ -42,6 +50,23 @@ public class ForumDetailed extends BaseResponse{
     public class Forum {
         @SerializedName("fid")
         private int fid;
+
+        public String getDescription() {
+            return description;
+        }
+
+        public String getIcon() {
+            return icon;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getThreadCount() {
+            return threadCount;
+        }
+
         @SerializedName("description")
         private String description;
         @SerializedName("icon")

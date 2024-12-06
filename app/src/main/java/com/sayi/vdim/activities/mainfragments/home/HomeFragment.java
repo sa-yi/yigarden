@@ -1,5 +1,6 @@
 package com.sayi.vdim.activities.mainfragments.home;
 
+import android.app.*;
 import android.content.*;
 import android.graphics.*;
 import android.net.*;
@@ -11,6 +12,7 @@ import android.widget.*;
 import androidx.annotation.*;
 import androidx.core.content.*;
 import androidx.fragment.app.*;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.*;
 import androidx.recyclerview.widget.*;
 import androidx.viewpager2.widget.*;
@@ -18,9 +20,11 @@ import androidx.viewpager2.widget.*;
 import com.sayi.MainApplication;
 import com.sayi.vdim.*;
 import com.sayi.vdim.activities.*;
+import com.sayi.vdim.adapter.*;
 import com.sayi.vdim.databinding.*;
 import com.sayi.vdim.dz_entity.*;
 import com.sayi.vdim.utils.*;
+import com.sayi.vdim.utils.Dialog;
 
 import java.util.*;
 
@@ -28,7 +32,7 @@ public class HomeFragment extends Fragment {
 
     Ticker ticker;
     AnnounceAdapter announceAdapter;
-    DzDataAdapter dzDataAdapter;
+    ThreadDataAdapter.DzDataAdapter dzDataAdapter;
     View root;
     HomeViewModel homeViewModel;
     int page = 1;
@@ -56,7 +60,7 @@ public class HomeFragment extends Fragment {
 
 
         Objects.requireNonNull(binding.toolbar.toolbar.getTabAt(2)).select();
-        dzDataAdapter = new DzDataAdapter();
+        dzDataAdapter = new ThreadDataAdapter.DzDataAdapter(requireActivity());
         binding.nickPostView.setAdapter(dzDataAdapter);
         homeViewModel.dzDataList.observe(getViewLifecycleOwner(), dzDatalist -> {
             binding.loadMore.setVisibility(View.GONE);
@@ -181,60 +185,5 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    class DzDataAdapter extends RecyclerView.Adapter<DzDataViewHolder> {
-        private List<ThreadData> dzThreadDataList = new ArrayList<>();
 
-        public void addData(ThreadData threadData) {
-            dzThreadDataList.add(threadData);
-        }
-
-        @NonNull
-        @Override
-        public DzDataViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-            NickPostBinding nickPostBinding = NickPostBinding.inflate(inflater, parent, false);
-            return new DzDataViewHolder(nickPostBinding);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull DzDataViewHolder holder, int position) {
-            ThreadData threadData = dzThreadDataList.get(position);
-            holder.bind(threadData);
-        }
-
-        @Override
-        public int getItemCount() {
-            return dzThreadDataList.size();
-        }
-    }
-
-    class DzDataViewHolder extends RecyclerView.ViewHolder {
-        NickPostBinding binding;
-
-        public DzDataViewHolder(NickPostBinding binding) {
-            super(binding.getRoot());
-            this.binding = binding;
-        }
-
-        public void bind(ThreadData threadData) {
-
-            binding.userName.setText(threadData.getAuthor());
-            String sendTime = threadData.getLastpost();
-            sendTime = sendTime.replace("&nbsp;", " ");
-            binding.sendTime.setText(sendTime);
-            binding.title.setText(threadData.getSubject());
-            binding.expert.setText(threadData.getMessage());
-            binding.getRoot().setOnClickListener(v -> {
-                Intent intent = new Intent(getContext(), PostActivity.class);
-                //intent.setData();
-                Uri uri = new Uri.Builder().scheme("vdim")
-                        .authority("")  // authority 这里可以为空
-                        .path("/viewthread")
-                        .appendQueryParameter("tid", threadData.getTid())
-                        .build();
-                intent.setData(uri);
-                startActivity(intent);
-            });
-        }
-    }
 }

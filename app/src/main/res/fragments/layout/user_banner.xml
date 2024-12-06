@@ -33,6 +33,7 @@
             android:id="@+id/user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/tianyi_blue"
             android:text="正在获取用户名"
             android:textStyle="bold" />
 
