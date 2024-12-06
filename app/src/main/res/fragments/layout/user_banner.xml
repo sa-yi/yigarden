@@ -9,14 +9,14 @@
     android:orientation="horizontal">
 
     <androidx.cardview.widget.CardView
-        app:cardCornerRadius="25dp"
-        android:layout_width="50dp"
-        android:layout_height="50dp">
+        app:cardCornerRadius="20dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp">
         <!-- 头像 -->
         <ImageView
             android:id="@+id/avator"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:contentDescription="avator"
             android:scaleType="centerCrop"
             android:src="@drawable/default_avator" />

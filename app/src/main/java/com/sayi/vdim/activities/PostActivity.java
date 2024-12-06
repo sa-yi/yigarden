@@ -62,7 +62,7 @@ public class PostActivity extends AppCompatActivity {
         }
 
 
-        post_id = Integer.parseInt(Objects.requireNonNull(uri.getQueryParameter("id")));
+        post_id = Integer.parseInt(Objects.requireNonNull(uri.getQueryParameter("tid")));
         Log.e("uri:", "scheme:" + uri.getScheme()
                 + ",path:" + uri.getPath()
                 + ",id:" + post_id);

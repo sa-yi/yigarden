@@ -221,8 +221,8 @@ public class HomeFragment extends Fragment {
                 //intent.setData();
                 Uri uri = new Uri.Builder().scheme("vdim")
                         .authority("")  // authority 这里可以为空
-                        .path("/viewpost")
-                        .appendQueryParameter("id", threadData.getTid())
+                        .path("/viewthread")
+                        .appendQueryParameter("tid", threadData.getTid())
                         .build();
                 intent.setData(uri);
                 startActivity(intent);

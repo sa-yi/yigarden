@@ -126,5 +126,5 @@ dependencies {
     }
 
 
-    implementation("com.github.ceneax:QRScan:1.0.1")
+    //implementation("com.github.ceneax:QRScan:1.0.1")
 }
