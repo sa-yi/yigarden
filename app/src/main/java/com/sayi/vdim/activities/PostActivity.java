@@ -21,12 +21,11 @@ import androidx.core.content.*;
 import androidx.core.text.*;
 import androidx.lifecycle.*;
 
-
-import com.bumptech.glide.Glide;
+import com.bumptech.glide.*;
 import com.bumptech.glide.request.target.*;
 import com.bumptech.glide.request.transition.*;
 import com.sayi.*;
-import com.sayi.vdim.*;
+import com.sayi.vdim.R;
 import com.sayi.vdim.activities.fragments.*;
 import com.sayi.vdim.databinding.*;
 import com.sayi.vdim.dz_entity.*;
@@ -43,9 +42,10 @@ public class PostActivity extends AppCompatActivity {
     ActivityPostBinding binding;
 
     PostViewModel viewModel;
+    UserBannerFragment userBanner;
     private int post_id = -1;
     private ArrayMap<String, String> attachmentImages = new ArrayMap<>();
-    UserBannerFragment userBanner;
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -150,14 +150,14 @@ public class PostActivity extends AppCompatActivity {
 
 
     private SpannableString getFormattedHtml(String content, TextView textView) {
-        content=content.replace("&amp;","&");
+        content = content.replace("&amp;", "&");
         content = content.replace("&gt;", ">")
                 .replace("&lt;", "<");
         Spanned sp = Html.fromHtml(content, HtmlCompat.FROM_HTML_MODE_LEGACY, source -> {
             final LevelListDrawable drawable = new LevelListDrawable();
 
             // 占位图片
-            Drawable empty = AppCompatResources.getDrawable(PostActivity.this,R.drawable.baseline_image_24);
+            Drawable empty = AppCompatResources.getDrawable(PostActivity.this, R.drawable.baseline_image_24);
             drawable.addLevel(0, 0, empty);
             drawable.setBounds(0, 0, 71, 71);
 
@@ -363,31 +363,6 @@ public class PostActivity extends AppCompatActivity {
 
     }
 
-    public class CustomTagHandler implements Html.TagHandler {
-        @Override
-        public void handleTag(boolean opening, String tag, Editable output, XMLReader xmlReader) {
-            if (tag.equalsIgnoreCase("img")) {
-                int len = output.length();
-                ImageSpan[] images = output.getSpans(len - 1, len, ImageSpan.class);
-                String imageSource = images[0].getSource();
-                ClickableSpan clickableSpan = new ClickableSpan() {
-                    @Override
-                    public void onClick(@NonNull View widget) {
-                        if(!imageSource.contains("smiley")) {//带smiley的为论坛表情
-                            //Toast.makeText(PostActivity.this, imageSource, Toast.LENGTH_SHORT).show();
-                            Intent galleryIntent = new Intent(PostActivity.this, PostViewImageActivity.class);
-
-                            galleryIntent.putExtra("url", imageSource);
-                            galleryIntent.putExtra("index", -1);
-                            startActivity(galleryIntent);
-                        }
-                    }
-                };
-                output.setSpan(clickableSpan, len - 1, len, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-        }
-    }
-
     public static class PostViewModel extends ViewModel {
         private static final String TAG = "PostViewModel";
         private final DzService dzService = DzClient.getRetrofitInstance().create(DzService.class);
@@ -423,6 +398,31 @@ public class PostActivity extends AppCompatActivity {
                     Log.e(TAG, "Error fetching post", t);
                 }
             });
+        }
+    }
+
+    public class CustomTagHandler implements Html.TagHandler {
+        @Override
+        public void handleTag(boolean opening, String tag, Editable output, XMLReader xmlReader) {
+            if (tag.equalsIgnoreCase("img")) {
+                int len = output.length();
+                ImageSpan[] images = output.getSpans(len - 1, len, ImageSpan.class);
+                String imageSource = images[0].getSource();
+                ClickableSpan clickableSpan = new ClickableSpan() {
+                    @Override
+                    public void onClick(@NonNull View widget) {
+                        if (!imageSource.contains("smiley")) {//带smiley的为论坛表情
+                            //Toast.makeText(PostActivity.this, imageSource, Toast.LENGTH_SHORT).show();
+                            Intent galleryIntent = new Intent(PostActivity.this, PostViewImageActivity.class);
+
+                            galleryIntent.putExtra("url", imageSource);
+                            galleryIntent.putExtra("index", -1);
+                            startActivity(galleryIntent);
+                        }
+                    }
+                };
+                output.setSpan(clickableSpan, len - 1, len, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
         }
     }
 }

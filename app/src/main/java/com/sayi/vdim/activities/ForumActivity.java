@@ -29,6 +29,7 @@ public class ForumActivity extends AppCompatActivity {
         Intent intent=getIntent();
         int fid=intent.getIntExtra("fid",-1);
 
+        setSupportActionBar(binding.toolbar);
 
         binding.thread
                 .setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -44,19 +45,23 @@ public class ForumActivity extends AppCompatActivity {
                 if(response.isSuccessful()) {
                     ForumDetailed forumDetailed = response.body();
                     if(forumDetailed!=null) {
-                        Log.d(TAG, forumDetailed.getForum().getName());
+                        String name=forumDetailed.getForum().getName();
+                        setTitle(name);
                         for(ThreadData threadData: forumDetailed.getThreadData()){
                             Log.d("ThreadData",threadData.getSubject());
                             dzDataAdapter.addData(threadData);
                             dzDataAdapter.notifyItemChanged(-1);
                         }
                     }
+
+                }else {
+                    MainApplication.toast("获取板块信息失败");
                 }
             }
 
             @Override
             public void onFailure(Call<ForumDetailed> call, Throwable throwable) {
-
+                MainApplication.toast("获取信息失败");
             }
         });
 

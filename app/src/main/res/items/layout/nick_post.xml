@@ -112,7 +112,6 @@
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ZTZ99III"
             android:textSize="18sp"
             android:textStyle="bold" />
         <!-- 帖子摘要 -->

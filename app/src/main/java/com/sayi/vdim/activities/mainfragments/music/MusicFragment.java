@@ -6,6 +6,7 @@ import android.Manifest;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.*;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -23,7 +24,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
-import androidx.core.content.ContextCompat;
+import androidx.core.content.*;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.MediaItem;
@@ -76,6 +77,16 @@ public class MusicFragment extends Fragment implements Player.Listener {
         }
     }
 
+    boolean checkPermission(){
+        String permission;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permission=Manifest.permission.READ_MEDIA_AUDIO;
+        }else {
+            permission=Manifest.permission.READ_EXTERNAL_STORAGE;
+        }
+        return ContextCompat.checkSelfPermission(requireActivity(),permission) == PackageManager.PERMISSION_GRANTED;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,7 +104,6 @@ public class MusicFragment extends Fragment implements Player.Listener {
 
         playBtnDrawable = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_play);
         pauseBtnDrawable = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_pause);
-        requestPermission();
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -114,6 +124,10 @@ public class MusicFragment extends Fragment implements Player.Listener {
             MainApplication.toast("开发中");
         });
 
+        if(checkPermission()){
+            binding.reqPermView.setVisibility(View.GONE);
+            requestPermission();
+        }
         binding.reqMediaPerm.setOnClickListener(v -> {
             if (clickCount <= 3) {
                 requestPermission();
