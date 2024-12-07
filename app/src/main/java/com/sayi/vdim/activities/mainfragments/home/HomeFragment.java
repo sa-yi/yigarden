@@ -62,6 +62,18 @@ public class HomeFragment extends Fragment {
         Objects.requireNonNull(binding.toolbar.toolbar.getTabAt(2)).select();
         dzDataAdapter = new ThreadDataAdapter.DzDataAdapter(requireActivity());
         binding.nickPostView.setAdapter(dzDataAdapter);
+        binding.nickPostView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                if (layoutManager != null && layoutManager.findLastCompletelyVisibleItemPosition() == dzDataAdapter.getItemCount() - 1) {
+                    // 滑动到底部，触发加载更多
+                    page++;
+                    homeViewModel.fetchDzData(page);
+                }
+            }
+        });
         homeViewModel.dzDataList.observe(getViewLifecycleOwner(), dzDatalist -> {
             binding.loadMore.setVisibility(View.GONE);
             for (ThreadData dzThreadData : dzDatalist) {

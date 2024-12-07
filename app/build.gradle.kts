@@ -20,7 +20,7 @@ android {
         minSdk = 28
         targetSdk = 35
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0-alpha"
 
         vectorDrawables {
             useSupportLibrary = true
@@ -38,7 +38,7 @@ android {
             // 启用代码压缩、优化及混淆
             isMinifyEnabled = true
             // 启用资源压缩，需配合 minifyEnabled=true 使用
-            isShrinkResources=true
+            isShrinkResources = true
 
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -78,7 +78,8 @@ dependencies {
     implementation("com.android.volley:volley:1.2.1")
 
 
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
+
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
     implementation("androidx.navigation:navigation-fragment-ktx:2.8.4")
@@ -122,7 +123,7 @@ dependencies {
     }
 
     implementation("com.github.ihsanbal:LoggingInterceptor:3.1.0") {//httplogger
-        exclude(group= "org.json", module= "json")
+        exclude(group = "org.json", module = "json")
     }
 
 

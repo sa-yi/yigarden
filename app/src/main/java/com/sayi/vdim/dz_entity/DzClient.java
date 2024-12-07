@@ -127,7 +127,7 @@ public class DzClient {
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
 
             //TODO:加上允许抓包
-            builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
+            //builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
 
 
             builder.hostnameVerifier((hostname, session) -> true);

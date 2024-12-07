@@ -8,6 +8,8 @@ import android.view.*;
 import androidx.annotation.*;
 import androidx.recyclerview.widget.*;
 
+import com.bumptech.glide.Glide;
+import com.sayi.vdim.*;
 import com.sayi.vdim.activities.*;
 import com.sayi.vdim.databinding.*;
 import com.sayi.vdim.dz_entity.*;
@@ -58,7 +60,7 @@ public class ThreadDataAdapter {
         }
 
         public void bind(ThreadData threadData) {
-
+            int authorId=threadData.getAuthorId();
             binding.userName.setText(threadData.getAuthor());
             String sendTime = threadData.getLastpost();
             sendTime = sendTime.replace("&nbsp;", " ");
@@ -76,6 +78,8 @@ public class ThreadDataAdapter {
                 intent.setData(uri);
                 activity.startActivity(intent);
             });
+            Glide.with(activity).asBitmap().load("https://i.lty.fan/uc_server/avatar.php?size=big&uid="+ authorId).error(R.drawable.default_avator).into(binding.avator);
+            //TODO 加载头像
         }
     }
 }

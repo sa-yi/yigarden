@@ -1,7 +1,6 @@
 package com.sayi.vdim.activities;
 
 import android.content.*;
-import android.net.*;
 import android.os.*;
 import android.util.*;
 
@@ -35,10 +34,28 @@ public class ForumActivity extends AppCompatActivity {
                 .setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         dzDataAdapter = new ThreadDataAdapter.DzDataAdapter(this);
         binding.thread.setAdapter(dzDataAdapter);
+        binding.thread.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                if (layoutManager != null && layoutManager.findLastCompletelyVisibleItemPosition() == dzDataAdapter.getItemCount() - 1) {
+                    // 滑动到底部，触发加载更多
+                    page++;
+                    fetch(fid,page);
+                }
+            }
+        });
 
-        DzService dzService=DzClient.getRetrofitInstance().create(DzService.class);
 
-        Call<ForumDetailed> call= dzService.getForumDetailed(fid,1);
+        dzService=DzClient.getRetrofitInstance().create(DzService.class);
+
+        fetch(fid,page);
+    }
+    int page=1;
+    DzService dzService;
+    void fetch(int fid,int page){
+        Call<ForumDetailed> call= dzService.getForumDetailed(fid,page);
         call.enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<ForumDetailed> call, Response<ForumDetailed> response) {
@@ -64,7 +81,6 @@ public class ForumActivity extends AppCompatActivity {
                 MainApplication.toast("获取信息失败");
             }
         });
-
     }
 
     @Override
