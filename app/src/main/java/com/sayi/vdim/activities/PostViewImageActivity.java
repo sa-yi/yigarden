@@ -34,6 +34,7 @@ import com.sayi.vdim.databinding.ModalBottomSheetContentBinding;
 
 import java.io.*;
 import java.util.*;
+import android.webkit.MimeTypeMap;
 
 public class PostViewImageActivity extends AppCompatActivity {
     ActivityViewPostImageBinding binding;
@@ -80,7 +81,7 @@ public class PostViewImageActivity extends AppCompatActivity {
 
     // 保存图片到相册的方法
     private static void saveImage(String imageUrl) {
-        // 这里可以使用 Glide 来加载图片并保存到设备的存储空间，使用 MediaStore API 进行保存
+        // 使用Glide加载图片并保存到设备的存储空间，使用MediaStore API进行保存
         Glide.with(getContext())
                 .asBitmap()
                 .load(imageUrl)
@@ -90,14 +91,19 @@ public class PostViewImageActivity extends AppCompatActivity {
                         try {
                             // 获取图片的输出流
                             ContentValues values = new ContentValues();
+                            String fileName = "image_" + System.currentTimeMillis();
+                            String fileExtension = MimeTypeMap.getFileExtensionFromUrl(imageUrl);
+                            String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
                             values.put(MediaStore.Images.Media.TITLE, "Saved Image");
-                            values.put(MediaStore.Images.Media.DISPLAY_NAME, "image_" + System.currentTimeMillis());
-                            values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+                            values.put(MediaStore.Images.Media.DISPLAY_NAME, fileName + "." + fileExtension);
+                            values.put(MediaStore.Images.Media.MIME_TYPE, mimeType);
                             Uri uri = getContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
 
                             OutputStream outputStream = getContext().getContentResolver().openOutputStream(uri);
                             if (outputStream != null) {
-                                resource.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                                // 根据文件类型选择压缩格式
+                                Bitmap.CompressFormat compressFormat = getCompressFormat(fileExtension);
+                                resource.compress(compressFormat, 100, outputStream);
                                 outputStream.flush();
                                 outputStream.close();
                                 Toast.makeText(getContext(), "保存成功", Toast.LENGTH_SHORT).show();
@@ -109,6 +115,20 @@ public class PostViewImageActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    private static Bitmap.CompressFormat getCompressFormat(String fileExtension) {
+        switch (fileExtension.toLowerCase()) {
+            case "png":
+                return Bitmap.CompressFormat.PNG;
+            case "webp":
+                return Bitmap.CompressFormat.WEBP;
+            case "jpeg":
+            case "jpg":
+            default:
+                return Bitmap.CompressFormat.JPEG;
+        }
+    }
+
     private static void shareImage(String imageUrl){
         Glide.with(getContext())
                 .asBitmap()

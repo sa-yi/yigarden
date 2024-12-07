@@ -41,8 +41,13 @@ public class ForumActivity extends AppCompatActivity {
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 if (layoutManager != null && layoutManager.findLastCompletelyVisibleItemPosition() == dzDataAdapter.getItemCount() - 1) {
                     // 滑动到底部，触发加载更多
-                    page++;
-                    fetch(fid,page);
+                    if(!finished) {
+                        page++;
+                        fetch(fid, page);
+                    }else if(showLastMessage){
+                        MainApplication.toast("您已浏览完毕该版块下所有帖子");
+                        showLastMessage=false;
+                    }
                 }
             }
         });
@@ -52,6 +57,10 @@ public class ForumActivity extends AppCompatActivity {
 
         fetch(fid,page);
     }
+    boolean showLastMessage=true;
+
+    boolean finished=false;
+    int threadCount=0;
     int page=1;
     DzService dzService;
     void fetch(int fid,int page){
@@ -63,11 +72,18 @@ public class ForumActivity extends AppCompatActivity {
                     ForumDetailed forumDetailed = response.body();
                     if(forumDetailed!=null) {
                         String name=forumDetailed.getForum().getName();
+                        threadCount=forumDetailed.getForum().getThreadCount();
                         setTitle(name);
                         for(ThreadData threadData: forumDetailed.getThreadData()){
                             Log.d("ThreadData",threadData.getSubject());
                             dzDataAdapter.addData(threadData);
                             dzDataAdapter.notifyItemChanged(-1);
+                        }
+
+                        Log.d("ThreadCount",dzDataAdapter.getItemCount()+":"+threadCount);
+                        if (dzDataAdapter.getItemCount()>= threadCount) {
+                            //TODO 已加载完所有帖子
+                            finished=true;
                         }
                     }
 

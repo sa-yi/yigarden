@@ -30,7 +30,7 @@ import java.util.*;
 
 public class HomeFragment extends Fragment {
 
-    Ticker ticker;
+
     AnnounceAdapter announceAdapter;
     ThreadDataAdapter.DzDataAdapter dzDataAdapter;
     View root;
@@ -56,7 +56,6 @@ public class HomeFragment extends Fragment {
 
         binding.nickPostView
                 .setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        binding.announceBar.setPageTransformer(new AnnounceVerticalPageTransformer());
 
 
         Objects.requireNonNull(binding.toolbar.toolbar.getTabAt(2)).select();
@@ -75,24 +74,17 @@ public class HomeFragment extends Fragment {
             }
         });
         homeViewModel.dzDataList.observe(getViewLifecycleOwner(), dzDatalist -> {
-            binding.loadMore.setVisibility(View.GONE);
             for (ThreadData dzThreadData : dzDatalist) {
                 dzDataAdapter.addData(dzThreadData);
                 dzDataAdapter.notifyItemChanged(dzDataAdapter.getItemCount());
             }
             Log.d("dz_data_size", dzDatalist.size() + "");
-            if (dzDatalist.size() == 15)
-                binding.loadMore.setVisibility(View.VISIBLE);
         });
 
 
-        binding.nickPostView.setVisibility(View.GONE);
         homeViewModel.fetchDzData(page);
-        binding.nickPostView.setVisibility(View.VISIBLE);
 
-        binding.loadMore.setOnClickListener(v ->
-                homeViewModel.fetchDzData(++page)
-        );
+
         homeViewModel.getFailedData().observe(getViewLifecycleOwner(),failedData->{
             MainApplication.toast("获取帖子失败，正在重新获取cookie...");
             Intent intent=new Intent(requireActivity(),WebLoginActivity.class);
@@ -101,7 +93,7 @@ public class HomeFragment extends Fragment {
         });
 
         announceAdapter = new AnnounceAdapter();
-        binding.announceBar.setAdapter(announceAdapter);
+
         homeViewModel.announcementsDataList.observe(getViewLifecycleOwner(), announceAdapter::setAnnouncements);
 
 
@@ -115,32 +107,27 @@ public class HomeFragment extends Fragment {
             //TODO 发布帖子界面暂时不开启
             //Intent intent = new Intent(getContext(), WpPublishActivity.class);
             //startActivity(intent);
+            MainApplication.toast("开发中...");
         });
         binding.message.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), NotifyActivity.class);
             startActivity(intent);
+            MainApplication.toast("开发中...");
         });
 
 
-        ticker = new Ticker();
-        ticker.setInterval(2000);
-        ticker.addOnTickListener(
-                () -> binding.announceBar.setCurrentItem(binding.announceBar.getCurrentItem() + 1, true));
-        ticker.start();
+
 
     }
 
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if (hidden) ticker.stop();
-        else ticker.resume();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ticker.stop();
         binding = null;
     }
 

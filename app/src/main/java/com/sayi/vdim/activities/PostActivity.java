@@ -172,12 +172,11 @@ public class PostActivity extends AppCompatActivity {
                             if (source.contains("smiley"))
                                 drawable.setBounds(0, 0, 100, 100);
                             else {
-                                int width = binding.content.getWidth();
+                                int width = binding.content.getMeasuredWidth();
                                 int intrinsicWidth = drawable.getIntrinsicWidth();
                                 int intrinsicHeight = drawable.getIntrinsicHeight();
 
                                 float rate = (float) width / intrinsicWidth;
-
                                 int height = (int) (intrinsicHeight * rate);
 
                                 drawable.setBounds(0, 0, width, height);
@@ -213,7 +212,7 @@ public class PostActivity extends AppCompatActivity {
             // 创建新的 ClickableSpan 并重写 onClick 方法
             spannableString.setSpan(new ClickableSpan() {
                 @Override
-                public void onClick(View widget) {
+                public void onClick(@NonNull View widget) {
                     Dialog.init(PostActivity.this).setupDialog("是否跳转链接", span.getURL()).setPositiveButton("确认", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -234,6 +233,7 @@ public class PostActivity extends AppCompatActivity {
 
         // 使得链接可点击
         textView.setMovementMethod(LinkMovementMethod.getInstance());
+        textView.setText(textView.getText());
     }
 
     void setupUI() {
