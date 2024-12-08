@@ -18,7 +18,7 @@ public class MAppGlideModule extends AppGlideModule {
     public void registerComponents(Context context, Glide glide, Registry registry) {
         // 使用自定义的 OkHttpClient
         OkHttpClient client = DzClient.getUnsafeOkHttpClient();
-        registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));
+        registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory((Call.Factory) client));
     }
 
     @Override

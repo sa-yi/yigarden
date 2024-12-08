@@ -68,6 +68,9 @@ public class ThreadAttachment implements Serializable {
     @SerializedName("attachsize")
     private String attachsize;
 
+    /**
+     * 表示以附件形式传递图片
+     */
     @SerializedName("attachimg")
     private int attachimg;
 
@@ -203,16 +206,12 @@ public class ThreadAttachment implements Serializable {
         return attachsize;
     }
 
-    public void setAttachsize(String attachsize) {
-        this.attachsize = attachsize;
-    }
 
+    /**
+     *值为1表示以附件形式传递图片
+     */
     public int getAttachimg() {
         return attachimg;
-    }
-
-    public void setAttachimg(int attachimg) {
-        this.attachimg = attachimg;
     }
 
     public int getPayed() {

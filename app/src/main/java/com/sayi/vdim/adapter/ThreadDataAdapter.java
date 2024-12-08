@@ -79,7 +79,6 @@ public class ThreadDataAdapter {
                 activity.startActivity(intent);
             });
             Glide.with(activity).asBitmap().load("https://i.lty.fan/uc_server/avatar.php?size=big&uid="+ authorId).error(R.drawable.default_avator).into(binding.avator);
-            //TODO 加载头像
         }
     }
 }

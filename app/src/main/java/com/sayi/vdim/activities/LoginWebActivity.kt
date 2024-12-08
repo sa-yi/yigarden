@@ -73,7 +73,8 @@ class WebLoginActivity : AppCompatActivity() {
                 handler: SslErrorHandler?,
                 error: SslError?
             ) {
-                handler?.proceed()
+                //handler?.proceed()
+                //TODO 移除ssl错误的继续处理
             }
         }
         binding.refresh.setOnClickListener{
@@ -86,8 +87,8 @@ class WebLoginActivity : AppCompatActivity() {
         binding.web.clearCache(true)
         binding.web.clearHistory()
         binding.web.loadUrl("about:blank")
-        binding.web.destroy()
         binding.root.removeAllViews()
+        binding.web.destroy()
         super.onDestroy()
     }
     private lateinit var intent: Intent

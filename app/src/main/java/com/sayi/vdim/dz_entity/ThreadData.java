@@ -144,7 +144,7 @@ public class ThreadData extends BaseResponse {
     @SerializedName("allowvote")
     private int allowvote;
     @SerializedName("remaintime")
-    private List<Integer> remaintime;
+    private Object remaintime;
 
     public ArrayList<Post> getPost() {
         return variables.post;

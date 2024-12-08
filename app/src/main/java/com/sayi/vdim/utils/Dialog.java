@@ -2,18 +2,19 @@ package com.sayi.vdim.utils;
 
 import android.content.Context;
 
+import androidx.annotation.*;
 import androidx.appcompat.app.AlertDialog;
 
 public class Dialog {
     private Context context;
     private AlertDialog.Builder builder;
 
-    public static Dialog init(Context _context) {
-        return new Dialog(_context);
+    public static Dialog init(Context context) {
+        return new Dialog(context);
     }
 
-    private Dialog(Context _context) {
-        this.context = _context;
+    private Dialog(Context context) {
+        this.context = context;
         this.builder = new AlertDialog.Builder(context);
     }
 
@@ -21,10 +22,7 @@ public class Dialog {
         builder.setTitle(title);
         builder.setMessage(content);
 
-        String positiveText = "确认";
-        builder.setPositiveButton(positiveText, (dialog, which) -> {
-            // positive button logic
-        });
+
         return this;
     }
 
@@ -41,6 +39,7 @@ public class Dialog {
         builder.setNeutralButton(netrualText,listener);
         return this;
     }
+
 
     public void show() {
         AlertDialog dialog = builder.create();

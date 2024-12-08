@@ -19,8 +19,8 @@ android {
         compileSdk = 35
         minSdk = 28
         targetSdk = 35
-        versionCode = 2
-        versionName = "1.0.1-alpha"
+        versionCode = 3
+        versionName = "0.1.0-alpha"
 
         vectorDrawables {
             useSupportLibrary = true
@@ -44,6 +44,24 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+        }
+    }
+    android.applicationVariants.all {
+        // 编译类型
+        val buildType = this.buildType.name
+        val versionName = android.defaultConfig.versionName
+        val versionCode = android.defaultConfig.versionCode
+        outputs.all {
+            // 判断是否是输出 apk 类型
+            if (this is com.android.build.gradle
+                .internal.api.ApkVariantOutputImpl
+            ) {
+                this.outputFileName = "V次元" +
+                        "_${versionName}_${versionCode}_${buildType}.apk"
+                val suffix = if (buildType == "debug") "-debug" else ""
+                this.versionNameOverride = "$versionName$suffix"
+            }
         }
     }
     buildFeatures {

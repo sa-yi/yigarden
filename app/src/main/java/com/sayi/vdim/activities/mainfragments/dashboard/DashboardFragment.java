@@ -1,6 +1,7 @@
 package com.sayi.vdim.activities.mainfragments.dashboard;
 
 import android.content.*;
+import android.net.*;
 import android.os.*;
 import android.util.*;
 import android.view.*;
@@ -118,9 +119,13 @@ public class DashboardFragment extends Fragment {
                         binding.grid.addView(gridItemBinding.getRoot());
                         gridItemBinding.getRoot().setOnClickListener(v -> {
                             Intent intent=new Intent(requireActivity(), ForumActivity.class);
-
-                            intent.putExtra("fid",forum.getFid());
-                            startActivity(intent);
+                            Uri uri = new Uri.Builder().scheme("vdim")
+                                    .authority("")  // authority 这里可以为空
+                                    .path("/forum")
+                                    .appendQueryParameter("fid", String.valueOf(forum.getFid()))
+                                    .build();
+                            intent.setData(uri);
+                            requireActivity().startActivity(intent);
                         });
                     }
                 }

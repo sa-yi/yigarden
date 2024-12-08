@@ -83,6 +83,23 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".activities.ForumActivity"
+            android:exported="true">
+            <intent-filter>
+                <!-- 必须设置 -->
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <!-- 需要被网页拉起必须设置 -->
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- 协议部分:"vdim://i.lty.fan/forum?fid=2" -->
+                <data
+                    android:host="i.lty.fan"
+                    android:pathPrefix="/forum"
+                    android:scheme="vdim" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name="com.sayi.music.MusicActivity"
             android:launchMode="standard" />
         <activity
@@ -92,9 +109,6 @@
             android:name=".activities.LoginActivity"
             android:exported="true"
             android:launchMode="singleInstance" />
-        <activity
-            android:name=".activities.ForumActivity"
-            android:exported="true"/>
         <activity
             android:name="com.sayi.CrashReporter"
             android:exported="true"

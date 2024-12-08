@@ -184,8 +184,8 @@ public class PostViewImageActivity extends AppCompatActivity {
                 dismiss();
             });
             sheetBinding.share.setOnClickListener(v->{
-                MainApplication.toast("share");
                 shareImage(imageUrl);
+                dismiss();
             });
             return sheetBinding.getRoot();
         }

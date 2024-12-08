@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.*;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -43,5 +44,9 @@ public class UserBannerFragment extends Fragment {
     }
     public void setSendTime(String time){
         viewModel.setSendTime(time);
+    }
+
+    public ImageView getAvatorView(){
+        return binding.avator;
     }
 }
