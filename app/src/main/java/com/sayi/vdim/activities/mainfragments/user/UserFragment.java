@@ -3,13 +3,19 @@ package com.sayi.vdim.activities.mainfragments.user;
 import static android.content.Context.*;
 import static com.sayi.vdim.Consts.*;
 
+import android.Manifest;
 import android.content.*;
+import android.content.pm.*;
+import android.net.*;
 import android.os.*;
 import android.util.*;
 import android.view.*;
 
+import androidx.activity.result.*;
+import androidx.activity.result.contract.*;
 import androidx.annotation.*;
 import androidx.appcompat.app.*;
+import androidx.core.app.*;
 import androidx.core.content.*;
 import androidx.core.view.*;
 import androidx.fragment.app.*;
@@ -17,18 +23,41 @@ import androidx.lifecycle.*;
 
 import com.bumptech.glide.*;
 import com.sayi.*;
-import com.sayi.vdim.*;
 import com.sayi.vdim.R;
 import com.sayi.vdim.activities.*;
 import com.sayi.vdim.databinding.*;
 import com.sayi.vdim.dz_entity.*;
 import com.sayi.vdim.utils.*;
+import com.yxing.*;
+import com.yxing.def.*;
 
 import java.text.*;
+import java.util.*;
 
 public class UserFragment extends Fragment {
 
+    static int requestCameraPermission = 1;
+    ActivityResultLauncher<String> callPermissionRequest;
+
+    boolean granted = false;
     private FragmentUserBinding binding;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        callPermissionRequest = registerForActivityResult(new ActivityResultContracts.RequestPermission(), _granted -> {
+            granted = _granted;
+            if (granted)
+                ScanCodeConfig.create(requireActivity(), UserFragment.this).setStyle(ScanStyle.NONE)
+                        .setPlayAudio(true)
+                        .buidler()
+                        .start(ScanCodeActivity.class);
+        });
+    }
+
+    private boolean isCameraPermissionGranted() {
+        return ContextCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -41,13 +70,13 @@ public class UserFragment extends Fragment {
 
         View root = binding.getRoot();
 
-        ((AppCompatActivity)requireActivity()).setSupportActionBar(binding.toolbar);
+        ((AppCompatActivity) requireActivity()).setSupportActionBar(binding.toolbar);
         requireActivity().setTitle("");
         setupMenu();
 
         userViewModel.getUserData().observe(getViewLifecycleOwner(), userEntity -> {
-            DzUser user=userEntity.getSpace();
-            Log.d("User",user.toString());
+            DzUser user = userEntity.getSpace();
+            Log.d("User", user.toString());
             int id = user.getUid();
             binding.userId.setText(MessageFormat.format("{0}", id));
             String name = user.getUsername();
@@ -71,27 +100,38 @@ public class UserFragment extends Fragment {
             Intent intent = new Intent(getContext(), SettingsActivity.class);
             startActivity(intent);
         });
-
-        /*binding.scan.setOnClickListener(v->{
-            Intent intent=new Intent(getContext(), QRScanActivity.class);
-            startActivityForResult(intent,1);
-        });*/
-        binding.exit.setOnClickListener(v->{
+        binding.exit.setOnClickListener(v -> {
             requireActivity().finish();
         });
 
         return root;
     }
 
-    private void setupMenu(){
+    private void setupMenu() {
         requireActivity().addMenuProvider(new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
-                menuInflater.inflate(R.menu.user_menu,menu);
+                menuInflater.inflate(R.menu.user_menu, menu);
             }
 
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                int id = menuItem.getItemId();
+                if (id == R.id.scan) {//TODO 申请相机权限
+                    if (isCameraPermissionGranted()) {
+                        ScanCodeConfig.create(requireActivity(), UserFragment.this).setStyle(ScanStyle.NONE)
+                                .setPlayAudio(true)
+                                .buidler()
+                                .start(ScanCodeActivity.class);
+                    } else {
+                        ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, requestCameraPermission);
+                    }
+                    return true;
+                } else if (id == R.id.settings) {
+                    Intent intent = new Intent(requireActivity(), SettingsActivity.class);
+                    startActivity(intent);
+                    return true;
+                }
                 return false;
             }
         });
@@ -104,6 +144,39 @@ public class UserFragment extends Fragment {
             if (data != null) {
                 String result = data.getStringExtra("data");
                 MainApplication.toast(result);
+            }
+        } else if (requestCode == ScanCodeConfig.QUESTCODE) {
+            if (data == null) return;
+            Bundle extras = data.getExtras();
+            if (extras != null) {//TODO 解析二维码
+                int codeType = extras.getInt(ScanCodeConfig.CODE_TYPE);//0为一维码，其它为二维码
+                String code = extras.getString(ScanCodeConfig.CODE_KEY);
+                Uri uri = Uri.parse(code);
+                String scheme = uri.getScheme();//vdim,http,htps
+                String authority = uri.getAuthority();//i.lty.fan
+                String path=uri.getPath();//viewthread
+                String query = uri.getQuery();//tid=679
+                Set<String> parameter = uri.getQueryParameterNames();//?
+                String paras="";
+                for(String para:parameter){
+                    paras+=","+para;
+                }
+                Log.d("qrcode", "scheme:" + scheme + ",authority:" + authority + ",parameter:"+paras+",query:" + query+",path="+path);
+                if (scheme == null) {
+                    return;
+                }
+                if (authority == null) {
+                    return;
+                }
+                if (scheme.equals("vdim")) {
+
+                } else if (scheme.equals("http") || scheme.equals("https")) {
+                    if (authority.equals("i.lty.fan")) {
+
+                    }
+                }
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
             }
         }
     }

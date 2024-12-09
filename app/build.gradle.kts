@@ -19,8 +19,8 @@ android {
         compileSdk = 35
         minSdk = 28
         targetSdk = 35
-        versionCode = 3
-        versionName = "0.1.0-alpha"
+        versionCode = 2
+        versionName = "0.2.0-alpha"
 
         vectorDrawables {
             useSupportLibrary = true
@@ -143,7 +143,6 @@ dependencies {
     implementation("com.github.ihsanbal:LoggingInterceptor:3.1.0") {//httplogger
         exclude(group = "org.json", module = "json")
     }
+    implementation("com.github.amggg:YXing:V2.0.1")
 
-
-    //implementation("com.github.ceneax:QRScan:1.0.1")
 }
