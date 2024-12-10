@@ -41,17 +41,14 @@ public class SettingsActivity extends AppCompatActivity {
         }
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isNightMode = sharedPreferences.getBoolean("theme", false);
-        sharedPreferences.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
-                MainApplication.toast(key);
-                if (Objects.equals(key, "theme")) {
-                    boolean ifDark = sharedPreferences.getBoolean("theme", false);
-                    if (ifDark) {
-                        DarkModeUtils.applyNightMode(SettingsActivity.this);
-                    } else {
-                        DarkModeUtils.applyDayMode(SettingsActivity.this);
-                    }
+        sharedPreferences.registerOnSharedPreferenceChangeListener((sharedPreferences1, key) -> {
+            MainApplication.toast(key);
+            if (Objects.equals(key, "theme")) {
+                boolean ifDark = sharedPreferences1.getBoolean("theme", false);
+                if (ifDark) {
+                    DarkModeUtils.applyNightMode(SettingsActivity.this);
+                } else {
+                    DarkModeUtils.applyDayMode(SettingsActivity.this);
                 }
             }
         });

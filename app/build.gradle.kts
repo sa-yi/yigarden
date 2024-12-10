@@ -9,6 +9,10 @@ android {
     namespace = "com.sayi.vdim"
     compileSdk = 35
 
+    packagingOptions{
+        exclude( "META-INF/DEPENDENCIES")
+
+    }
 
     repositories {
 
@@ -109,6 +113,9 @@ dependencies {
     implementation("androidx.media3:media3-exoplayer:1.5.0")
     implementation("androidx.media3:media3-session:1.5.0")
     implementation("androidx.media3:media3-ui:1.5.0")
+
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.4.1")
+
 
 
     // Retrofit for network requests

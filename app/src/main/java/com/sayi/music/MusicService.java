@@ -1,50 +1,57 @@
 package com.sayi.music;
 
 import android.app.Service;
-import android.content.ComponentName;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.PixelFormat;
-import android.media.MediaMetadataRetriever;
-import android.net.Uri;
-import android.os.Binder;
-import android.os.IBinder;
-import android.provider.Settings;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.TextView;
+import android.content.*;
+import android.graphics.*;
+import android.graphics.drawable.*;
+import android.media.*;
+import android.net.*;
+import android.os.*;
+import android.provider.*;
+import android.util.*;
+import android.view.*;
+import android.widget.*;
 
-import androidx.annotation.Nullable;
-import androidx.media3.common.MediaItem;
-import androidx.media3.common.Player;
+import androidx.annotation.*;
+import androidx.media3.common.MediaMetadata;
+import androidx.media3.common.*;
 import androidx.media3.session.MediaController;
-import androidx.media3.session.SessionToken;
+import androidx.media3.session.*;
+import androidx.preference.*;
 
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.MoreExecutors;
-import com.hw.lrcviewlib.LrcDataBuilder;
+import com.bumptech.glide.*;
+import com.bumptech.glide.request.target.*;
+import com.bumptech.glide.request.transition.*;
+import com.google.common.util.concurrent.*;
 import com.hw.lrcviewlib.LrcRow;
-import com.sayi.music.util.lrcparser.LrcParser;
-import com.sayi.vdim.utils.Ticker;
+import com.hw.lrcviewlib.*;
+import com.sayi.*;
+import com.sayi.music.util.lrcparser.*;
+import com.sayi.vdim.sayi_music_entity.*;
+import com.sayi.vdim.utils.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
+import org.apache.hc.core5.util.*;
+
+import java.io.*;
+import java.util.*;
+import java.util.concurrent.*;
+
+import retrofit2.*;
 
 public class MusicService extends Service implements Player.Listener {
+    static String TAG = "MusicService";
     Ticker ticker;
     ArrayList<Player.Listener> listeners = new ArrayList<>();
     WindowManager windowManager;
     WindowManager.LayoutParams params;
     TextView lrcView;
     boolean isInited = false;
+    ListenableFuture<MediaController> controllerFuture;
+    SyService syService;
+    boolean loadFromNetwork = false;
     private MusicBinder binder;
     private MediaController controller;
+    ArrayList<MediaItem> mediaItemArrayList=new ArrayList<>();
 
     public static String formatTime(float msec) {
         int minute = ((int) msec) / 1000 / 60;
@@ -69,8 +76,131 @@ public class MusicService extends Service implements Player.Listener {
         super.onCreate();
         SessionToken sessionToken =
                 new SessionToken(this, new ComponentName(this, PlaybackService.class));
-        ListenableFuture<MediaController> controllerFuture =
+        controllerFuture =
                 new MediaController.Builder(this, sessionToken).buildAsync();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        loadFromNetwork = sharedPreferences.getBoolean("use_network", false);
+
+        if (loadFromNetwork) {
+            syService = SyClient.getRetrofitInstance().create(SyService.class);
+            Call<ArrayList<Music>> musicListCall = syService.getSongList();
+            musicListCall.enqueue(new Callback<>() {
+                @Override
+                public void onResponse(@NonNull Call<ArrayList<Music>> call, @NonNull Response<ArrayList<Music>> response) {
+                    if (response.isSuccessful()) {
+                        MediaItem.Builder mediaItemBuilder = new MediaItem.Builder();
+                        MediaMetadata.Builder metaDataBuilder = new MediaMetadata.Builder();
+
+
+                        controllerFuture.addListener(() -> {
+                            // Call controllerFuture.get() to retrieve the MediaController.
+                            // MediaController implements the Player interface, so it can be
+                            // attached to the PlayerView UI component.
+                            //playerView.setPlayer(controllerFuture.get());
+                            try {
+                                controller = controllerFuture.get();
+                                controller.setMediaItems(mediaItemArrayList);
+                                controller.setShuffleModeEnabled(true);
+                                for (Player.Listener listener : listeners)
+                                    controller.addListener(listener);
+                                controller.addListener(new Player.Listener() {
+                                    @Override
+                                    public void onMediaItemTransition(@Nullable MediaItem mediaItem, int reason) {
+                                        Player.Listener.super.onMediaItemTransition(mediaItem, reason);
+                                    }
+                                });
+                            } catch (ExecutionException | InterruptedException e) {
+                                e.printStackTrace();
+                                Log.e("ControllerFeature", e.getMessage());
+                            }
+                        }, MoreExecutors.directExecutor());
+
+
+                        ArrayList<Music> musicList = response.body();
+                        if (musicList == null) return;
+
+
+
+                        for(int i=0;i<musicList.size();i++){
+                            Music music= musicList.get(i);
+                            Log.d("Music", music.getName());
+                            Call<MusicFully> musicFullyCall = syService.getInfo(music.getId());
+                            int finalI = i;
+                            musicFullyCall.enqueue(new Callback<>() {
+                                @Override
+                                public void onResponse(@NonNull Call<MusicFully> call, @NonNull Response<MusicFully> response) {
+                                    if (response.isSuccessful()) {
+                                        MusicFully musicFully = response.body();
+                                        if (musicFully == null) return;
+                                        if(musicFully.getUrl()==null)return;
+                                        Log.d("MusicUrl", musicFully.getUrl());
+
+
+                                        Glide.with(MusicService.this).asBitmap().load(musicFully.getPic()).into(new CustomTarget<Bitmap>() {
+                                            @Override
+                                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+
+                                                ByteArrayOutputStream stream=new ByteArrayOutputStream();
+                                                resource.compress(Bitmap.CompressFormat.PNG,100,stream);
+                                                byte[] bitmapData=stream.toByteArray();
+
+                                                MediaMetadata metadata = metaDataBuilder
+                                                        .setTitle(musicFully.getName())
+                                                        .setArtist(musicFully.getArtist())
+                                                        .setArtworkData(bitmapData,MediaMetadata.PICTURE_TYPE_FRONT_COVER)
+                                                        .build();
+                                                MediaItem mediaItem = mediaItemBuilder
+                                                        .setUri(musicFully.getUrl())
+                                                        .setMediaMetadata(metadata)
+                                                        .build();
+                                                mediaItemArrayList.add(mediaItem);
+                                                if(finalI == musicList.size()-1){
+                                                    controller.setMediaItems(mediaItemArrayList);
+                                                    Log.d("MusicUrl","finished");
+                                                    //controller.prepare();
+                                                    //controller.play();
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                                            }
+                                        });
+                                    } else {
+                                        Log.e("MusicUrl", music.getName());
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(@NonNull Call<MusicFully> call, @NonNull Throwable throwable) {
+                                    Log.e("Music", "failed:" + throwable.getMessage());
+                                }
+                            });
+                        }
+
+
+                    } else {
+                        MainApplication.toast("获取在线歌单失败，正在加载本地歌单");
+                        fetchLocalData();
+                        Log.e(TAG, "failed");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ArrayList<Music>> call, Throwable throwable) {
+                    MainApplication.toast("获取在线歌单失败，正在加载本地歌单");
+                    fetchLocalData();
+                    Log.e(TAG, "error");
+                }
+            });
+        } else {
+            fetchLocalData();
+        }
+    }
+
+    public void fetchLocalData() {
         MusicScanner.scanLocalMedia(this, mediaItems -> {
             controllerFuture.addListener(() -> {
                 // Call controllerFuture.get() to retrieve the MediaController.
@@ -79,20 +209,20 @@ public class MusicService extends Service implements Player.Listener {
                 //playerView.setPlayer(controllerFuture.get());
                 try {
                     controller = controllerFuture.get();
+                    controller.setMediaItems(mediaItems);
+                    controller.setShuffleModeEnabled(true);
+                    for (Player.Listener listener : listeners)
+                        controller.addListener(listener);
+                    controller.addListener(new Player.Listener() {
+                        @Override
+                        public void onMediaItemTransition(@Nullable MediaItem mediaItem, int reason) {
+                            Player.Listener.super.onMediaItemTransition(mediaItem, reason);
+                        }
+                    });
                 } catch (ExecutionException | InterruptedException e) {
                     e.printStackTrace();
-                    Log.e("ControllerFeature",e.getMessage());
+                    Log.e("ControllerFeature", e.getMessage());
                 }
-                controller.setMediaItems(mediaItems);
-                controller.setShuffleModeEnabled(true);
-                for (Player.Listener listener : listeners)
-                    controller.addListener(listener);
-                controller.addListener(new Player.Listener() {
-                    @Override
-                    public void onMediaItemTransition(@Nullable MediaItem mediaItem, int reason) {
-                        Player.Listener.super.onMediaItemTransition(mediaItem, reason);
-                    }
-                });
             }, MoreExecutors.directExecutor());
         });
     }
@@ -115,7 +245,8 @@ public class MusicService extends Service implements Player.Listener {
         super.onDestroy();
         if (isViewInOverlay(lrcView))
             windowManager.removeView(lrcView);
-        controller.release();
+        if (controller != null)
+            controller.release();
     }
 
     public boolean isViewInOverlay(View view) {
@@ -149,46 +280,41 @@ public class MusicService extends Service implements Player.Listener {
 
     public class MusicBinder extends Binder {
         MediaItem mediaItem;
+        boolean ifShouldShowLyrics = false;
         private boolean isLyricsShown = false;
 
         public MusicBinder() {
             initWindow();
         }
 
-
         public void initWindow() {
-            // 获取WindowManager
-            windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-            // 创建布局参数
-            params = new WindowManager.LayoutParams();
-            //这里需要进行不同的设置
-            params.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
-            //设置透明度
-            params.alpha = 1.0f;
-            //设置内部视图对齐方式
-            params.gravity = Gravity.TOP;
+            windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);// 获取WindowManager
+            params = new WindowManager.LayoutParams();// 创建布局参数
+            params.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;//这里需要进行不同的设置
+            params.alpha = 1.0f;//设置透明度
+            params.gravity = Gravity.TOP;//设置内部视图对齐方式
             params.rotationAnimation = WindowManager.LayoutParams.ROTATION_ANIMATION_JUMPCUT;
-            //窗口的右下角角坐标
-            params.x = 20;
+            params.x = 20;//窗口的右下角角坐标
             params.y = 20;
-            //是指定窗口的像素格式为 RGBA_8888。
-            //使用 RGBA_8888 像素格式的窗口可以在保持高质量图像的同时实现透明度效果。
-            params.format = PixelFormat.RGBA_8888;
-            //设置窗口的宽高,这里为自动
-            params.width = WindowManager.LayoutParams.WRAP_CONTENT;
+            params.format = PixelFormat.RGBA_8888;//是指定窗口的像素格式为 RGBA_8888。使用 RGBA_8888 像素格式的窗口可以在保持高质量图像的同时实现透明度效果。
+            params.width = WindowManager.LayoutParams.WRAP_CONTENT;//设置窗口的宽高,这里为自动
             params.height = WindowManager.LayoutParams.WRAP_CONTENT;
             //这段非常重要，是后续是否穿透点击的关键
             params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
                     | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE  //表示悬浮窗口不需要获取焦点，这样用户点击悬浮窗口以外的区域，就不需要关闭悬浮窗口。
                     | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;//表示悬浮窗口不会阻塞事件传递，即用户点击悬浮窗口以外的区域时，事件会传递给后面的窗口处理。
-            lrcView = new TextView(getApplicationContext());
+            lrcView = new TextView(MusicService.this);
             lrcView.setTextColor(0xff66ccff);
             lrcView.setSingleLine();
-            lrcView.setText("");
             lrcView.setVisibility(View.GONE);
             if (Settings.canDrawOverlays(MusicService.this)) {
                 windowManager.addView(lrcView, params);
             }
+        }
+
+
+        public ArrayList<MediaItem> getMediaList(){
+            return mediaItemArrayList;
         }
 
         public void addListener(Player.Listener listener) {
@@ -199,33 +325,40 @@ public class MusicService extends Service implements Player.Listener {
         }
 
         public void removeListener(Player.Listener listener) {
+            if (controller == null) return;
             controller.removeListener(listener);
         }
 
         public void skipToPrevious() {
+            if (controller == null) return;
             controller.seekToPrevious();
             controller.play();
         }
 
         public void skipToNext() {
+            if (controller == null) return;
             controller.seekToNext();
             controller.play();
         }
 
         public void pause() {
+            if (controller == null) return;
             controller.pause();
         }
 
         public void play() {
+            if (controller == null) return;
             controller.play();
         }
 
         public void play(int index) {
+            if (controller == null) return;
             controller.seekTo(index, 0);
             controller.play();
         }
 
         public void seekToPosition(long positionMs) {
+            if (controller == null) return;
             controller.seekTo(positionMs);
         }
 
@@ -235,18 +368,22 @@ public class MusicService extends Service implements Player.Listener {
         }
 
         public boolean isPlaying() {
+            if (controller == null) return false;
             return controller.isPlaying();
         }
 
         public float getCurrentPosition() {
+            if (controller == null) return -1f;
             return controller.getCurrentPosition();
         }
 
         public void setCurrentPosition(float currentPosition) {
+            if (controller == null) return;
             controller.seekTo((long) currentPosition);
         }
 
         public float getDuration() {
+            if (controller == null) return -1f;
             return controller.getDuration();
         }
 
@@ -262,10 +399,12 @@ public class MusicService extends Service implements Player.Listener {
         }
 
         public int getCurrentMediaItemIndex() {
+            if (controller == null) return -1;
             return controller.getCurrentMediaItemIndex();
         }
 
         public Uri getMediaUri() {
+            if (controller == null) return null;
             mediaItem = controller.getCurrentMediaItem();
             Uri mediaUri = mediaItem.localConfiguration.uri;
             return mediaUri;
@@ -276,20 +415,20 @@ public class MusicService extends Service implements Player.Listener {
         }
 
         public List<LrcRow> getLyrics() {
+            if (controller == null) return null;
             String mediaPath = getMediaPath();
 
             int dotIndex = mediaPath.lastIndexOf('.');
             String lyricPath = mediaPath.substring(0, dotIndex) + ".lrc";
             File lyricFile = new File(lyricPath);
-            List<LrcRow> lrcRows = null;
+
             if (lyricFile.exists()) {
                 Log.d("lyricPath", lyricPath);
-                lrcRows = new LrcDataBuilder().Build(lyricFile);
+                return new LrcDataBuilder().Build(lyricFile);
             } else {
                 Log.d("lyricPath", "not existed");
                 return null;
             }
-            return lrcRows;
         }
 
         public String getTitle() {
@@ -302,22 +441,23 @@ public class MusicService extends Service implements Player.Listener {
 
         public void showLyrics() {
             lrcView.setVisibility(View.VISIBLE);
-            isLyricsShown=true;
+            isLyricsShown = true;
         }
 
         public void hideLyrics() {
             lrcView.setVisibility(View.GONE);
-            isLyricsShown=false;
+            isLyricsShown = false;
         }
 
         public void ifShouldShowLyrics(boolean ifShow) {
-            isLyricsShown=ifShow;
-            ifShouldShowLyrics=ifShow;
+            isLyricsShown = ifShow;
+            ifShouldShowLyrics = ifShow;
         }
-        public boolean getIfShouldShowLyrics(){
+
+        public boolean getIfShouldShowLyrics() {
             return ifShouldShowLyrics;
         }
-        boolean ifShouldShowLyrics=false;
+
         public boolean isLyricsShown() {
             return isLyricsShown;
         }
@@ -345,5 +485,4 @@ public class MusicService extends Service implements Player.Listener {
             return bitmap;
         }
     }
-
 }

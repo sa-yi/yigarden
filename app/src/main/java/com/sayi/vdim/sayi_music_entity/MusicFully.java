@@ -17,7 +17,7 @@ public class MusicFully {
         @SerializedName("artist")
         private String artist;
         @SerializedName("picid")
-        private int picId;
+        private long picId;
         @SerializedName("url")
         private String url;
         @SerializedName("pic")

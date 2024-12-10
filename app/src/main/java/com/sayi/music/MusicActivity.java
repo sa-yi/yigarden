@@ -52,7 +52,7 @@ public class MusicActivity extends AppCompatActivity implements Player.Listener,
             ticker.setInterval(1000);
             ticker.start();
 
-            onPlaybackStateChanged(Player.STATE_READY);
+
 
             setupOnclickListener();
             isInited = true;

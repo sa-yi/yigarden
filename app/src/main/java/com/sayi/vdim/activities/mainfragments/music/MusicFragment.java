@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
+import android.util.*;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,8 +28,7 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.core.content.*;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.media3.common.MediaItem;
-import androidx.media3.common.Player;
+import androidx.media3.common.*;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -40,8 +40,11 @@ import com.sayi.music.MusicSettingsActivity;
 import com.sayi.vdim.R;
 import com.sayi.vdim.databinding.FragmentMusicBinding;
 import com.sayi.vdim.databinding.MusicBarBinding;
+import com.sayi.vdim.sayi_music_entity.*;
 import com.sayi.vdim.utils.Dialog;
 import com.sayi.vdim.utils.Statusbar;
+
+import java.util.*;
 
 public class MusicFragment extends Fragment implements Player.Listener {
 
@@ -58,8 +61,9 @@ public class MusicFragment extends Fragment implements Player.Listener {
         public void onServiceConnected(ComponentName name, IBinder service) {
             binder = (MusicService.MusicBinder) service;
             binder.addListener(MusicFragment.this);
-            adapter = new MusicAdapter();
-            binding.recyclerview.setAdapter(adapter);
+
+
+            adapter.setMediaItems(binder.getMediaList());
             isServiceConnected = true;
         }
 
@@ -69,7 +73,7 @@ public class MusicFragment extends Fragment implements Player.Listener {
     };
     private Drawable playBtnDrawable, pauseBtnDrawable;
 
-    void requestPermission() {
+    private void requestPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             callPermissionRequest.launch(Manifest.permission.READ_MEDIA_AUDIO);
         } else {
@@ -77,7 +81,7 @@ public class MusicFragment extends Fragment implements Player.Listener {
         }
     }
 
-    boolean checkPermission(){
+    private boolean checkPermission(){
         String permission;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             permission=Manifest.permission.READ_MEDIA_AUDIO;
@@ -101,15 +105,17 @@ public class MusicFragment extends Fragment implements Player.Listener {
             //MainApplication.toast("requested");
         });
 
+        adapter = new MusicAdapter();
 
         playBtnDrawable = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_play);
         pauseBtnDrawable = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_pause);
     }
-
+    MusicViewModel musicViewModel;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        MusicViewModel musicViewModel =
-                new ViewModelProvider(this).get(MusicViewModel.class);
+        musicViewModel = new ViewModelProvider(this).get(MusicViewModel.class);
+
+
 
         binding = FragmentMusicBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -150,6 +156,9 @@ public class MusicFragment extends Fragment implements Player.Listener {
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         binding.recyclerview.setLayoutManager(linearLayoutManager);
 
+
+        binding.recyclerview.setAdapter(adapter);
+
         barBinding = MusicBarBinding.bind(root.findViewById(R.id.homeControlWrapper));
 
         barBinding.getRoot().setOnClickListener(v -> {
@@ -174,6 +183,13 @@ public class MusicFragment extends Fragment implements Player.Listener {
             binder.skipToPrevious();
         });
         return root;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        //musicViewModel.fetchSongList();
     }
 
     @Override
@@ -231,6 +247,14 @@ public class MusicFragment extends Fragment implements Player.Listener {
     public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> {
         private int currentPlayingIndex = -1;
 
+        public void setMediaItems(ArrayList<MediaItem> mediaItems) {
+            this.mediaItems = mediaItems;
+            notifyDataSetChanged();
+        }
+
+        private ArrayList<MediaItem> mediaItems=new ArrayList<>();
+
+
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -242,7 +266,7 @@ public class MusicFragment extends Fragment implements Player.Listener {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            MediaItem mediaItem = MusicScanner.mediaItems.get(position);
+            MediaItem mediaItem = mediaItems.get(position);
             holder.music_name.setText(mediaItem.mediaMetadata.title);
             holder.music_artist.setText(mediaItem.mediaMetadata.artist);
             holder.itemView.setOnClickListener(v -> {
@@ -260,7 +284,8 @@ public class MusicFragment extends Fragment implements Player.Listener {
 
         @Override
         public int getItemCount() {
-            return MusicScanner.mediaItems.size();
+            if(mediaItems==null)return 0;
+            return mediaItems.size();
         }
 
         public void setCurrentPlayingIndex(int index) {

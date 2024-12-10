@@ -7,13 +7,13 @@
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
-    <PreferenceCategory app:title="@string/messages_header">
 
-        <EditTextPreference
-            app:key="signature"
-            app:title="@string/signature_title"
-            app:useSimpleSummaryProvider="true" />
-
+    <PreferenceCategory app:title="音乐">
+        <SwitchPreferenceCompat
+            app:key="use_network"
+            app:title="网络"
+            app:summary="从网络加载歌单"
+            app:summaryOff="从本地加载歌单"/>
     </PreferenceCategory>
     <PreferenceCategory app:title="权限">
         <SwitchPreferenceCompat

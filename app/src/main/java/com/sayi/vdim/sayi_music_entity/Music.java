@@ -9,10 +9,20 @@ public class Music {
 
     @SerializedName("id")
     private int id;
+
+    public String getName() {
+        return name;
+    }
+
     @SerializedName("name")
     private String name;
     @SerializedName("picId")
     private int picId;
+
+    public String getPicUrl() {
+        return picUrl;
+    }
+
     @SerializedName("picUrl")
     private String picUrl;
 
