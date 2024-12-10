@@ -112,8 +112,8 @@ public class MusicFragment extends Fragment implements Player.Listener {
         binding.toolbarTitle.setText("音乐");
         binding.musicSettings.setOnClickListener(v -> {
             //TODO 音乐的设置界面
-            //Intent intent = new Intent(requireActivity(), MusicSettingsActivity.class);
-            //startActivity(intent);
+            Intent intent = new Intent(requireActivity(), MusicSettingsActivity.class);
+            startActivity(intent);
             MainApplication.toast("开发中");
         });
 
@@ -197,7 +197,6 @@ public class MusicFragment extends Fragment implements Player.Listener {
         Player.Listener.super.onMediaItemTransition(mediaItem, reason);
         if (mediaItem == null) return;
         barBinding.homeSongNameView.setText(mediaItem.mediaMetadata.title);
-        barBinding.homePlayPauseBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(pauseBtnDrawable, null, null, null);
         int currentIndex = binder.getCurrentMediaItemIndex();
         adapter.setCurrentPlayingIndex(currentIndex);
     }

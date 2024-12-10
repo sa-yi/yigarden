@@ -8,9 +8,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.sayi.vdim.R;
+import com.sayi.vdim.databinding.*;
 import com.sayi.vdim.utils.DarkModeUtils;
 
 public class MusicSettingsActivity extends AppCompatActivity {
+    ActivityMusicSettingsBinding binding;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,6 +23,7 @@ public class MusicSettingsActivity extends AppCompatActivity {
         }else {
             window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
-        setContentView(R.layout.activity_music_settings);
+        binding=ActivityMusicSettingsBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
     }
 }

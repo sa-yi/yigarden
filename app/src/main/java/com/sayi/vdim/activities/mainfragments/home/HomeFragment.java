@@ -78,10 +78,12 @@ public class HomeFragment extends Fragment {
 
 
         homeViewModel.getFailedData().observe(getViewLifecycleOwner(), failedData -> {
-            MainApplication.toast("获取帖子失败，正在重新获取cookie...");
-            Intent intent = new Intent(requireActivity(), WebLoginActivity.class);
-            startActivity(intent);
-            requireActivity().finish();
+            Dialog.init(requireActivity()).setupDialog("获取帖子失败","是否重新获取Cookie").setPositiveButton("确认", (dialogInterface, i) -> {
+                MainApplication.toast("正在重新获取cookie...");
+                Intent intent = new Intent(requireActivity(), WebLoginActivity.class);
+                startActivity(intent);
+                requireActivity().finish();
+            }).show();
         });
 
 
