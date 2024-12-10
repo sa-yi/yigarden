@@ -30,8 +30,6 @@ import com.sayi.music.util.lrcparser.*;
 import com.sayi.vdim.sayi_music_entity.*;
 import com.sayi.vdim.utils.*;
 
-import org.apache.hc.core5.util.*;
-
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
@@ -49,9 +47,9 @@ public class MusicService extends Service implements Player.Listener {
     ListenableFuture<MediaController> controllerFuture;
     SyService syService;
     boolean loadFromNetwork = false;
+    ArrayList<MediaItem> mediaItemArrayList = new ArrayList<>();
     private MusicBinder binder;
     private MediaController controller;
-    ArrayList<MediaItem> mediaItemArrayList=new ArrayList<>();
 
     public static String formatTime(float msec) {
         int minute = ((int) msec) / 1000 / 60;
@@ -121,9 +119,8 @@ public class MusicService extends Service implements Player.Listener {
                         if (musicList == null) return;
 
 
-
-                        for(int i=0;i<musicList.size();i++){
-                            Music music= musicList.get(i);
+                        for (int i = 0; i < musicList.size(); i++) {
+                            Music music = musicList.get(i);
                             Log.d("Music", music.getName());
                             Call<MusicFully> musicFullyCall = syService.getInfo(music.getId());
                             int finalI = i;
@@ -133,7 +130,7 @@ public class MusicService extends Service implements Player.Listener {
                                     if (response.isSuccessful()) {
                                         MusicFully musicFully = response.body();
                                         if (musicFully == null) return;
-                                        if(musicFully.getUrl()==null)return;
+                                        if (musicFully.getUrl() == null) return;
                                         Log.d("MusicUrl", musicFully.getUrl());
 
 
@@ -141,23 +138,24 @@ public class MusicService extends Service implements Player.Listener {
                                             @Override
                                             public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
 
-                                                ByteArrayOutputStream stream=new ByteArrayOutputStream();
-                                                resource.compress(Bitmap.CompressFormat.PNG,100,stream);
-                                                byte[] bitmapData=stream.toByteArray();
+                                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                                resource.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                                byte[] bitmapData = stream.toByteArray();
 
                                                 MediaMetadata metadata = metaDataBuilder
                                                         .setTitle(musicFully.getName())
                                                         .setArtist(musicFully.getArtist())
-                                                        .setArtworkData(bitmapData,MediaMetadata.PICTURE_TYPE_FRONT_COVER)
+                                                        .setArtworkData(bitmapData, MediaMetadata.PICTURE_TYPE_FRONT_COVER)
                                                         .build();
                                                 MediaItem mediaItem = mediaItemBuilder
                                                         .setUri(musicFully.getUrl())
                                                         .setMediaMetadata(metadata)
                                                         .build();
                                                 mediaItemArrayList.add(mediaItem);
-                                                if(finalI == musicList.size()-1){
+                                                if (finalI == musicList.size() - 1) {
                                                     controller.setMediaItems(mediaItemArrayList);
-                                                    Log.d("MusicUrl","finished");
+                                                    binder.setMediaItemArrayList(mediaItemArrayList);
+                                                    Log.d("MusicUrl", "finished");
                                                     //controller.prepare();
                                                     //controller.play();
                                                 }
@@ -210,6 +208,7 @@ public class MusicService extends Service implements Player.Listener {
                 try {
                     controller = controllerFuture.get();
                     controller.setMediaItems(mediaItems);
+                    binder.setMediaItemArrayList(mediaItems);
                     controller.setShuffleModeEnabled(true);
                     for (Player.Listener listener : listeners)
                         controller.addListener(listener);
@@ -282,6 +281,7 @@ public class MusicService extends Service implements Player.Listener {
         MediaItem mediaItem;
         boolean ifShouldShowLyrics = false;
         private boolean isLyricsShown = false;
+        private LoadFinishedListener listener;
 
         public MusicBinder() {
             initWindow();
@@ -312,9 +312,14 @@ public class MusicService extends Service implements Player.Listener {
             }
         }
 
+        public void setOnLoadFinishedListener(LoadFinishedListener listener) {
+            this.listener = listener;
+        }
 
-        public ArrayList<MediaItem> getMediaList(){
-            return mediaItemArrayList;
+        public void setMediaItemArrayList(ArrayList<MediaItem> mediaItemArrayList) {
+            MusicService.this.mediaItemArrayList = mediaItemArrayList;
+            listener.onLoadFinished(mediaItemArrayList);
+
         }
 
         public void addListener(Player.Listener listener) {
@@ -483,6 +488,10 @@ public class MusicService extends Service implements Player.Listener {
                 e.printStackTrace();
             }
             return bitmap;
+        }
+
+        public interface LoadFinishedListener {
+            public void onLoadFinished(ArrayList<MediaItem> mediaItems);
         }
     }
 }

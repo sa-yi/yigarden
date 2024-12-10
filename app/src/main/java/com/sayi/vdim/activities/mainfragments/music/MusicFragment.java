@@ -1,48 +1,32 @@
 package com.sayi.vdim.activities.mainfragments.music;
 
-import static android.content.Context.BIND_AUTO_CREATE;
+import static android.content.Context.*;
 
 import android.Manifest;
-import android.content.ComponentName;
-import android.content.Intent;
-import android.content.ServiceConnection;
+import android.content.*;
 import android.content.pm.*;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.provider.Settings;
-import android.util.*;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.graphics.drawable.*;
+import android.net.*;
+import android.os.*;
+import android.provider.*;
+import android.view.*;
+import android.widget.*;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.activity.result.*;
+import androidx.activity.result.contract.*;
+import androidx.annotation.*;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.content.*;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.fragment.app.*;
+import androidx.lifecycle.*;
 import androidx.media3.common.*;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.*;
 
-import com.sayi.MainApplication;
-import com.sayi.music.MusicActivity;
-import com.sayi.music.MusicScanner;
-import com.sayi.music.MusicService;
-import com.sayi.music.MusicSettingsActivity;
+import com.sayi.*;
+import com.sayi.music.*;
 import com.sayi.vdim.R;
-import com.sayi.vdim.databinding.FragmentMusicBinding;
-import com.sayi.vdim.databinding.MusicBarBinding;
-import com.sayi.vdim.sayi_music_entity.*;
-import com.sayi.vdim.utils.Dialog;
-import com.sayi.vdim.utils.Statusbar;
+import com.sayi.vdim.databinding.*;
+import com.sayi.vdim.utils.*;
 
 import java.util.*;
 
@@ -55,7 +39,6 @@ public class MusicFragment extends Fragment implements Player.Listener {
     boolean granted = false;
     ActivityResultLauncher<String> callPermissionRequest;
     int clickCount = 0;
-    private FragmentMusicBinding binding;
     ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -63,7 +46,10 @@ public class MusicFragment extends Fragment implements Player.Listener {
             binder.addListener(MusicFragment.this);
 
 
-            adapter.setMediaItems(binder.getMediaList());
+            binder.setOnLoadFinishedListener(mediaItems -> {
+                adapter.setMediaItems(mediaItems);
+            });
+
             isServiceConnected = true;
         }
 
@@ -71,6 +57,8 @@ public class MusicFragment extends Fragment implements Player.Listener {
         public void onServiceDisconnected(ComponentName componentName) {
         }
     };
+    MusicViewModel musicViewModel;
+    private FragmentMusicBinding binding;
     private Drawable playBtnDrawable, pauseBtnDrawable;
 
     private void requestPermission() {
@@ -81,14 +69,14 @@ public class MusicFragment extends Fragment implements Player.Listener {
         }
     }
 
-    private boolean checkPermission(){
+    private boolean checkPermission() {
         String permission;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            permission=Manifest.permission.READ_MEDIA_AUDIO;
-        }else {
-            permission=Manifest.permission.READ_EXTERNAL_STORAGE;
+            permission = Manifest.permission.READ_MEDIA_AUDIO;
+        } else {
+            permission = Manifest.permission.READ_EXTERNAL_STORAGE;
         }
-        return ContextCompat.checkSelfPermission(requireActivity(),permission) == PackageManager.PERMISSION_GRANTED;
+        return ContextCompat.checkSelfPermission(requireActivity(), permission) == PackageManager.PERMISSION_GRANTED;
     }
 
     @Override
@@ -110,11 +98,10 @@ public class MusicFragment extends Fragment implements Player.Listener {
         playBtnDrawable = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_play);
         pauseBtnDrawable = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_pause);
     }
-    MusicViewModel musicViewModel;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         musicViewModel = new ViewModelProvider(this).get(MusicViewModel.class);
-
 
 
         binding = FragmentMusicBinding.inflate(inflater, container, false);
@@ -130,7 +117,7 @@ public class MusicFragment extends Fragment implements Player.Listener {
             MainApplication.toast("开发中");
         });
 
-        if(checkPermission()){
+        if (checkPermission()) {
             binding.reqPermView.setVisibility(View.GONE);
             requestPermission();
         }
@@ -246,22 +233,19 @@ public class MusicFragment extends Fragment implements Player.Listener {
 
     public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> {
         private int currentPlayingIndex = -1;
+        private ArrayList<MediaItem> mediaItems = new ArrayList<>();
 
         public void setMediaItems(ArrayList<MediaItem> mediaItems) {
-            this.mediaItems = mediaItems;
+            this.mediaItems.addAll(mediaItems);
             notifyDataSetChanged();
         }
-
-        private ArrayList<MediaItem> mediaItems=new ArrayList<>();
-
 
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            ViewHolder holder = new ViewHolder(LayoutInflater.from(
+            return new ViewHolder(LayoutInflater.from(
                     getContext()).inflate(R.layout.item_music, parent,
                     false));
-            return holder;
         }
 
         @Override
@@ -284,7 +268,6 @@ public class MusicFragment extends Fragment implements Player.Listener {
 
         @Override
         public int getItemCount() {
-            if(mediaItems==null)return 0;
             return mediaItems.size();
         }
 
