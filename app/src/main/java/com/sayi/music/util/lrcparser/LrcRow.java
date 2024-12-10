@@ -34,10 +34,14 @@ public class LrcRow{
 
 	
 	public static float unformatTime(String time){
-		String[] timeParts=time.split(":");
-		int minutes=Integer.parseInt(timeParts[0]);
-		float seconds=Float.parseFloat(timeParts[1]);
-		return minutes*60+seconds;
+		try {
+			String[] timeParts = time.split(":");
+			int minutes = Integer.parseInt(timeParts[0]);
+			float seconds = Float.parseFloat(timeParts[1]);
+			return minutes * 60 + seconds;
+		}catch (Exception e){
+			return -1f;
+		}
 	}
 
 	@Override

@@ -22,6 +22,7 @@
 
 # 保留 com.sayi.vdim.dz_entity 包下的所有类及其字段
 -keep class com.sayi.vdim.dz_entity.** { *; }
+-keep class com.sayi.vdim.sayi_music_entity.** {*;}
 
 -optimizationpasses 5
 
