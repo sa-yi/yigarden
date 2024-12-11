@@ -74,157 +74,12 @@ public class MusicService extends Service implements Player.Listener {
         super.onCreate();
         SessionToken sessionToken =
                 new SessionToken(this, new ComponentName(this, PlaybackService.class));
-        controllerFuture =
-                new MediaController.Builder(this, sessionToken).buildAsync();
+        controllerFuture = new MediaController.Builder(this, sessionToken).buildAsync();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         loadFromNetwork = sharedPreferences.getBoolean("use_network", false);
-
-        if (loadFromNetwork) {
-            syService = SyClient.getRetrofitInstance().create(SyService.class);
-            Call<ArrayList<Music>> musicListCall = syService.getSongList();
-            musicListCall.enqueue(new Callback<>() {
-                @Override
-                public void onResponse(@NonNull Call<ArrayList<Music>> call, @NonNull Response<ArrayList<Music>> response) {
-                    if (response.isSuccessful()) {
-                        MediaItem.Builder mediaItemBuilder = new MediaItem.Builder();
-                        MediaMetadata.Builder metaDataBuilder = new MediaMetadata.Builder();
-
-
-                        controllerFuture.addListener(() -> {
-                            // Call controllerFuture.get() to retrieve the MediaController.
-                            // MediaController implements the Player interface, so it can be
-                            // attached to the PlayerView UI component.
-                            //playerView.setPlayer(controllerFuture.get());
-                            try {
-                                controller = controllerFuture.get();
-                                controller.setMediaItems(mediaItemArrayList);
-                                controller.setShuffleModeEnabled(true);
-                                for (Player.Listener listener : listeners)
-                                    controller.addListener(listener);
-                                controller.addListener(new Player.Listener() {
-                                    @Override
-                                    public void onMediaItemTransition(@Nullable MediaItem mediaItem, int reason) {
-                                        Player.Listener.super.onMediaItemTransition(mediaItem, reason);
-                                    }
-                                });
-                            } catch (ExecutionException | InterruptedException e) {
-                                e.printStackTrace();
-                                Log.e("ControllerFeature", e.getMessage());
-                            }
-                        }, MoreExecutors.directExecutor());
-
-
-                        ArrayList<Music> musicList = response.body();
-                        if (musicList == null) return;
-
-
-                        for (int i = 0; i < musicList.size(); i++) {
-                            Music music = musicList.get(i);
-                            Log.d("Music", music.getName());
-                            Call<MusicFully> musicFullyCall = syService.getInfo(music.getId());
-                            int finalI = i;
-                            musicFullyCall.enqueue(new Callback<>() {
-                                @Override
-                                public void onResponse(@NonNull Call<MusicFully> call, @NonNull Response<MusicFully> response) {
-                                    if (response.isSuccessful()) {
-                                        MusicFully musicFully = response.body();
-                                        if (musicFully == null) return;
-                                        if (musicFully.getUrl() == null) return;
-                                        Log.d("MusicUrl", musicFully.getUrl());
-
-
-                                        Glide.with(MusicService.this).asBitmap().load(musicFully.getPic()).into(new CustomTarget<Bitmap>() {
-                                            @Override
-                                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-
-                                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                                                resource.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                                                byte[] bitmapData = stream.toByteArray();
-
-                                                MediaMetadata metadata = metaDataBuilder
-                                                        .setTitle(musicFully.getName())
-                                                        .setArtist(musicFully.getArtist())
-                                                        .setArtworkData(bitmapData, MediaMetadata.PICTURE_TYPE_FRONT_COVER)
-                                                        .build();
-                                                MediaItem mediaItem = mediaItemBuilder
-                                                        .setUri(musicFully.getUrl())
-                                                        .setMediaMetadata(metadata)
-                                                        .build();
-                                                mediaItemArrayList.add(mediaItem);
-                                                if (finalI == musicList.size() - 1) {
-                                                    controller.setMediaItems(mediaItemArrayList);
-                                                    binder.setMediaItemArrayList(mediaItemArrayList);
-                                                    Log.d("MusicUrl", "finished");
-                                                    //controller.prepare();
-                                                    //controller.play();
-                                                }
-                                            }
-
-                                            @Override
-                                            public void onLoadCleared(@Nullable Drawable placeholder) {
-
-                                            }
-                                        });
-                                    } else {
-                                        Log.e("MusicUrl", music.getName());
-                                    }
-                                }
-
-                                @Override
-                                public void onFailure(@NonNull Call<MusicFully> call, @NonNull Throwable throwable) {
-                                    Log.e("Music", "failed:" + throwable.getMessage());
-                                }
-                            });
-                        }
-
-
-                    } else {
-                        MainApplication.toast("获取在线歌单失败，正在加载本地歌单");
-                        fetchLocalData();
-                        Log.e(TAG, "failed");
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<ArrayList<Music>> call, Throwable throwable) {
-                    MainApplication.toast("获取在线歌单失败，正在加载本地歌单");
-                    fetchLocalData();
-                    Log.e(TAG, "error");
-                }
-            });
-        } else {
-            fetchLocalData();
-        }
     }
 
-    public void fetchLocalData() {
-        MusicScanner.scanLocalMedia(this, mediaItems -> {
-            controllerFuture.addListener(() -> {
-                // Call controllerFuture.get() to retrieve the MediaController.
-                // MediaController implements the Player interface, so it can be
-                // attached to the PlayerView UI component.
-                //playerView.setPlayer(controllerFuture.get());
-                try {
-                    controller = controllerFuture.get();
-                    controller.setMediaItems(mediaItems);
-                    binder.setMediaItemArrayList(mediaItems);
-                    controller.setShuffleModeEnabled(true);
-                    for (Player.Listener listener : listeners)
-                        controller.addListener(listener);
-                    controller.addListener(new Player.Listener() {
-                        @Override
-                        public void onMediaItemTransition(@Nullable MediaItem mediaItem, int reason) {
-                            Player.Listener.super.onMediaItemTransition(mediaItem, reason);
-                        }
-                    });
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                    Log.e("ControllerFeature", e.getMessage());
-                }
-            }, MoreExecutors.directExecutor());
-        });
-    }
 
     @Nullable
     @Override
@@ -382,11 +237,6 @@ public class MusicService extends Service implements Player.Listener {
             return controller.getCurrentPosition();
         }
 
-        public void setCurrentPosition(float currentPosition) {
-            if (controller == null) return;
-            controller.seekTo((long) currentPosition);
-        }
-
         public float getDuration() {
             if (controller == null) return -1f;
             return controller.getDuration();
@@ -421,6 +271,13 @@ public class MusicService extends Service implements Player.Listener {
 
         public List<LrcRow> getLyrics() {
             if (controller == null) return null;
+            if (loadFromNetwork) {
+
+
+                return null;
+            }
+
+
             String mediaPath = getMediaPath();
 
             int dotIndex = mediaPath.lastIndexOf('.');
@@ -468,6 +325,7 @@ public class MusicService extends Service implements Player.Listener {
         }
 
         public Bitmap getAlbumCover() {
+            mediaItem = controller.getCurrentMediaItem();
             Bitmap bitmap = null;
             Uri artworkUri = mediaItem.mediaMetadata.artworkUri;
             Log.d("artworkUri", artworkUri + "");
@@ -484,14 +342,208 @@ public class MusicService extends Service implements Player.Listener {
                     return bitmap;
                 }
                 retriever.release();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return bitmap;
         }
 
+        public Bitmap getArtWork() {//网络
+            mediaItem = controller.getCurrentMediaItem();
+
+            Bitmap bitmap;
+
+            byte[] albumArt = mediaItem.mediaMetadata.artworkData;;
+            if (albumArt != null) {
+                // 将字节数组转换为Bitmap
+                bitmap = BitmapFactory.decodeByteArray(albumArt, 0, albumArt.length);
+                // 设置专辑封面给ImageView
+                return bitmap;
+            }
+            return null;
+        }
+
+        public void fetchData(){
+            if (loadFromNetwork) {
+                syService = SyClient.getRetrofitInstance().create(SyService.class);
+                Call<ArrayList<Music>> musicListCall = syService.getSongList();
+                musicListCall.enqueue(new Callback<>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ArrayList<Music>> call, @NonNull Response<ArrayList<Music>> response) {
+                        if (response.isSuccessful()) {
+                            MediaItem.Builder mediaItemBuilder = new MediaItem.Builder();
+                            MediaMetadata.Builder metaDataBuilder = new MediaMetadata.Builder();
+
+
+                            controllerFuture.addListener(() -> {
+                                // Call controllerFuture.get() to retrieve the MediaController.
+                                // MediaController implements the Player interface, so it can be
+                                // attached to the PlayerView UI component.
+                                //playerView.setPlayer(controllerFuture.get());
+                                try {
+                                    controller = controllerFuture.get();
+                                    controller.setMediaItems(mediaItemArrayList);
+                                    controller.setShuffleModeEnabled(true);
+                                    for (Player.Listener listener : listeners)
+                                        controller.addListener(listener);
+                                    controller.addListener(new Player.Listener() {
+                                        @Override
+                                        public void onMediaItemTransition(@Nullable MediaItem mediaItem, int reason) {
+                                            Player.Listener.super.onMediaItemTransition(mediaItem, reason);
+                                        }
+                                    });
+                                } catch (ExecutionException | InterruptedException e) {
+                                    e.printStackTrace();
+                                    Log.e("ControllerFeature", e.getMessage());
+                                }
+                            }, MoreExecutors.directExecutor());
+
+
+                            ArrayList<Music> musicList = response.body();
+                            if (musicList == null) return;
+
+
+                            for (int i = 0; i < musicList.size(); i++) {
+                                Music music = musicList.get(i);
+                                Log.d("Music", music.getName());
+                                Call<MusicFully> musicFullyCall = syService.getInfo(music.getId());
+                                int finalI = i;
+
+
+                                musicFullyCall.enqueue(new Callback<>() {
+                                    @Override
+                                    public void onResponse(@NonNull Call<MusicFully> call, @NonNull Response<MusicFully> response) {
+                                        if (response.isSuccessful()) {
+                                            MusicFully musicFully = response.body();
+                                            if (musicFully == null) return;
+                                            if (musicFully.getUrl() == null) return;
+                                            Log.d("MusicUrl", musicFully.getUrl());
+
+
+                                            MediaMetadata metadata = metaDataBuilder
+                                                    .setTitle(musicFully.getName())
+                                                    .setArtist(musicFully.getArtist())
+                                                    .build();
+                                            MediaItem mediaItem = mediaItemBuilder
+                                                    .setUri(musicFully.getUrl())
+                                                    .setMediaMetadata(metadata)
+                                                    .build();
+                                            mediaItemArrayList.add(mediaItem);
+                                            if (finalI == musicList.size() - 1) {
+                                                controller.setMediaItems(mediaItemArrayList);
+                                                binder.setMediaItemArrayList(mediaItemArrayList);
+                                                Log.d("MusicUrl", "finished");
+                                                //controller.prepare();
+                                                //controller.play();
+                                            }
+                                            Glide.with(MusicService.this).asBitmap().load(musicFully.getPic()).into(new CustomTarget<Bitmap>() {
+                                                @Override
+                                                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+
+                                                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                                    resource.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                                    byte[] bitmapData = stream.toByteArray();
+
+                                                    MediaMetadata metadata = metaDataBuilder
+                                                            .setTitle(musicFully.getName())
+                                                            .setArtist(musicFully.getArtist())
+                                                            .setArtworkData(bitmapData, MediaMetadata.PICTURE_TYPE_FRONT_COVER)
+                                                            .build();
+                                                    MediaItem mediaItem = mediaItemBuilder
+                                                            .setUri(musicFully.getUrl())
+                                                            .setMediaMetadata(metadata)
+                                                            .build();
+                                                    controller.replaceMediaItem(finalI,mediaItem);
+                                                }
+
+                                                @Override
+                                                public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                                                }
+                                            });
+                                        } else {
+                                            Log.e("MusicUrl", music.getName());
+                                        }
+                                    }
+                                    @Override
+                                    public void onFailure(@NonNull Call<MusicFully> call, @NonNull Throwable throwable) {
+                                        Log.e("Music", "failed:" + throwable.getMessage());
+                                    }
+                                });
+                            }
+                        } else {
+                            MainApplication.toast("获取在线歌单失败，正在加载本地歌单");
+                            fetchLocalData();
+                            Log.e(TAG, "failed");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ArrayList<Music>> call, Throwable throwable) {
+                        MainApplication.toast("获取在线歌单失败，正在加载本地歌单");
+                        fetchLocalData();
+                        Log.e(TAG, "error");
+                    }
+                });
+            } else {
+                fetchLocalData();
+            }
+        }
+
+        public void fetchSingleData(Music music) {
+
+            Call<MusicFully> musicFullyCall = syService.getInfo(music.getId());
+
+
+            musicFullyCall.enqueue(new Callback<>() {
+                @Override
+                public void onResponse(@NonNull Call<MusicFully> call, @NonNull Response<MusicFully> response) {
+                    if (response.isSuccessful()) {
+                        MusicFully musicFully = response.body();
+                        if (musicFully == null) return;
+                        if (musicFully.getUrl() == null) return;
+                        Log.d("MusicUrl", musicFully.getUrl());
+
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<MusicFully> call, Throwable throwable) {
+
+                }
+            });
+        }
+
+
+        public void fetchLocalData() {
+            MusicScanner.scanLocalMedia(MusicService.this, mediaItems -> {
+                controllerFuture.addListener(() -> {
+                    // Call controllerFuture.get() to retrieve the MediaController.
+                    // MediaController implements the Player interface, so it can be
+                    // attached to the PlayerView UI component.
+                    //playerView.setPlayer(controllerFuture.get());
+                    try {
+                        controller = controllerFuture.get();
+                        controller.setMediaItems(mediaItems);
+                        binder.setMediaItemArrayList(mediaItems);
+                        controller.setShuffleModeEnabled(true);
+                        for (Player.Listener listener : listeners)
+                            controller.addListener(listener);
+                        controller.addListener(new Player.Listener() {
+                            @Override
+                            public void onMediaItemTransition(@Nullable MediaItem mediaItem, int reason) {
+                                Player.Listener.super.onMediaItemTransition(mediaItem, reason);
+                            }
+                        });
+                    } catch (ExecutionException | InterruptedException e) {
+                        Log.e("ControllerFeature", Objects.requireNonNull(e.getMessage()));
+                    }
+                }, MoreExecutors.directExecutor());
+            });
+        }
         public interface LoadFinishedListener {
-            public void onLoadFinished(ArrayList<MediaItem> mediaItems);
+            void onLoadFinished(ArrayList<MediaItem> mediaItems);
         }
     }
 }

@@ -55,8 +55,7 @@
                 </androidx.appcompat.widget.Toolbar>
             </com.google.android.material.appbar.AppBarLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerview"
+            <FrameLayout
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="@color/default_background"
@@ -64,7 +63,13 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/appbar"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintVertical_bias="0.0" >
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </FrameLayout>
 
             <fragment
                 android:id="@+id/homeControlWrapper"
@@ -76,21 +81,23 @@
 
         <LinearLayout
             android:id="@+id/req_perm_view"
-            android:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/white_blue"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="visible">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="权限未授予，无法加载本地音乐"/>
+                android:text="权限未授予，无法加载本地音乐" />
+
             <Button
                 android:id="@+id/req_media_perm"
-                android:text="申请权限"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="申请权限" />
         </LinearLayout>
     </FrameLayout>
 </layout>

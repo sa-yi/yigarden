@@ -19,10 +19,6 @@ public class Music {
     @SerializedName("picId")
     private int picId;
 
-    public String getPicUrl() {
-        return picUrl;
-    }
-
     @SerializedName("picUrl")
     private String picUrl;
 

@@ -34,10 +34,7 @@ public class LrcDataBuilder {
      */
     public List<LrcRow> Build(File lrcFile, IRowsParser parser) {
         return Build(LoadContentFromFile(lrcFile), parser);
-
     }
-
-
     /**
      * @param context
      * @param fileName

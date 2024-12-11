@@ -48,8 +48,9 @@ public class MusicFragment extends Fragment implements Player.Listener {
 
             binder.setOnLoadFinishedListener(mediaItems -> {
                 adapter.setMediaItems(mediaItems);
-            });
 
+            });
+            binder.fetchData();
             isServiceConnected = true;
         }
 
@@ -107,6 +108,15 @@ public class MusicFragment extends Fragment implements Player.Listener {
         binding = FragmentMusicBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+
+        return root;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        //musicViewModel.fetchSongList();
         binding.statusbarPlaceholder.setHeight(Statusbar.getStatusBHeight(requireActivity()));
         binding.statusbarPlaceholder.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white_blue));
         binding.toolbarTitle.setText("音乐");
@@ -146,7 +156,7 @@ public class MusicFragment extends Fragment implements Player.Listener {
 
         binding.recyclerview.setAdapter(adapter);
 
-        barBinding = MusicBarBinding.bind(root.findViewById(R.id.homeControlWrapper));
+        barBinding = MusicBarBinding.bind(binding.getRoot().findViewById(R.id.homeControlWrapper));
 
         barBinding.getRoot().setOnClickListener(v -> {
             if (!granted) return;
@@ -169,14 +179,6 @@ public class MusicFragment extends Fragment implements Player.Listener {
             if (!granted) return;
             binder.skipToPrevious();
         });
-        return root;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        //musicViewModel.fetchSongList();
     }
 
     @Override
@@ -215,11 +217,12 @@ public class MusicFragment extends Fragment implements Player.Listener {
     }
 
     private void showPopupMenu(View view, int position) {
-        PopupMenu popupMenu = new PopupMenu(requireContext(), view);
+        PopupMenu popupMenu = new PopupMenu(requireActivity(), view);
         popupMenu.inflate(R.menu.item_menu);
         popupMenu.setOnMenuItemClickListener(menuItem -> {
             int itemId = menuItem.getItemId();
             if (itemId == R.id.action_play_next) {
+                MainApplication.toast("开发中");
                 return true;
             } else if (itemId == R.id.action_play) {
                 binder.play(position);

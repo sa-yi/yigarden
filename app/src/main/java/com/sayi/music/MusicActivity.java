@@ -1,35 +1,29 @@
 package com.sayi.music;
 
-import static android.view.KeyEvent.KEYCODE_BACK;
+import static android.view.KeyEvent.*;
 
-import android.content.ComponentName;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.provider.Settings;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.View;
-import android.view.Window;
-import android.widget.SeekBar;
+import android.content.*;
+import android.graphics.*;
+import android.graphics.drawable.*;
+import android.net.*;
+import android.os.*;
+import android.provider.*;
+import android.util.*;
+import android.view.*;
+import android.widget.*;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.media3.common.MediaItem;
-import androidx.media3.common.Player;
+import androidx.activity.result.*;
+import androidx.activity.result.contract.*;
+import androidx.annotation.*;
+import androidx.appcompat.app.*;
+import androidx.media3.common.*;
 
-import com.sayi.MainApplication;
+import com.sayi.*;
 import com.sayi.vdim.R;
-import com.sayi.vdim.databinding.ActivityMusicBinding;
-import com.sayi.vdim.utils.DarkModeUtils;
-import com.sayi.vdim.utils.Ticker;
+import com.sayi.vdim.databinding.*;
+import com.sayi.vdim.utils.*;
 
-public class MusicActivity extends AppCompatActivity implements Player.Listener, Ticker.OnTickListener {
+public class MusicActivity extends AppCompatActivity implements Player.Listener {
     Ticker ticker;
     ActivityMusicBinding binding;
     MusicService.MusicBinder binder;
@@ -39,7 +33,7 @@ public class MusicActivity extends AppCompatActivity implements Player.Listener,
     ActivityResultLauncher<Intent> resultLauncher;
     boolean isInited = false;
 
-    boolean showLyrics=false;
+    boolean showLyrics = false;
 
     ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -48,11 +42,17 @@ public class MusicActivity extends AppCompatActivity implements Player.Listener,
             binder.addListener(MusicActivity.this);
 
             ticker = new Ticker();
-            ticker.addOnTickListener(MusicActivity.this);
+            ticker.addOnTickListener(() -> {
+
+                binding.current.setText(binder.getFormattedCurrentPosition());
+                if (lrcViewScrolledDelayedCount > 0) lrcViewScrolledDelayedCount--;
+                else binding.lrcview.smoothScrollToTime((long) binder.getCurrentPosition());
+                if (!isSeekBarTracking) binding.seek.setProgress((int) binder.getCurrentPosition());
+            });
             ticker.setInterval(1000);
             ticker.start();
 
-
+            update();
 
             setupOnclickListener();
             isInited = true;
@@ -69,14 +69,6 @@ public class MusicActivity extends AppCompatActivity implements Player.Listener,
             binder.removeListener(MusicActivity.this);
         }
     };
-
-    @Override
-    public void onTick() {
-        binding.current.setText(binder.getFormattedCurrentPosition());
-        if (lrcViewScrolledDelayedCount > 0) lrcViewScrolledDelayedCount--;
-        else binding.lrcview.smoothScrollToTime((long) binder.getCurrentPosition());
-        if (!isSeekBarTracking) binding.seek.setProgress((int) binder.getCurrentPosition());
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -126,7 +118,7 @@ public class MusicActivity extends AppCompatActivity implements Player.Listener,
     protected void onStop() {
         super.onStop();
         if (isInited)
-            if(showLyrics)
+            if (showLyrics)
                 binder.showLyrics();
 
     }
@@ -145,13 +137,20 @@ public class MusicActivity extends AppCompatActivity implements Player.Listener,
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(binder!=null){
-            if(binder.getIfShouldShowLyrics())
+        if (binder != null) {
+            if (binder.getIfShouldShowLyrics())
                 binder.showLyrics();
         }
     }
 
     void setupOnclickListener() {
+        binding.cover.setOnClickListener(v -> {
+            binding.cover.setVisibility(View.GONE);
+        });
+        binding.lrcview.setOnClickListener(v -> {
+            binding.cover.setVisibility(View.VISIBLE);
+        });
+
         binding.playOrPause.setOnClickListener(v -> {
             binder.playOrPause();
         });
@@ -210,19 +209,25 @@ public class MusicActivity extends AppCompatActivity implements Player.Listener,
     public void onPlaybackStateChanged(int playbackState) {
         if (playbackState == Player.STATE_READY) {
             binding.playOrPause.setImageResource(binder.isPlaying() ? R.drawable.ic_pause : R.drawable.ic_play);
-            binding.duration.setText(binder.getFormattedDuration());
-            binding.seek.setMax((int) binder.getDuration());
             update();
         }
     }
 
     void update() {
+        Bitmap artWork = binder.getArtWork();
+        if (artWork != null) {
+            binding.cover.setImageBitmap(artWork);//网络
+        }
+        Bitmap bitmap = binder.getAlbumCover();
+        if (bitmap != null)
+            binding.cover.setImageBitmap(bitmap);//本地
+
         binding.lrcview.setLrcData(binder.getLyrics());
         binding.title.setText(binder.getTitle());
         binding.author.setText(binder.getAuthor());
-        Bitmap bitmap = binder.getAlbumCover();
-        if (bitmap != null)
-            binding.cover.setImageBitmap(bitmap);
+
+        binding.seek.setMax((int) binder.getDuration());
+        binding.duration.setText(binder.getFormattedDuration());
     }
 
     @Override
