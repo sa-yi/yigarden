@@ -48,7 +48,6 @@ public class MusicFragment extends Fragment implements Player.Listener {
 
             binder.setOnLoadFinishedListener(mediaItems -> {
                 adapter.setMediaItems(mediaItems);
-
             });
             binder.fetchData();
             isServiceConnected = true;

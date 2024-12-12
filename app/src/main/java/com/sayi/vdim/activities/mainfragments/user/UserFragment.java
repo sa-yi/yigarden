@@ -154,14 +154,14 @@ public class UserFragment extends Fragment {
                 Uri uri = Uri.parse(code);
                 String scheme = uri.getScheme();//vdim,http,htps
                 String authority = uri.getAuthority();//i.lty.fan
-                String path=uri.getPath();//viewthread
+                String path = uri.getPath();//viewthread
                 String query = uri.getQuery();//tid=679
                 Set<String> parameter = uri.getQueryParameterNames();//?
-                String paras="";
-                for(String para:parameter){
-                    paras+=","+para;
+                String paras = "";
+                for (String para : parameter) {
+                    paras += "," + para;
                 }
-                Log.d("qrcode", "scheme:" + scheme + ",authority:" + authority + ",parameter:"+paras+",query:" + query+",path="+path);
+                Log.d("qrcode", "scheme:" + scheme + ",authority:" + authority + ",parameter:" + paras + ",query:" + query + ",path=" + path);
                 if (scheme == null) {
                     return;
                 }
@@ -169,10 +169,31 @@ public class UserFragment extends Fragment {
                     return;
                 }
                 if (scheme.equals("vdim")) {
-
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
+                    return;
                 } else if (scheme.equals("http") || scheme.equals("https")) {
                     if (authority.equals("i.lty.fan")) {
-
+                        if (path.equals("/forum.php")) {
+                            String mod = uri.getQueryParameter("mod");
+                            if (mod != null) {
+                                if (mod.equals("viewthread")) {
+                                    Log.d("thread", query);
+                                    String tidStr = uri.getQueryParameter("tid");
+                                    Log.d("tid", tidStr);
+                                    int tid = Integer.parseInt(tidStr);
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vdim://i.lty.fan/viewthread?tid=" + tid));
+                                    startActivity(intent);
+                                } else if (mod.equals("forumdisplay")) {
+                                    String fidStr = uri.getQueryParameter("fid");
+                                    Log.d(mod + ":fid", fidStr);
+                                    int fid = Integer.parseInt(fidStr);
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vdim://i.lty.fan/forum?fid=" + fid));
+                                    startActivity(intent);
+                                }
+                            }
+                        }
+                        return;
                     }
                 }
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);

@@ -8,10 +8,10 @@ plugins {
 android {
     namespace = "com.sayi.vdim"
     compileSdk = 35
-
-    packagingOptions{
-        exclude( "META-INF/DEPENDENCIES")
-
+    packagingOptions {
+        resources {
+            excludes += setOf("META-INF/DEPENDENCIES")
+        }
     }
 
     repositories {

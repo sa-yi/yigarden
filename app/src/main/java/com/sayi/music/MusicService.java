@@ -386,12 +386,7 @@ public class MusicService extends Service implements Player.Listener {
                                     controller.setShuffleModeEnabled(true);
                                     for (Player.Listener listener : listeners)
                                         controller.addListener(listener);
-                                    controller.addListener(new Player.Listener() {
-                                        @Override
-                                        public void onMediaItemTransition(@Nullable MediaItem mediaItem, int reason) {
-                                            Player.Listener.super.onMediaItemTransition(mediaItem, reason);
-                                        }
-                                    });
+                                    controller.addListener(MusicService.this);
                                 } catch (ExecutionException | InterruptedException e) {
                                     e.printStackTrace();
                                     Log.e("ControllerFeature", e.getMessage());
@@ -545,5 +540,11 @@ public class MusicService extends Service implements Player.Listener {
         public interface LoadFinishedListener {
             void onLoadFinished(ArrayList<MediaItem> mediaItems);
         }
+    }
+
+    @Override
+    public void onPlayerError(PlaybackException error) {
+        Player.Listener.super.onPlayerError(error);
+        MainApplication.toast("播放失败");
     }
 }
