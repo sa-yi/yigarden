@@ -42,14 +42,25 @@ public class SettingsActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isNightMode = sharedPreferences.getBoolean("theme", false);
         sharedPreferences.registerOnSharedPreferenceChangeListener((sharedPreferences1, key) -> {
-            MainApplication.toast(key);
-            if (Objects.equals(key, "theme")) {
-                boolean ifDark = sharedPreferences1.getBoolean("theme", false);
-                if (ifDark) {
-                    DarkModeUtils.applyNightMode(SettingsActivity.this);
-                } else {
-                    DarkModeUtils.applyDayMode(SettingsActivity.this);
-                }
+            switch (Objects.requireNonNull(key)) {
+                case "theme":
+                    boolean ifDark = sharedPreferences1.getBoolean("theme", false);
+                    if (ifDark) {
+                        DarkModeUtils.applyNightMode(SettingsActivity.this);
+                    } else {
+                        DarkModeUtils.applyDayMode(SettingsActivity.this);
+                    }
+                    break;
+                case "use_network":
+                    boolean useNetwork = sharedPreferences1.getBoolean("use_network", false);
+                    if (useNetwork) {
+                        MainApplication.toast("开启在线歌单，重启后生效");
+                    } else {
+                        MainApplication.toast("使用本地歌单，重启后生效");
+                    }
+                    break;
+                default:
+                    MainApplication.toast(key);
             }
         });
 

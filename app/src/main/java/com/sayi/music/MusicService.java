@@ -3,7 +3,6 @@ package com.sayi.music;
 import android.app.Service;
 import android.content.*;
 import android.graphics.*;
-import android.graphics.drawable.*;
 import android.media.*;
 import android.net.*;
 import android.os.*;
@@ -19,9 +18,6 @@ import androidx.media3.session.MediaController;
 import androidx.media3.session.*;
 import androidx.preference.*;
 
-import com.bumptech.glide.*;
-import com.bumptech.glide.request.target.*;
-import com.bumptech.glide.request.transition.*;
 import com.google.common.util.concurrent.*;
 import com.hw.lrcviewlib.LrcRow;
 import com.hw.lrcviewlib.*;
@@ -38,6 +34,7 @@ import retrofit2.*;
 
 public class MusicService extends Service implements Player.Listener {
     static String TAG = "MusicService";
+    static ArrayList<MediaItem> mediaItemArrayList = new ArrayList<>();
     Ticker ticker;
     ArrayList<Player.Listener> listeners = new ArrayList<>();
     WindowManager windowManager;
@@ -47,7 +44,6 @@ public class MusicService extends Service implements Player.Listener {
     ListenableFuture<MediaController> controllerFuture;
     SyService syService;
     boolean loadFromNetwork = false;
-    ArrayList<MediaItem> mediaItemArrayList = new ArrayList<>();
     private MusicBinder binder;
     private MediaController controller;
 
@@ -130,6 +126,12 @@ public class MusicService extends Service implements Player.Listener {
             isInited = true;
         }
         LrcParser.parse(binder.getMediaPath());
+    }
+
+    @Override
+    public void onPlayerError(@NonNull PlaybackException error) {
+        Player.Listener.super.onPlayerError(error);
+        MainApplication.toast("播放失败");
     }
 
     public class MusicBinder extends Binder {
@@ -353,7 +355,8 @@ public class MusicService extends Service implements Player.Listener {
 
             Bitmap bitmap;
 
-            byte[] albumArt = mediaItem.mediaMetadata.artworkData;;
+            byte[] albumArt = mediaItem.mediaMetadata.artworkData;
+            ;
             if (albumArt != null) {
                 // 将字节数组转换为Bitmap
                 bitmap = BitmapFactory.decodeByteArray(albumArt, 0, albumArt.length);
@@ -363,7 +366,7 @@ public class MusicService extends Service implements Player.Listener {
             return null;
         }
 
-        public void fetchData(){
+        public void fetchData() {
             if (loadFromNetwork) {
                 syService = SyClient.getRetrofitInstance().create(SyService.class);
                 Call<ArrayList<Music>> musicListCall = syService.getSongList();
@@ -401,70 +404,25 @@ public class MusicService extends Service implements Player.Listener {
                             for (int i = 0; i < musicList.size(); i++) {
                                 Music music = musicList.get(i);
                                 Log.d("Music", music.getName());
-                                Call<MusicFully> musicFullyCall = syService.getInfo(music.getId());
-                                int finalI = i;
 
-
-                                musicFullyCall.enqueue(new Callback<>() {
-                                    @Override
-                                    public void onResponse(@NonNull Call<MusicFully> call, @NonNull Response<MusicFully> response) {
-                                        if (response.isSuccessful()) {
-                                            MusicFully musicFully = response.body();
-                                            if (musicFully == null) return;
-                                            if (musicFully.getUrl() == null) return;
-                                            Log.d("MusicUrl", musicFully.getUrl());
-
-
-                                            MediaMetadata metadata = metaDataBuilder
-                                                    .setTitle(musicFully.getName())
-                                                    .setArtist(musicFully.getArtist())
-                                                    .build();
-                                            MediaItem mediaItem = mediaItemBuilder
-                                                    .setUri(musicFully.getUrl())
-                                                    .setMediaMetadata(metadata)
-                                                    .build();
-                                            mediaItemArrayList.add(mediaItem);
-                                            if (finalI == musicList.size() - 1) {
-                                                controller.setMediaItems(mediaItemArrayList);
-                                                binder.setMediaItemArrayList(mediaItemArrayList);
-                                                Log.d("MusicUrl", "finished");
-                                                //controller.prepare();
-                                                //controller.play();
-                                            }
-                                            Glide.with(MusicService.this).asBitmap().load(musicFully.getPic()).into(new CustomTarget<Bitmap>() {
-                                                @Override
-                                                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-
-                                                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                                                    resource.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                                                    byte[] bitmapData = stream.toByteArray();
-
-                                                    MediaMetadata metadata = metaDataBuilder
-                                                            .setTitle(musicFully.getName())
-                                                            .setArtist(musicFully.getArtist())
-                                                            .setArtworkData(bitmapData, MediaMetadata.PICTURE_TYPE_FRONT_COVER)
-                                                            .build();
-                                                    MediaItem mediaItem = mediaItemBuilder
-                                                            .setUri(musicFully.getUrl())
-                                                            .setMediaMetadata(metadata)
-                                                            .build();
-                                                    controller.replaceMediaItem(finalI,mediaItem);
-                                                }
-
-                                                @Override
-                                                public void onLoadCleared(@Nullable Drawable placeholder) {
-
-                                                }
-                                            });
-                                        } else {
-                                            Log.e("MusicUrl", music.getName());
-                                        }
-                                    }
-                                    @Override
-                                    public void onFailure(@NonNull Call<MusicFully> call, @NonNull Throwable throwable) {
-                                        Log.e("Music", "failed:" + throwable.getMessage());
-                                    }
-                                });
+                                Bundle extras = new Bundle();
+                                extras.putInt("id", music.getId());
+                                MediaMetadata metadata = metaDataBuilder
+                                        .setTitle(music.getName())
+                                        .setExtras(extras)
+                                        .build();
+                                MediaItem mediaItem = mediaItemBuilder
+                                        .setUri("")
+                                        .setMediaMetadata(metadata)
+                                        .build();
+                                mediaItemArrayList.add(mediaItem);
+                                if (i == musicList.size() - 1) {
+                                    controller.setMediaItems(mediaItemArrayList);
+                                    binder.setMediaItemArrayList(mediaItemArrayList);
+                                    Log.d("MusicUrl", "finished");
+                                    //controller.prepare();
+                                    //controller.play();
+                                }
                             }
                         } else {
                             MainApplication.toast("获取在线歌单失败，正在加载本地歌单");
@@ -484,32 +442,6 @@ public class MusicService extends Service implements Player.Listener {
                 fetchLocalData();
             }
         }
-
-        public void fetchSingleData(Music music) {
-
-            Call<MusicFully> musicFullyCall = syService.getInfo(music.getId());
-
-
-            musicFullyCall.enqueue(new Callback<>() {
-                @Override
-                public void onResponse(@NonNull Call<MusicFully> call, @NonNull Response<MusicFully> response) {
-                    if (response.isSuccessful()) {
-                        MusicFully musicFully = response.body();
-                        if (musicFully == null) return;
-                        if (musicFully.getUrl() == null) return;
-                        Log.d("MusicUrl", musicFully.getUrl());
-
-
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<MusicFully> call, Throwable throwable) {
-
-                }
-            });
-        }
-
 
         public void fetchLocalData() {
             MusicScanner.scanLocalMedia(MusicService.this, mediaItems -> {
@@ -537,14 +469,9 @@ public class MusicService extends Service implements Player.Listener {
                 }, MoreExecutors.directExecutor());
             });
         }
+
         public interface LoadFinishedListener {
             void onLoadFinished(ArrayList<MediaItem> mediaItems);
         }
-    }
-
-    @Override
-    public void onPlayerError(PlaybackException error) {
-        Player.Listener.super.onPlayerError(error);
-        MainApplication.toast("播放失败");
     }
 }
