@@ -9,20 +9,6 @@ public class MusicFully {
     @SerializedName("data")
     private Data data;
 
-    public class Data {
-        @SerializedName("name")
-        private String name;
-        @SerializedName("album")
-        private String album;
-        @SerializedName("artist")
-        private String artist;
-        @SerializedName("picid")
-        private long picId;
-        @SerializedName("url")
-        private String url;
-        @SerializedName("pic")
-        private String pic;
-    }
     public boolean isSuccessful() {
         return code == 1;
     }
@@ -41,5 +27,26 @@ public class MusicFully {
 
     public String getName() {
         return data.name;
+    }
+
+    public String getLrc() {
+        return data.lrc;
+    }
+
+    public class Data {
+        @SerializedName("name")
+        private String name;
+        @SerializedName("album")
+        private String album;
+        @SerializedName("artist")
+        private String artist;
+        @SerializedName("picid")
+        private long picId;
+        @SerializedName("url")
+        private String url;
+        @SerializedName("pic")
+        private String pic;
+        @SerializedName("lrc")
+        private String lrc;
     }
 }

@@ -237,6 +237,7 @@ public class MusicFragment extends Fragment implements Player.Listener {
         private ArrayList<MediaItem> mediaItems = new ArrayList<>();
 
         public void setMediaItems(ArrayList<MediaItem> mediaItems) {
+            this.mediaItems.clear();
             this.mediaItems.addAll(mediaItems);
             notifyDataSetChanged();
         }

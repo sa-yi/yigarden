@@ -228,6 +228,8 @@ public class MusicActivity extends AppCompatActivity implements Player.Listener 
 
         binding.seek.setMax((int) binder.getDuration());
         binding.duration.setText(binder.getFormattedDuration());
+
+        binding.playOrPause.setImageResource(binder.isPlaying() ? R.drawable.ic_pause : R.drawable.ic_play);
     }
 
     @Override

@@ -54,7 +54,7 @@ public class PlaybackService extends MediaSessionService implements Player.Liste
             Call<MusicFully> call = syService.getInfo(id);
             call.enqueue(new Callback<>() {
                 @Override
-                public void onResponse(Call<MusicFully> call, Response<MusicFully> response) {
+                public void onResponse(@NonNull Call<MusicFully> call, @NonNull Response<MusicFully> response) {
                     if (response.isSuccessful()) {
                         MusicFully musicFully = response.body();
                         if (musicFully != null) {
@@ -83,8 +83,8 @@ public class PlaybackService extends MediaSessionService implements Player.Liste
                 }
 
                 @Override
-                public void onFailure(Call<MusicFully> call, Throwable throwable) {
-                    MainApplication.toast("网络出错");
+                public void onFailure(@NonNull Call<MusicFully> call, @NonNull Throwable throwable) {
+                    Log.e(TAG,"error:"+throwable.getMessage());
                 }
             });
             return;
@@ -101,7 +101,7 @@ public class PlaybackService extends MediaSessionService implements Player.Liste
 
     @Override
     public void onDestroy() {
-        mediaSession.getPlayer().release();
+        player.release();
         mediaSession.release();
         mediaSession = null;
         super.onDestroy();
