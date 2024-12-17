@@ -5,11 +5,14 @@ import android.content.*;
 import android.graphics.*;
 import android.media.*;
 import android.net.Uri;
+import android.os.*;
 import android.provider.MediaStore;
 import android.util.*;
 
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.MediaMetadata;
+
+import com.hw.lrcviewlib.*;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -47,21 +50,34 @@ public class MusicScanner {
                         String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
                         String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
                         String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
-                        String data = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
+                        String mediaPath = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
                         long album_id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID));
 
                         byte[] artworkData=null;
+
+
+                        int dotIndex = mediaPath.lastIndexOf('.');
+                        String lyricPath = mediaPath.substring(0, dotIndex) + ".lrc";
+                        File lyricFile = new File(lyricPath);
+
+                        Bundle extra = new Bundle();
+                        if(lyricFile.exists()) {
+                            String lyric = LrcDataBuilder.LoadContentFromFile(lyricFile);
+                            if (lyric == null) lyric = "";
+                            extra.putString("lyric", lyric);
+                        }
 
                         MediaMetadata mediaMetadata = new MediaMetadata.Builder()
                                 .setTitle(title)
                                 .setArtist(artist)
                                 .setAlbumTitle(album)
                                 .setArtworkData(artworkData,null)
+                                .setExtras(extra)
                                 .build();
 
                         mediaItems.add(new MediaItem.Builder()
                                 .setMediaMetadata(mediaMetadata)
-                                .setUri(Uri.parse(data))
+                                .setUri(Uri.parse(mediaPath))
                                 .build());
                     }
                     cursor.close();

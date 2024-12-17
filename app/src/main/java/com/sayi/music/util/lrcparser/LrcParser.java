@@ -1,30 +1,43 @@
 package com.sayi.music.util.lrcparser;
 
-import android.util.Log;
+import android.util.*;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import androidx.annotation.*;
+
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
 
 public class LrcParser {
     public static ArrayList<LrcRow> lrcs = new ArrayList<>();
+    static String regex = "\\[(.*?)\\](.+)";
+    static Pattern p = Pattern.compile(regex);
     static LrcRow nullRow = new LrcRow("00:00", "");
 
-    public static ArrayList<LrcRow> parse(String path) {
-        Log.d("LrcParser", path);
+    public static ArrayList<LrcRow> parse(String musicFilePath) {
+        Log.d("LrcParser", musicFilePath);
+        String lyricFilePath = musicFilePath.replaceAll(".mp3$|.flac$|.ogg$|.wma$|.m4a$", ".lrc");
+
+        return metaParse(iparseFile(lyricFilePath));
+    }
+
+    public static ArrayList<LrcRow> parseString(String content){
+        return metaParse(iparseString(content));
+    }
+
+    static String[] iparseFile(String path) {
+        String lrc = read(path);
+        return iparseString(lrc);
+    }
+
+    static String[] iparseString(String content) {
+        String[] lrcs = content.split("\n");
+        return lrcs;
+    }
+
+    public static ArrayList<LrcRow> metaParse(String[] lyrics) {
         lrcs.clear();
-        path = path.replaceAll(".mp3$|.flac$|.ogg$|.wma$|.m4a$", ".lrc");
-
-        String regex = "\\[(.*?)\\](.+)";
-        Pattern p = Pattern.compile(regex);
-
-        for (String lrc : iparse(path)) {
+        for (String lrc : lyrics) {
             Matcher m = p.matcher(lrc);
             if (m.find()) {
                 Matcher m2 = p.matcher(m.group(2));
@@ -53,33 +66,24 @@ public class LrcParser {
         return nullRow;
     }
 
-    static String[] iparse(String path) {
-        String lrc = read(path);
-        String[] lrcs = lrc.split("\n");
-        return lrcs;
-    }
 
-    static String read(String path) {
-        String s = "";
+    public static String read(String path) {
         File file = new File(path);
-        if (!file.exists())
+        if (!file.exists()) {
             return "";
-        try {
-            FileInputStream in = new FileInputStream(file);
-            s = readTextFromSDcard(in);
-        } catch (Exception e) {
         }
-        return s;
-    }
+        StringBuilder buffer = new StringBuilder();
+        try (FileInputStream in = new FileInputStream(file);
+             InputStreamReader reader = new InputStreamReader(in);
+             BufferedReader bufferedReader = new BufferedReader(reader)) {
 
-    static String readTextFromSDcard(InputStream is) throws Exception {
-        InputStreamReader reader = new InputStreamReader(is);
-        BufferedReader bufferedReader = new BufferedReader(reader);
-        StringBuffer buffer = new StringBuffer();
-        String str;
-        while ((str = bufferedReader.readLine()) != null) {
-            buffer.append(str);
-            buffer.append("\n");
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                buffer.append(line);
+                buffer.append("\n");
+            }
+        } catch (IOException e) {
+            Log.e("LrcParser", Objects.requireNonNull(e.getMessage()));
         }
         return buffer.toString();
     }

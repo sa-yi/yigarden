@@ -121,8 +121,8 @@ public class MusicFragment extends Fragment implements Player.Listener {
         binding.toolbarTitle.setText("音乐");
         binding.musicSettings.setOnClickListener(v -> {
             //TODO 音乐的设置界面
-            Intent intent = new Intent(requireActivity(), MusicSettingsActivity.class);
-            startActivity(intent);
+            /*Intent intent = new Intent(requireActivity(), MusicSettingsActivity.class);
+            startActivity(intent);*/
             MainApplication.toast("开发中");
         });
 

@@ -277,12 +277,9 @@ public class PostActivity extends AppCompatActivity {
                                 // 检查是否至少有两个部分
                                 if (partsByDot.length >= 2) {
                                     index = partsByDot[0]; //板块id部分
-                                    System.out.println("Number1: " + index);
 
                                     page = partsByDot[1]; // 页码部分 TODO 根据页码加载
-                                    System.out.println("Number2: " + page);
                                 } else {
-                                    System.out.println("无法找到第二个数字");
                                     index = partsByDot[0];
                                 }
                                 if(Objects.equals(forumString, "forum")){

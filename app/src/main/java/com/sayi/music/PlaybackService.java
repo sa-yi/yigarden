@@ -46,7 +46,7 @@ public class PlaybackService extends MediaSessionService implements Player.Liste
         MediaMetadata metadata = mediaItem.mediaMetadata;
         Bundle extras = metadata.extras;
         if (extras != null) {
-            int id = extras.getInt("id");
+            int id = extras.getInt("id", -1);
             Log.d("PlaybackService", "id:" + id);
             if (id == -1) {
                 return;
@@ -59,21 +59,24 @@ public class PlaybackService extends MediaSessionService implements Player.Liste
                         MusicFully musicFully = response.body();
                         if (musicFully != null) {
                             if (musicFully.isSuccessful()) {
+                                Bundle extra = new Bundle();
+                                extra.putString("lyric", musicFully.getLrc());
                                 MediaMetadata mediaMetadata = mediaMetadataBuilder
                                         .setArtist(musicFully.getArtist())
                                         .setTitle(musicFully.getName())
                                         .setArtworkUri(Uri.parse(musicFully.getPic()))
+                                        .setExtras(extra)
                                         .build();
                                 MediaItem newMediaItem = mediaItemBuilder.setMediaId(mediaItem.mediaId)
                                         .setUri(musicFully.getUrl())
                                         .setMediaMetadata(mediaMetadata).build();
 
-                                Log.d("playbackservice", "newMediaItem:");
+
                                 int curr = player.getCurrentMediaItemIndex();
                                 MusicService.mediaItemArrayList.set(curr, newMediaItem);
                                 player.setMediaItems(MusicService.mediaItemArrayList, false);
                                 //player.seekTo(curr,0);
-                                player.play();
+                                //player.play();
 
                             }
                         }
@@ -84,7 +87,7 @@ public class PlaybackService extends MediaSessionService implements Player.Liste
 
                 @Override
                 public void onFailure(@NonNull Call<MusicFully> call, @NonNull Throwable throwable) {
-                    Log.e(TAG,"error:"+throwable.getMessage());
+                    Log.e(TAG, "error:" + throwable.getMessage());
                 }
             });
             return;

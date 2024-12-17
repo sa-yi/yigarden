@@ -1,5 +1,7 @@
 package com.sayi.vdim.sayi_music_entity;
 
+import androidx.annotation.*;
+
 import com.google.gson.annotations.*;
 
 public class MusicFully {
@@ -33,6 +35,14 @@ public class MusicFully {
         return data.lrc;
     }
 
+    @Override
+    public String toString() {
+        return "MusicFully{" +
+                "code=" + code +
+                ", data=" + data +
+                '}';
+    }
+
     public class Data {
         @SerializedName("name")
         private String name;
@@ -48,5 +58,18 @@ public class MusicFully {
         private String pic;
         @SerializedName("lrc")
         private String lrc;
+
+        @Override
+        public String toString() {
+            return "Data{" +
+                    "name='" + name + '\'' +
+                    ", album='" + album + '\'' +
+                    ", artist='" + artist + '\'' +
+                    ", picId=" + picId +
+                    ", url='" + url + '\'' +
+                    ", pic='" + pic + '\'' +
+                    ", lrc='" + lrc + '\'' +
+                    '}';
+        }
     }
 }

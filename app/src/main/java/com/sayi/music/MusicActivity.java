@@ -141,6 +141,7 @@ public class MusicActivity extends AppCompatActivity implements Player.Listener 
             if (binder.getIfShouldShowLyrics())
                 binder.showLyrics();
         }
+        binding.lrcview.onDestroy();
     }
 
     void setupOnclickListener() {

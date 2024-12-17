@@ -66,24 +66,22 @@ public class LrcDataBuilder {
         StringReader reader = new StringReader(rawLrcStrData);
         BufferedReader br = new BufferedReader(reader);
         String line;
-        List<LrcRow> rows = new ArrayList<LrcRow>();
+        ArrayList<LrcRow> rows = new ArrayList<>();
         try {
             // 循环地读取歌词的每一行
             do {
                 line = br.readLine();
 
-                if (line != null && line.trim().length() > 0) {
+                if (line != null && !line.trim().isEmpty()) {
                     // 解析每一行歌词 得到每行歌词的集合，因为有些歌词重复有多个时间，就可以解析出多个歌词行来
                     List<LrcRow> lrcRows = parser.parse(line);
-                    if (lrcRows != null && lrcRows.size() > 0) {
-                        for (LrcRow row : lrcRows) {
-                            rows.add(row);
-                        }
+                    if (lrcRows != null && !lrcRows.isEmpty()) {
+                        rows.addAll(lrcRows);
                     }
                 }
             } while (line != null);
 
-            if (rows.size() > 0) {
+            if (!rows.isEmpty()) {
                 // 根据歌词行的时间排序
                 Collections.sort(rows);
             } else {
@@ -108,7 +106,7 @@ public class LrcDataBuilder {
      * @param file
      * @return
      */
-    private String LoadContentFromFile(File file) {
+    public static String LoadContentFromFile(File file) {
         try {
             InputStreamReader inputReader = new InputStreamReader(new FileInputStream(file), "utf-8");
             BufferedReader bufReader = new BufferedReader(inputReader);
@@ -119,6 +117,8 @@ public class LrcDataBuilder {
                     continue;
                 result += line + "\r\n";
             }
+            bufReader.close();
+            inputReader.close();
             return result;
         } catch (Exception e) {
             e.printStackTrace();

@@ -26,7 +26,6 @@ import com.sayi.music.util.lrcparser.*;
 import com.sayi.vdim.sayi_music_entity.*;
 import com.sayi.vdim.utils.*;
 
-import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -108,10 +107,7 @@ public class MusicService extends Service implements Player.Listener {
         if (layoutParams != null) {
             // 检查布局参数的类型是否为 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
             // 或其他悬浮窗类型，例如 TYPE_PHONE、TYPE_SYSTEM_ALERT、TYPE_SYSTEM_OVERLAY 等
-            return layoutParams.type == WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY ||
-                    layoutParams.type == WindowManager.LayoutParams.TYPE_PHONE ||
-                    layoutParams.type == WindowManager.LayoutParams.TYPE_SYSTEM_ALERT ||
-                    layoutParams.type == WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
+            return layoutParams.type == WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
         }
 
         return false;
@@ -125,6 +121,15 @@ public class MusicService extends Service implements Player.Listener {
             ticker.start();
             isInited = true;
         }
+        MediaMetadata metadata = mediaItem.mediaMetadata;
+        Bundle extras = metadata.extras;
+        if (extras != null) {
+            String lyric = extras.getString("lyric");
+            if(lyric!=null){
+                LrcParser.parseString(lyric);
+                return;
+            }
+        }
         LrcParser.parse(binder.getMediaPath());
     }
 
@@ -132,6 +137,7 @@ public class MusicService extends Service implements Player.Listener {
     public void onPlayerError(@NonNull PlaybackException error) {
         Player.Listener.super.onPlayerError(error);
         MainApplication.toast("播放失败");
+        binder.skipToNext();
     }
 
     public class MusicBinder extends Binder {
@@ -174,7 +180,7 @@ public class MusicService extends Service implements Player.Listener {
         }
 
         public void setMediaItemArrayList(ArrayList<MediaItem> mediaItemArrayList) {
-            MusicService.this.mediaItemArrayList = mediaItemArrayList;
+            MusicService.mediaItemArrayList = mediaItemArrayList;
             listener.onLoadFinished(mediaItemArrayList);
 
         }
@@ -273,26 +279,16 @@ public class MusicService extends Service implements Player.Listener {
 
         public List<LrcRow> getLyrics() {
             if (controller == null) return null;
-            if (loadFromNetwork) {
-
-
-                return null;
-            }
-
-
-            String mediaPath = getMediaPath();
-
-            int dotIndex = mediaPath.lastIndexOf('.');
-            String lyricPath = mediaPath.substring(0, dotIndex) + ".lrc";
-            File lyricFile = new File(lyricPath);
-
-            if (lyricFile.exists()) {
-                Log.d("lyricPath", lyricPath);
-                return new LrcDataBuilder().Build(lyricFile);
-            } else {
-                Log.d("lyricPath", "not existed");
-                return null;
-            }
+            mediaItem = controller.getCurrentMediaItem();
+            if (mediaItem == null) return null;
+            Bundle extras = mediaItem.mediaMetadata.extras;
+            if (extras == null) return null;
+            String lyric = extras.getString("lyric");
+            if (lyric != null) {
+                //Log.d("lyric", lyric);
+                return new LrcDataBuilder().Build(lyric, new DefaultLrcRowsParser());
+            } else Log.d("lyric", "null");
+            return null;
         }
 
         public String getTitle() {
@@ -337,13 +333,13 @@ public class MusicService extends Service implements Player.Listener {
                 MediaMetadataRetriever retriever = new MediaMetadataRetriever();
                 retriever.setDataSource(MusicService.this, artworkUri);
                 byte[] albumArt = retriever.getEmbeddedPicture();
+                retriever.release();
                 if (albumArt != null) {
                     // 将字节数组转换为Bitmap
                     bitmap = BitmapFactory.decodeByteArray(albumArt, 0, albumArt.length);
                     // 设置专辑封面给ImageView
                     return bitmap;
                 }
-                retriever.release();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -356,7 +352,7 @@ public class MusicService extends Service implements Player.Listener {
             Bitmap bitmap;
 
             byte[] albumArt = mediaItem.mediaMetadata.artworkData;
-            ;
+
             if (albumArt != null) {
                 // 将字节数组转换为Bitmap
                 bitmap = BitmapFactory.decodeByteArray(albumArt, 0, albumArt.length);
@@ -403,7 +399,6 @@ public class MusicService extends Service implements Player.Listener {
 
                             for (int i = 0; i < musicList.size(); i++) {
                                 Music music = musicList.get(i);
-                                Log.d("Music", music.getName());
 
                                 Bundle extras = new Bundle();
                                 extras.putInt("id", music.getId());
@@ -420,8 +415,6 @@ public class MusicService extends Service implements Player.Listener {
                                     controller.setMediaItems(mediaItemArrayList);
                                     binder.setMediaItemArrayList(mediaItemArrayList);
                                     Log.d("MusicUrl", "finished");
-                                    //controller.prepare();
-                                    //controller.play();
                                 }
                             }
                         } else {
@@ -432,7 +425,7 @@ public class MusicService extends Service implements Player.Listener {
                     }
 
                     @Override
-                    public void onFailure(Call<ArrayList<Music>> call, Throwable throwable) {
+                    public void onFailure(@NonNull Call<ArrayList<Music>> call, @NonNull Throwable throwable) {
                         MainApplication.toast("获取在线歌单失败，正在加载本地歌单");
                         fetchLocalData();
                         Log.e(TAG, "error");

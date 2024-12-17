@@ -12,25 +12,23 @@ import java.util.List;
 public class DefaultLrcRowsParser implements IRowsParser {
     private String tag = "DefaultLrcRowsParser";
     @Override
-    public List<LrcRow> parse(String lrcRowDada) {
+    public List<LrcRow> parse(String lrcRowData) {
         try {
-            // [01:15.33] 或者 [00:00]这种格式
-            Boolean Form1 = lrcRowDada.indexOf("[") == 0 && lrcRowDada.indexOf("]") == 9;
-            Boolean Form2 = lrcRowDada.indexOf("[") == 0 && lrcRowDada.indexOf("]") == 6;
+            // 检查时间格式是否为 [mm:ss.SSS] 或者 [mm:ss.SS] 或者 [mm:ss.S]
+            boolean isCorrectFormat = lrcRowData.matches("\\[\\d{2}:\\d{2}\\.\\d{1,3}\\].+");
 
-            if (!Form1 && !Form2) {
+            if (!isCorrectFormat) {
                 return null;
             }
 
-            int lastIndexOfRightBracket = lrcRowDada.lastIndexOf("]");
+            int lastIndexOfRightBracket = lrcRowData.lastIndexOf("]");
 
-            String content = lrcRowDada.substring(lastIndexOfRightBracket + 1, lrcRowDada.length());
+            String content = lrcRowData.substring(lastIndexOfRightBracket + 1, lrcRowData.length());
 
-            String times = lrcRowDada.substring(0, lastIndexOfRightBracket + 1).replace("[", "-").replace("]",
-                    "-");
+            String times = lrcRowData.substring(0, lastIndexOfRightBracket + 1).replace("[", "-").replace("]", "-");
 
-            String arrTimes[] = times.split("-");
-            List<LrcRow> listTimes = new ArrayList<LrcRow>();
+            String[] arrTimes = times.split("-");
+            List<LrcRow> listTimes = new ArrayList<>();
             for (String temp : arrTimes) {
                 if (temp.trim().length() == 0) {
                     continue;
@@ -45,6 +43,7 @@ public class DefaultLrcRowsParser implements IRowsParser {
             return null;
         }
     }
+
 
     /**
      * 将解析得到的表示时间的字符转化为Long型

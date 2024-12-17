@@ -23,8 +23,8 @@ android {
         compileSdk = 35
         minSdk = 28
         targetSdk = 35
-        versionCode = 6
-        versionName = "0.3.1-alpha"
+        versionCode = 7
+        versionName = "0.4.0-alpha"
 
         vectorDrawables {
             useSupportLibrary = true
@@ -110,6 +110,11 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.2.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
 
+
+    implementation("androidx.preference:preference-ktx:1.2.1")
+    implementation("androidx.core:core-ktx:1.15.0")
+    implementation("androidx.activity:activity-ktx:1.9.3")
+
     implementation("androidx.media3:media3-exoplayer:1.5.0")
     implementation("androidx.media3:media3-session:1.5.0")
     implementation("androidx.media3:media3-ui:1.5.0")
@@ -129,9 +134,6 @@ dependencies {
 
     implementation("com.github.bumptech.glide:glide:4.15.1")
     implementation("com.github.bumptech.glide:okhttp3-integration:4.15.1")
-    implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("androidx.core:core-ktx:1.15.0")
-    implementation("androidx.activity:activity-ktx:1.9.3")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 
     api("org.wordpress:aztec:v1.6.2")
