@@ -7,14 +7,18 @@ import android.graphics.*;
 import android.net.*;
 import android.os.*;
 import android.text.*;
+import android.util.*;
 import android.view.*;
 import android.widget.*;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.*;
 
 import com.android.volley.toolbox.*;
+import com.google.gson.internal.*;
 import com.sayi.*;
 import com.sayi.vdim.*;
+import com.sayi.vdim.customentity.*;
 import com.sayi.vdim.databinding.*;
 
 import java.io.*;
@@ -23,6 +27,11 @@ import java.security.cert.*;
 import java.util.*;
 
 import javax.net.ssl.*;
+
+import okhttp3.*;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -49,11 +58,49 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(binding.getRoot());
         binding.login.setEnabled(false);
-        binding.username.addTextChangedListener(new InputTextWatcher(binding.username));
-        binding.password.addTextChangedListener(new InputTextWatcher(binding.password));
+        InputTextWatcher watcher=new InputTextWatcher();
+        watcher.addEditText(binding.username);
+        watcher.addEditText(binding.password);
+        binding.username.addTextChangedListener(watcher);
+        binding.password.addTextChangedListener(watcher);
 
+        CustomService service = CustomClient.getRetrofitInstance().create(CustomService.class);
         binding.login.setOnClickListener(v -> {
-            MainApplication.toast("开发中...");
+            String username = binding.username.getText().toString();
+            String password = binding.password.getText().toString();
+
+
+            Call<CustomToken> call = service.login(username,password);
+            call.enqueue(new Callback<>() {
+
+                @Override
+                public void onResponse(@NonNull Call<CustomToken> call, @NonNull Response<CustomToken> response) {
+                    if (response.isSuccessful()) {
+                        CustomToken tokenEntity = response.body();
+                        if (tokenEntity != null) {
+                            String token=tokenEntity.getToken();
+                            Log.d("token", token);
+                            if(!token.isEmpty()){
+                                ((MainApplication)getApplication()).putToken(token);
+                                MainApplication.toast("登录成功");
+                                finish();
+                                Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                                startActivity(intent);
+                            }
+                        }else {
+                            Log.e("login","null token");
+                        }
+                    }else {
+                        Log.e("login",response.message());
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<CustomToken> call, @NonNull Throwable e) {
+                    Log.e("login",e.getMessage());
+                }
+
+            });
         });
         binding.jumpToRig.setOnClickListener(v -> {
 
@@ -135,7 +182,7 @@ public class LoginActivity extends AppCompatActivity {
     class InputTextWatcher implements TextWatcher {
         private ArrayList<EditText> editTexts = new ArrayList<>();
 
-        public InputTextWatcher(EditText editText) {
+        public void addEditText(EditText editText){
             editTexts.add(editText);
         }
 
@@ -151,6 +198,7 @@ public class LoginActivity extends AppCompatActivity {
         public void afterTextChanged(Editable s) {
             boolean enabled = true;
             for (EditText editText : editTexts) {
+                Log.d("textWatcher",editText.getText().toString());
                 if (editText.getText().toString().isEmpty())
                     enabled = false;
             }

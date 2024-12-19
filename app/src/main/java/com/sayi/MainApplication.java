@@ -1,38 +1,19 @@
 package com.sayi;
 
-import static com.sayi.vdim.Consts.sp_token;
-import static com.sayi.vdim.Consts.sp_user_data;
+import static com.sayi.vdim.Consts.*;
 
-import android.app.Application;
-import android.content.SharedPreferences;
-import android.os.Handler;
-import android.os.Looper;
-import android.widget.Toast;
+import android.annotation.*;
+import android.app.*;
+import android.content.*;
+import android.os.*;
+import android.widget.*;
 
 import com.sayi.vdim.*;
-import com.sayi.vdim.utils.DarkModeUtils;
+import com.sayi.vdim.utils.*;
 
 public class MainApplication extends Application {
+    public static String token = "";
     private static MainApplication mContext;
-
-    public static String token ="";
-    public String getToken(){
-        SharedPreferences sharedPreferences = getSharedPreferences(sp_user_data, MODE_PRIVATE);
-        token = sharedPreferences.getString(sp_token,"");
-        return token;
-    }
-
-    public void putDzCookie(String dzCookie){
-        SharedPreferences sharedPreferences=getSharedPreferences(DzConsts.COOKIE_PREFS,MODE_PRIVATE);
-        SharedPreferences.Editor editor=sharedPreferences.edit();
-        editor.putString(DzConsts.COOKIE,dzCookie);
-        editor.apply();
-    }
-
-    public String getDzCookie(){
-        SharedPreferences sharedPreferences=getSharedPreferences(DzConsts.COOKIE_PREFS,MODE_PRIVATE);
-        return sharedPreferences.getString(DzConsts.COOKIE,"");
-    }
 
     public static void toast(final String str) {
         Handler handler = new Handler(Looper.getMainLooper());
@@ -43,13 +24,38 @@ public class MainApplication extends Application {
         return mContext;
     }
 
+    public String getToken() {
+        SharedPreferences sharedPreferences = getSharedPreferences(sp_user_data, MODE_PRIVATE);
+        token = sharedPreferences.getString(sp_token, "");
+        return token;
+    }
+
+    @SuppressLint("ApplySharedPref")
+    public void putToken(String token) {
+        SharedPreferences sharedPreferences = getSharedPreferences(sp_user_data, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(sp_token, token);
+        editor.commit();
+    }
+
+    public void putDzCookie(String dzCookie) {
+        SharedPreferences sharedPreferences = getSharedPreferences(DzConsts.COOKIE_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(DzConsts.COOKIE, dzCookie);
+        editor.apply();
+    }
+
+    public String getDzCookie() {
+        SharedPreferences sharedPreferences = getSharedPreferences(DzConsts.COOKIE_PREFS, MODE_PRIVATE);
+        return sharedPreferences.getString(DzConsts.COOKIE, "");
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
         mContext = getApplication();
         CrashHandler.getInstance().init(mContext);
         DarkModeUtils.init(this);
-
 
 
     }
