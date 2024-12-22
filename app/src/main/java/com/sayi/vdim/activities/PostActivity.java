@@ -72,28 +72,33 @@ public class PostActivity extends AppCompatActivity {
                 + ",path:" + uri.getPath()
                 + ",id:" + post_id);
 
+        setupUI();
 
         viewModel = new ViewModelProvider(this).get(PostViewModel.class);
 
-        viewModel.getPostLiveData().observe(this, postFeedData -> {
-            setupUI();
+        viewModel.getThreadData().observe(this,threadData -> {
 
-            ThreadData postFeed = postFeedData.getFinalData();
-            Log.d("post", postFeedData.toString());
-            Objects.requireNonNull(getSupportActionBar()).setTitle(postFeed.getSubject());
+            Log.d("post", threadData.toString());
+            if(getSupportActionBar()!=null) {
+                Objects.requireNonNull(getSupportActionBar()).setTitle(threadData.getSubject());
+            }
 
-            String author = postFeed.getAuthor();
-            String date = postFeed.getLastpost();
+            String author = threadData.getAuthor();
+            String date = threadData.getLastpost();
 
             userBanner.setAuthorName(author);
             userBanner.setSendTime(date);
 
-            int authorId = postFeed.getAuthorId();
-            Glide.with(PostActivity.this).asBitmap().load("https://i.lty.fan/uc_server/avatar.php?size=big&uid=" + authorId).error(R.drawable.default_avator).into(userBanner.getAvatorView());
+            int authorId = threadData.getAuthorId();
+        });
+        viewModel.getPostLiveData().observe(this, postFeedData -> {
 
 
-            ArrayList<ThreadData.Post> posts = postFeedData.getPost();
-            ThreadData.Post firstPost = posts.remove(0);
+            //Glide.with(PostActivity.this).asBitmap().load("https://i.lty.fan/uc_server/avatar.php?size=big&uid=" + authorId).error(R.drawable.default_avator).into(userBanner.getAvatorView());
+
+
+            ArrayList<Post> posts = postFeedData;
+            Post firstPost = posts.remove(0);
 
             binding.replyCount.setText(posts.size() + "");
 
@@ -112,7 +117,7 @@ public class PostActivity extends AppCompatActivity {
 
 
             for (int i = 0; i < posts.size(); i++) {
-                ThreadData.Post post = posts.get(i);
+                Post post = posts.get(i);
 
                 addCommentView(post, (i == posts.size() - 1));
             }
@@ -143,6 +148,8 @@ public class PostActivity extends AppCompatActivity {
                         Log.d("Attachment not image", attachment.toString());
                     }
                 }
+
+
             }
             DialogLoading.dismiss(PostActivity.this);
         });
@@ -150,6 +157,7 @@ public class PostActivity extends AppCompatActivity {
             DialogLoading.dismiss(PostActivity.this);
             Toast.makeText(this, errorMsg, Toast.LENGTH_SHORT).show();
         });
+        viewModel.fetchThread(post_id);
         viewModel.fetchPost(post_id);
 
     }
@@ -434,7 +442,7 @@ public class PostActivity extends AppCompatActivity {
         textView.setHighlightColor(Color.TRANSPARENT);
     }
 
-    void addCommentView(ThreadData.Post comment, boolean isLast) {
+    void addCommentView(Post comment, boolean isLast) {
         addCommentView(comment);
         if (!isLast) {//不是最后一条评论下面会加一条分割线
             View splitter = new View(this);
@@ -444,12 +452,12 @@ public class PostActivity extends AppCompatActivity {
         }
     }
 
-    void addCommentView(ThreadData.Post comment) {
+    void addCommentView(Post comment) {
         PostCommentBinding commentBinding;
         commentBinding = PostCommentBinding.inflate(getLayoutInflater());
 
         int authorId = comment.getAuthorid();
-        Glide.with(this).asBitmap().load("https://i.lty.fan/uc_server/avatar.php?size=big&uid=" + authorId).into(commentBinding.avator);
+        //Glide.with(this).asBitmap().load("https://i.lty.fan/uc_server/avatar.php?size=big&uid=" + authorId).into(commentBinding.avator);
 
         commentBinding.userName.setText(comment.getAuthor());
         commentBinding.userName.setTextColor(ContextCompat.getColor(this, R.color.tianyi_blue));
@@ -492,10 +500,16 @@ public class PostActivity extends AppCompatActivity {
         private static final String TAG = "PostViewModel";
         private final DzService dzService = DzClient.getRetrofitInstance().create(DzService.class);
 
-        private final MutableLiveData<ThreadData> postLiveData = new MutableLiveData<>();
+        private final MutableLiveData<ThreadData> threadData=new MutableLiveData<>();
+        private final MutableLiveData<ArrayList<Post>> postLiveData = new MutableLiveData<>();
         private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
 
-        public LiveData<ThreadData> getPostLiveData() {
+
+        public LiveData<ThreadData> getThreadData(){
+            return threadData;
+        }
+
+        public LiveData<ArrayList<Post>> getPostLiveData() {
             return postLiveData;
         }
 
@@ -504,10 +518,30 @@ public class PostActivity extends AppCompatActivity {
             return errorMessage;
         }
 
-        public void fetchPost(int postId) {
-            dzService.getThread(postId).enqueue(new Callback<>() {
+
+        public void fetchThread(int tid){
+            dzService.getThread(tid).enqueue(new Callback<>() {
                 @Override
                 public void onResponse(@NonNull Call<ThreadData> call, @NonNull Response<ThreadData> response) {
+                    if(response.isSuccessful()){
+                        ThreadData data= response.body();
+                        if(data!=null){
+                            threadData.postValue(data);
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<ThreadData> call, @NonNull Throwable throwable) {
+
+                }
+            });
+        }
+
+        public void fetchPost(int tid) {
+            dzService.getPosts(tid).enqueue(new Callback<>() {
+                @Override
+                public void onResponse(@NonNull Call<ArrayList<Post>> call, @NonNull Response<ArrayList<Post>> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         Log.d(TAG, response.body().toString());
                         postLiveData.postValue(response.body());
@@ -518,7 +552,7 @@ public class PostActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailure(@NonNull Call<ThreadData> call, @NonNull Throwable t) {
+                public void onFailure(@NonNull Call<ArrayList<Post>> call, @NonNull Throwable t) {
                     errorMessage.postValue(t.getMessage());
                     Log.e(TAG, "Error fetching post", t);
                 }

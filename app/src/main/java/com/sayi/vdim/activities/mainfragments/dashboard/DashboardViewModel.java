@@ -35,7 +35,7 @@ public class DashboardViewModel extends ViewModel {
         DzService dzService=DzClient.getRetrofitInstance().create(DzService.class);
 
         Call<Forum> call2=dzService.getForum();
-        call2.enqueue(new Callback<>() {
+        /*call2.enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<Forum> call, Response<Forum> response) {
                 Log.d(TAG,response.body().toString());
@@ -54,7 +54,7 @@ public class DashboardViewModel extends ViewModel {
             public void onFailure(Call<Forum> call, Throwable throwable) {
                 Log.e(TAG,throwable.getMessage());
             }
-        });
+        });*/
     }
 
 }

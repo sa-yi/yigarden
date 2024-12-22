@@ -34,14 +34,13 @@ public class HomeViewModel extends ViewModel {
     public void fetchDzData(int page) {
 
         DzService dzService = DzClient.getRetrofitInstance().create(DzService.class);
-        Call<ThreadsResponse> call = dzService.getHotThreads(page);
+        Call<ArrayList<ThreadData>> call = dzService.getHotThreads(page);
         call.enqueue(new Callback<>() {
             @Override
-            public void onResponse(Call<ThreadsResponse> call, Response<ThreadsResponse> response) {
+            public void onResponse(Call<ArrayList<ThreadData>> call, Response<ArrayList<ThreadData>> response) {
                 if (response.isSuccessful()) {
-                    ThreadsResponse threadsResponse = response.body();
 
-                    List<ThreadData> data = threadsResponse.getData();
+                    List<ThreadData> data = response.body();
                     if ((data != null)) {
                         dzDataList.postValue(data);
                     }
@@ -52,7 +51,7 @@ public class HomeViewModel extends ViewModel {
             }
 
             @Override
-            public void onFailure(Call<ThreadsResponse> call, Throwable throwable) {
+            public void onFailure(Call<ArrayList<ThreadData>> call, Throwable throwable) {
                 Log.e("dz_error", throwable.toString());
                 failed.postValue("error");
             }

@@ -61,7 +61,7 @@ public class HomeFragment extends Fragment {
                 if (layoutManager != null && layoutManager.findLastCompletelyVisibleItemPosition() == dzDataAdapter.getItemCount() - 1) {
                     // 滑动到底部，触发加载更多
                     page++;
-                    homeViewModel.fetchDzData(page);
+                    //homeViewModel.fetchDzData(page);
                 }
             }
         });
@@ -83,7 +83,7 @@ public class HomeFragment extends Fragment {
             binding.refreshCookie.setVisibility(View.VISIBLE);
         });
         binding.refreshCookie.setOnClickListener(v -> {
-            Dialog.init(requireActivity())
+            /*Dialog.init(requireActivity())
                     .setupDialog("获取帖子失败", "是否重新获取Cookie")
                     .setPositiveButton("确认", (dialogInterface, i) -> {
                         MainApplication.toast("正在重新获取cookie...");
@@ -92,6 +92,7 @@ public class HomeFragment extends Fragment {
                         requireActivity().finish();
                     })
                     .show();
+            */
         });
 
         binding.searchInput.setOnClickListener(v -> {

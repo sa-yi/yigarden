@@ -93,7 +93,7 @@ public class ForumActivity extends AppCompatActivity {
 
     void fetch(int fid, int page) {
         Call<ForumDetailed> call = dzService.getForumDetailed(fid, page);
-        call.enqueue(new Callback<>() {
+        /*call.enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<ForumDetailed> call, Response<ForumDetailed> response) {
                 if (response.isSuccessful()) {
@@ -123,7 +123,7 @@ public class ForumActivity extends AppCompatActivity {
             public void onFailure(Call<ForumDetailed> call, Throwable throwable) {
                 MainApplication.toast("获取信息失败");
             }
-        });
+        });*/
     }
 
     @Override

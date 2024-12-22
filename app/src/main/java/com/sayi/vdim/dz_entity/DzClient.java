@@ -25,57 +25,8 @@ import retrofit2.converter.gson.*;
 public class DzClient {
     // 创建一个Cookie存储容器
     final static Map<String, List<Cookie>> cookieStore = new HashMap<>();
-    private static final String BASE_URL = "https://i.lty.fan/api/mobile/";
-    // 实现CookieJar接口
-    static CookieJar cookieJar = new CookieJar() {
-        @Override
-        public void saveFromResponse(HttpUrl url, @NonNull List<Cookie> cookies) {
-            // 保存服务器返回的Cookie
-            cookieStore.put(url.host(), cookies);
-            if (url.host().equals("i.lty.fan")) {
-                StringBuilder finalCookieBuilder = new StringBuilder();
-                for (Cookie cookie : cookies) {
-                    //Log.d("Cookie", cookie.toString());
-                    finalCookieBuilder.append(cookie.name()).append("=").append(cookie.value()).append(";");
-                }
-                String finalCookie = finalCookieBuilder.toString();
-                //Log.d("finalCookie", finalCookie);
-                MainApplication.getContext().putDzCookie(finalCookie);
-            }
+    private static final String BASE_URL = "https://api.lty.fan/";
 
-        }
-
-        @NonNull
-        @Override
-        public List<Cookie> loadForRequest(HttpUrl url) {
-            // 加载保存的Cookie
-            List<Cookie> unmodifiableCookies = cookieStore.get(url.host());
-            List<Cookie> modifiableCookies = new ArrayList<>(); // 创建一个新的可修改列表
-
-            // 如果存在不可修改的Cookie列表，则复制到新的可修改列表中
-            if (unmodifiableCookies != null) {
-                modifiableCookies.addAll(unmodifiableCookies);
-            }
-
-            // 获取其他来源的Cookie字符串
-            String cookieString = MainApplication.getContext().getDzCookie();
-            String[] cookiePairs = cookieString.split(";");
-            for (String cookiePair : cookiePairs) {
-                String[] nameValue = cookiePair.trim().split("=", 2);
-                if (nameValue.length == 2) {
-                    Cookie cookie = Cookie.parse(url, nameValue[0] + "=" + nameValue[1]);
-                    if (cookie != null) {
-                        modifiableCookies.add(cookie);
-                    }
-                }
-            }
-
-
-            // 返回新的可修改列表
-            return modifiableCookies;
-        }
-
-    };
     private static Retrofit retrofit;
 
     public static Retrofit getRetrofitInstance() {
@@ -134,7 +85,6 @@ public class DzClient {
 
             // Add the interceptor for custom headers
             builder.addInterceptor(new CustomHeaderInterceptor());
-            builder.cookieJar(cookieJar);
 
 
             //builder.addInterceptor(new LoggingInterceptor.Builder().build());
@@ -177,10 +127,8 @@ public class DzClient {
 
 
             Request.Builder builder = originalRequest.newBuilder();
-            //builder.removeHeader("User-Agent");//带cookie时不带ua也能过
-            builder.addHeader("User-Agent", WebSettings.getDefaultUserAgent(MainApplication.getContext()));
-
-            builder.addHeader("Referer", "https://i.lty.fan/");
+            builder.removeHeader("User-Agent");//带cookie时不带ua也能过
+            builder.addHeader("User-Agent", "AndroidApp");//TODO 修改header的信息
 
             builder.addHeader("Version-Name", getAppVersion());
             builder.addHeader("Version-Code", getAppCode());
@@ -188,22 +136,10 @@ public class DzClient {
             builder.addHeader("Package-Name", MainApplication.getContext().getPackageName());
 
 
-            String dzCookie = MainApplication.getContext().getDzCookie();
-            if (!Objects.equals(dzCookie, "")) {
-                builder.removeHeader("Cookie");
-                builder.addHeader("Cookie", dzCookie);
-            }
-
-
             Request newRequest = builder.build();
 
-            Response response = chain.proceed(newRequest);
 
-
-            //Log.d("Request", response.toString());
-            Headers headers = response.headers();
-            //Log.d("Cookie", headers.names().toString());
-            return response;
+            return chain.proceed(newRequest);
         }
     }
 }

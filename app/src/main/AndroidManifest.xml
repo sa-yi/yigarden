@@ -37,9 +37,6 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".activities.WebLoginActivity"
-            android:exported="true" />
-        <activity
             android:name=".activities.SettingsActivity"
             android:exported="false"
             android:label="@string/title_activity_settings" />

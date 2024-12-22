@@ -7,8 +7,6 @@ import com.google.gson.annotations.*;
 import java.util.*;
 
 public class ThreadData extends BaseResponse {
-    @SerializedName("Variables")
-    private Variables variables;
     @SerializedName("tid")
     private String tid;
     @SerializedName("fid")
@@ -129,8 +127,6 @@ public class ThreadData extends BaseResponse {
     private String message;
     @SerializedName("attachmentImagePreviewList")
     private List<Object> attachmentImagePreviewList;
-    @SerializedName("special_poll")
-    private SpecialPoll specialPoll;
     @SerializedName("expirations")
     private long expirations;
     @SerializedName("multiple")
@@ -145,20 +141,6 @@ public class ThreadData extends BaseResponse {
     private int allowvote;
     @SerializedName("remaintime")
     private Object remaintime;
-
-    public ArrayList<Post> getPost() {
-        return variables.post;
-    }
-
-    public ThreadData getFinalData() {
-        return variables.getThreadData();
-    }
-
-    @NonNull
-    @Override
-    public String toString() {
-        return super.toString() + variables;
-    }
 
     public String getSubject() {
         return subject;
@@ -184,134 +166,6 @@ public class ThreadData extends BaseResponse {
         return message;
     }
 
-    public static class Variables extends BaseVariables {
 
 
-        @SerializedName("thread")
-        private ThreadData threadData;//如果是查看单个帖子的情况会有thread字段
-        @SerializedName("postlist")
-        private ArrayList<Post> post;
-
-        public ThreadData getThreadData() {
-            return threadData;
-        }
-    }
-
-    public static class SpecialPoll {
-        @SerializedName("polloptions")
-        private Map<Integer, PollOption> pollOptions;
-
-        public static class PollOption {
-            @SerializedName("polloptionid")
-            private int polloptionId;
-            @SerializedName("polloption")
-            private String polloption;
-            @SerializedName("votes")
-            private int votes;
-            @SerializedName("width")
-            private String width;
-            @SerializedName("percent")
-            private float percent;
-            @SerializedName("color")
-            private String color;
-            @SerializedName("imginfo")
-            private List imginfo;
-        }
-    }
-
-    public static class Post {
-        @SerializedName("pid")
-        private int pid;
-        @SerializedName("tid")
-        private int tid;
-        @SerializedName("first")
-        private int first;
-        @SerializedName("author")
-        private String author;
-        @SerializedName("authorid")
-        private int authorid;
-        @SerializedName("dateline")
-        private String dateline;
-        @SerializedName("message")
-        private String message;
-        @SerializedName("anonymous")
-        private int anonymous;
-        @SerializedName("attachment")
-        private int attachment;
-        @SerializedName("status")
-        private int status;
-        @SerializedName("replycredit")
-        private int replycredit;
-        @SerializedName("position")
-        private int position;
-        @SerializedName("username")
-        private String username;
-        @SerializedName("adminid")
-        private int adminid;
-        @SerializedName("groupid")
-        private int groupid;
-        @SerializedName("memberstatus")
-        private int memberstatus;
-        @SerializedName("number")
-        private int number;
-        @SerializedName("dbdateline")
-        private int dbdateline;
-        @SerializedName("attachments")
-        private Map<Integer, ThreadAttachment> attachments;
-        @SerializedName("imagelist")
-        private ArrayList<Integer> imagelist;
-        @SerializedName("groupiconid")
-        private String groupiconid;
-
-        public String getAuthor() {
-            return author;
-        }
-
-        public int getAuthorid() {
-            return authorid;
-        }
-
-        public String getDateline() {
-            return dateline;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public Map<Integer, ThreadAttachment> getAttachments() {
-            return attachments;
-        }
-
-        public ArrayList<Integer> getImagelist() {
-            return imagelist;
-        }
-
-        @Override
-        public String toString() {
-            return "Post{" +
-                    "pid=" + pid +
-                    ", tid=" + tid +
-                    ", first=" + first +
-                    ", author='" + author + '\'' +
-                    ", authorid=" + authorid +
-                    ", dateline='" + dateline + '\'' +
-                    ", message='" + message + '\'' +
-                    ", anonymous=" + anonymous +
-                    ", attachment=" + attachment +
-                    ", status=" + status +
-                    ", replycredit=" + replycredit +
-                    ", position=" + position +
-                    ", username='" + username + '\'' +
-                    ", adminid=" + adminid +
-                    ", groupid=" + groupid +
-                    ", memberstatus=" + memberstatus +
-                    ", number=" + number +
-                    ", dbdateline=" + dbdateline +
-                    ", attachments=" + attachments +
-                    ", imagelist=" + imagelist +
-                    ", groupiconid='" + groupiconid + '\'' +
-                    '}';
-        }
-    }
 }

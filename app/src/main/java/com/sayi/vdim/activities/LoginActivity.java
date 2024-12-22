@@ -15,11 +15,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.*;
 
 import com.android.volley.toolbox.*;
-import com.google.gson.internal.*;
 import com.sayi.*;
 import com.sayi.vdim.*;
-import com.sayi.vdim.customentity.*;
 import com.sayi.vdim.databinding.*;
+import com.sayi.vdim.dz_entity.*;
 
 import java.io.*;
 import java.net.*;
@@ -28,10 +27,7 @@ import java.util.*;
 
 import javax.net.ssl.*;
 
-import okhttp3.*;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import retrofit2.*;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -49,6 +45,10 @@ public class LoginActivity extends AppCompatActivity {
         //window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 
 
+        Log.d("pkg",MainApplication.getContext().getPackageName());
+
+
+
         int flags = window.getDecorView().getSystemUiVisibility();
         flags |= View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
         window.getDecorView().setSystemUiVisibility(flags);
@@ -58,46 +58,66 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(binding.getRoot());
         binding.login.setEnabled(false);
-        InputTextWatcher watcher=new InputTextWatcher();
+        InputTextWatcher watcher = new InputTextWatcher();
         watcher.addEditText(binding.username);
         watcher.addEditText(binding.password);
         binding.username.addTextChangedListener(watcher);
         binding.password.addTextChangedListener(watcher);
 
-        CustomService service = CustomClient.getRetrofitInstance().create(CustomService.class);
+        DzService service = DzClient.getRetrofitInstance().create(DzService.class);
         binding.login.setOnClickListener(v -> {
             String username = binding.username.getText().toString();
             String password = binding.password.getText().toString();
 
 
-            Call<CustomToken> call = service.login(username,password);
+            Call<Map<String, Object>> call = service.login(username, password);
             call.enqueue(new Callback<>() {
 
                 @Override
-                public void onResponse(@NonNull Call<CustomToken> call, @NonNull Response<CustomToken> response) {
+                public void onResponse(@NonNull Call<Map<String, Object>> call, @NonNull Response<Map<String, Object>> response) {
                     if (response.isSuccessful()) {
-                        CustomToken tokenEntity = response.body();
+                        Map<String, Object> tokenEntity = response.body();
                         if (tokenEntity != null) {
-                            String token=tokenEntity.getToken();
+                            String token = (String) tokenEntity.get("token");
                             Log.d("token", token);
-                            if(!token.isEmpty()){
-                                ((MainApplication)getApplication()).putToken(token);
+                            if (!token.isEmpty()) {
+                                ((MainApplication) getApplication()).putToken(token);
                                 MainApplication.toast("登录成功");
                                 finish();
-                                Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
                             }
-                        }else {
-                            Log.e("login","null token");
+                        } else {
+                            Log.e("login", "null token");
                         }
-                    }else {
-                        Log.e("login",response.message());
+                    } else {
+                        Log.e("login", response.message());
+                        switch (response.code()) {
+                            case 400:
+                                MainApplication.toast("账户或密码为空");
+                                break;
+                            case 401:
+                                MainApplication.toast("账户密码输入错误");
+                                break;
+                            case 404:
+                                MainApplication.toast("未找到账户");
+                                break;
+                            case 500:
+                                MainApplication.toast("数据库连接错误");
+                                break;
+                            case 567:
+                                MainApplication.toast("登录次数过多，请稍后重试");
+                                break;
+                            default:
+                                MainApplication.toast("未知错误，错误码：" + response.code());
+
+                        }
                     }
                 }
 
                 @Override
-                public void onFailure(@NonNull Call<CustomToken> call, @NonNull Throwable e) {
-                    Log.e("login",e.getMessage());
+                public void onFailure(@NonNull Call<Map<String, Object>> call, @NonNull Throwable e) {
+                    Log.e("login", e.getMessage());
                 }
 
             });
@@ -125,11 +145,6 @@ public class LoginActivity extends AppCompatActivity {
         });
         binding.retrievePassword.setOnClickListener(v -> {
             MainApplication.toast("请前往网页端重置密码");
-        });
-        binding.webLogin.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this, WebLoginActivity.class);
-            startActivity(intent);
-            finish();
         });
 
     }
@@ -182,7 +197,7 @@ public class LoginActivity extends AppCompatActivity {
     class InputTextWatcher implements TextWatcher {
         private ArrayList<EditText> editTexts = new ArrayList<>();
 
-        public void addEditText(EditText editText){
+        public void addEditText(EditText editText) {
             editTexts.add(editText);
         }
 
@@ -198,7 +213,7 @@ public class LoginActivity extends AppCompatActivity {
         public void afterTextChanged(Editable s) {
             boolean enabled = true;
             for (EditText editText : editTexts) {
-                Log.d("textWatcher",editText.getText().toString());
+                Log.d("textWatcher", editText.getText().toString());
                 if (editText.getText().toString().isEmpty())
                     enabled = false;
             }
