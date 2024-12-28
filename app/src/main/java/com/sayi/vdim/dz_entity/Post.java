@@ -42,7 +42,7 @@ public class Post {
     @SerializedName("dbdateline")
     private int dbdateline;
     @SerializedName("attachments")
-    private Map<Integer, ThreadAttachment> attachments;
+    private ArrayList<ThreadAttachment> attachments;
     @SerializedName("imagelist")
     private ArrayList<Integer> imagelist;
     @SerializedName("groupiconid")
@@ -64,7 +64,7 @@ public class Post {
         return message;
     }
 
-    public Map<Integer, ThreadAttachment> getAttachments() {
+    public ArrayList<ThreadAttachment> getAttachments() {
         return attachments;
     }
 

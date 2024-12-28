@@ -2,6 +2,7 @@ package com.sayi.vdim.activities.mainfragments.home;
 
 import android.util.*;
 
+import androidx.annotation.*;
 import androidx.lifecycle.*;
 
 import com.sayi.*;
@@ -12,24 +13,8 @@ import java.util.*;
 import retrofit2.*;
 
 public class HomeViewModel extends ViewModel {
+    public final MutableLiveData<List<ThreadData>> dzDataList=new MutableLiveData<>(new ArrayList<>());;
 
-    public MutableLiveData<List<Announcement>> announcementsDataList;
-    public MutableLiveData<List<ThreadData>> dzDataList;
-
-    public HomeViewModel() {
-
-        List<Announcement> announcements = new ArrayList<>();
-        Announcement announcement = new Announcement("这里是公告", "公告的内容", "跳转的链接");
-        announcements.add(announcement);
-        Announcement announcement1 = new Announcement("这是另一个公告", "a", "d");
-        announcements.add(announcement1);
-        announcementsDataList = new MutableLiveData<>(new ArrayList<>());
-        announcementsDataList.setValue(announcements);
-
-
-        dzDataList = new MutableLiveData<>(new ArrayList<>());
-
-    }
 
     public void fetchDzData(int page) {
 
@@ -37,7 +22,7 @@ public class HomeViewModel extends ViewModel {
         Call<ArrayList<ThreadData>> call = dzService.getHotThreads(page);
         call.enqueue(new Callback<>() {
             @Override
-            public void onResponse(Call<ArrayList<ThreadData>> call, Response<ArrayList<ThreadData>> response) {
+            public void onResponse(@NonNull Call<ArrayList<ThreadData>> call, @NonNull Response<ArrayList<ThreadData>> response) {
                 if (response.isSuccessful()) {
 
                     List<ThreadData> data = response.body();
@@ -51,7 +36,7 @@ public class HomeViewModel extends ViewModel {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<ThreadData>> call, Throwable throwable) {
+            public void onFailure(@NonNull Call<ArrayList<ThreadData>> call, @NonNull Throwable throwable) {
                 Log.e("dz_error", throwable.toString());
                 failed.postValue("error");
             }
@@ -62,5 +47,5 @@ public class HomeViewModel extends ViewModel {
         return failed;
     }
 
-    private MutableLiveData<String> failed= new MutableLiveData<>();
+    private final MutableLiveData<String> failed = new MutableLiveData<>();
 }

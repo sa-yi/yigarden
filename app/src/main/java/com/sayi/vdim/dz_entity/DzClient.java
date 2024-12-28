@@ -78,7 +78,7 @@ public class DzClient {
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
 
             //TODO:加上允许抓包
-            //builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
+            builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
 
 
             builder.hostnameVerifier((hostname, session) -> true);
@@ -134,7 +134,7 @@ public class DzClient {
             builder.addHeader("Version-Code", getAppCode());
 
             builder.addHeader("Package-Name", MainApplication.getContext().getPackageName());
-
+            builder.addHeader("Referer","https://api.lty.fan/");
 
             Request newRequest = builder.build();
 

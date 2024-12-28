@@ -81,6 +81,7 @@ public class HomeFragment extends Fragment {
         homeViewModel.getFailedData().observe(getViewLifecycleOwner(), failedData -> {
             binding.nickPostView.setVisibility(View.GONE);
             binding.refreshCookie.setVisibility(View.VISIBLE);
+            MainApplication.toast("加载帖子失败");
         });
         binding.refreshCookie.setOnClickListener(v -> {
             /*Dialog.init(requireActivity())

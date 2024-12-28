@@ -57,21 +57,8 @@ public class PostViewImageActivity extends AppCompatActivity {
             imageUrls.add(intent.getStringExtra("url"));
         }else {
             Log.d(TAG, imageIndex + "");
-            for (String key : intent.getExtras().keySet()) {
-                Log.d(TAG, key + ":" + intent.getExtras().get(key));
-                if (!Objects.equals(key, "index")) {
-                    imageUrls.add(String.valueOf(intent.getExtras().get(key)));
-                }
-            }
-            for (String key : intent.getExtras().keySet()) {
-                if (!Objects.equals(key, "index")) {
-                    if (Integer.valueOf(key) == imageIndex) {
-                        break;
-                    } else
-                        index++;
-                }
-            }
-            Log.d(TAG, index + "");
+            imageUrls.addAll(intent.getStringArrayListExtra("images"));
+
         }
         GalleryAdapter adapter = new GalleryAdapter(this, imageUrls);
         binding.imageGallery.setAdapter(adapter);

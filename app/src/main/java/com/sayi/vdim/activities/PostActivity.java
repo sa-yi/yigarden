@@ -46,7 +46,7 @@ public class PostActivity extends AppCompatActivity {
     PostViewModel viewModel;
     UserBannerFragment userBanner;
     private int post_id = -1;
-    private ArrayMap<String, String> attachmentImages = new ArrayMap<>();
+    private ArrayList<String> attachmentImages = new ArrayList<>();
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -123,29 +123,31 @@ public class PostActivity extends AppCompatActivity {
             }
 
             if (firstPost.getAttachments() != null) {
-                for (int key : firstPost.getAttachments().keySet()) {
-                    ThreadAttachment attachment = firstPost.getAttachments().get(key);
+                int key=-1;
+                for (ThreadAttachment attachment : firstPost.getAttachments()) {
                     if (attachment == null) return;
-                    if (attachment.getIsImage() == 1 | attachment.getAttachimg() == 1) {//attachimg表示以附件形式传递且为图片
-                        String image_url = attachment.getUrl() + attachment.getAttachment();
+                    if (attachment.getAttachimg()) {//attachimg表示以附件形式传递且为图片
+                        key++;
+                        String image_url = attachment.getUrl();
+                        image_url="https://oss.lty.fan/forum/"+image_url;
                         Log.d("Attachment image", image_url);
-                        attachmentImages.put(String.valueOf(key), image_url);
+                        attachmentImages.add(image_url);
                         ImageView imageView = new ImageView(this);
                         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                         layoutParams.setMargins(10, 10, 10, 10);
                         imageView.setLayoutParams(layoutParams);
+                        int finalKey = key;
                         imageView.setOnClickListener(v -> {
                             Intent galleryIntent = new Intent(PostActivity.this, PostViewImageActivity.class);
-                            for (Map.Entry<String, String> attachmentValue : attachmentImages.entrySet()) {
-                                galleryIntent.putExtra(String.valueOf(attachmentValue.getKey()), attachmentValue.getValue());
-                            }
-                            galleryIntent.putExtra("index", key);
+                            galleryIntent.putExtra("images",attachmentImages);
+                            galleryIntent.putExtra("index", finalKey);
                             startActivity(galleryIntent);
                         });
                         Glide.with(imageView).load(image_url).into(imageView);
                         binding.contentContainer.addView(imageView);
-                    } else {
+                        //} else {
                         Log.d("Attachment not image", attachment.toString());
+                        //}
                     }
                 }
 
@@ -162,7 +164,15 @@ public class PostActivity extends AppCompatActivity {
 
     }
 
+    private static String parseDzFormat2Html(String dzContent){
+        String html="";
 
+
+
+        return html;
+    }
+
+    @NonNull
     private SpannableString getFormattedHtml(String content, TextView textView) {
         content = content.replace("&amp;", "&");
         content = content.replace("&gt;", ">")
@@ -325,6 +335,7 @@ public class PostActivity extends AppCompatActivity {
         textView.setText(textView.getText());
     }
 
+    @NonNull
     public static HashMap<String, String> getQueryParams(String urlString) {
         HashMap<String, String> params = new HashMap<>();
 
@@ -473,13 +484,11 @@ public class PostActivity extends AppCompatActivity {
 
         ArrayList<Integer> imageList = comment.getImagelist();
         if (comment.getAttachments() != null)
-            for (int attachmentId : comment.getAttachments().keySet()) {
-                if (imageList.contains(attachmentId)) {
+            for (ThreadAttachment attachment : comment.getAttachments()) {
                     //TODO 带图评论的图片
-                    ImageView imageView=new ImageView(this);
+/*                    ImageView imageView=new ImageView(this);
                     imageView.setMaxWidth(20);
                     imageView.setMaxHeight(10);
-                    ThreadAttachment attachment=comment.getAttachments().get(attachmentId);
                     String attachmentName=attachment.getAttachment();
                     String url=attachment.getUrl();
 
@@ -488,7 +497,7 @@ public class PostActivity extends AppCompatActivity {
                     Log.d("attachment",finalUrl);
                     Glide.with(this).load(finalUrl).into(imageView);
                     commentBinding.contentContainer.addView(imageView);
-                }
+*/
             }
 
 
