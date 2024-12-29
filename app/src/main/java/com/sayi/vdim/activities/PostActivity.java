@@ -33,8 +33,6 @@ import com.sayi.vdim.utils.*;
 
 import org.xml.sax.*;
 
-import java.net.*;
-import java.nio.charset.*;
 import java.util.*;
 
 import retrofit2.*;
@@ -47,6 +45,39 @@ public class PostActivity extends AppCompatActivity {
     UserBannerFragment userBanner;
     private int post_id = -1;
     private ArrayList<String> attachmentImages = new ArrayList<>();
+
+    private static String parseDzFormat2Html(String dzContent) {
+        return DzCodeParser.parseBBCode(dzContent);
+    }
+
+    @NonNull
+    public static HashMap<String, String> getQueryParams(String urlString) {
+        HashMap<String, String> params = new HashMap<>();
+
+        // 使用 Uri 类来解析 URL 参数
+        Uri uri = Uri.parse(urlString);
+
+        Log.d("uri", uri.toString());
+
+
+        // 获取 URL 查询参数部分
+        String query = uri.getQuery();
+
+        if (query != null && !query.isEmpty()) {
+            // 遍历每一个参数键值对
+            String[] pairs = query.split("&");
+            for (String pair : pairs) {
+                String[] keyValue = pair.split("=");
+                if (keyValue.length == 2) {
+                    String key = Uri.decode(keyValue[0]);
+                    String value = Uri.decode(keyValue[1]);
+                    params.put(key, value);
+                }
+            }
+        }
+
+        return params;
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -76,10 +107,10 @@ public class PostActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(PostViewModel.class);
 
-        viewModel.getThreadData().observe(this,threadData -> {
+        viewModel.getThreadData().observe(this, threadData -> {
 
             Log.d("post", threadData.toString());
-            if(getSupportActionBar()!=null) {
+            if (getSupportActionBar() != null) {
                 Objects.requireNonNull(getSupportActionBar()).setTitle(threadData.getSubject());
             }
 
@@ -123,13 +154,13 @@ public class PostActivity extends AppCompatActivity {
             }
 
             if (firstPost.getAttachments() != null) {
-                int key=-1;
+                int key = -1;
                 for (ThreadAttachment attachment : firstPost.getAttachments()) {
                     if (attachment == null) return;
                     if (attachment.getAttachimg()) {//attachimg表示以附件形式传递且为图片
                         key++;
                         String image_url = attachment.getUrl();
-                        image_url="https://oss.lty.fan/forum/"+image_url;
+                        image_url = "https://oss.lty.fan/forum/" + image_url;
                         Log.d("Attachment image", image_url);
                         attachmentImages.add(image_url);
                         ImageView imageView = new ImageView(this);
@@ -139,7 +170,7 @@ public class PostActivity extends AppCompatActivity {
                         int finalKey = key;
                         imageView.setOnClickListener(v -> {
                             Intent galleryIntent = new Intent(PostActivity.this, PostViewImageActivity.class);
-                            galleryIntent.putExtra("images",attachmentImages);
+                            galleryIntent.putExtra("images", attachmentImages);
                             galleryIntent.putExtra("index", finalKey);
                             startActivity(galleryIntent);
                         });
@@ -164,16 +195,9 @@ public class PostActivity extends AppCompatActivity {
 
     }
 
-    private static String parseDzFormat2Html(String dzContent){
-        String html="";
-
-
-
-        return html;
-    }
-
     @NonNull
     private SpannableString getFormattedHtml(String content, TextView textView) {
+        content = parseDzFormat2Html(content);
         content = content.replace("&amp;", "&");
         content = content.replace("&gt;", ">")
                 .replace("&lt;", "<");
@@ -238,17 +262,17 @@ public class PostActivity extends AppCompatActivity {
             spannableString.setSpan(new ClickableSpan() {
                 @Override
                 public void onClick(@NonNull View widget) {
-                    String url=span.getURL();
-                    if(url.startsWith("http")) {
+                    String url = span.getURL();
+                    if (url.startsWith("http")) {
                         Uri uri = Uri.parse(url);
 
-                        String authority=uri.getAuthority();
-                        String path=uri.getPath();
-                        String query=uri.getQuery();
+                        String authority = uri.getAuthority();
+                        String path = uri.getPath();
+                        String query = uri.getQuery();
 
 
-                        Log.d("urldata",authority+":"+path+":"+query);
-                        if(!Objects.equals(authority, "i.lty.fan")){//站外链接
+                        Log.d("urldata", authority + ":" + path + ":" + query);
+                        if (!Objects.equals(authority, "i.lty.fan")) {//站外链接
                             Dialog.init(PostActivity.this)
                                     .setupDialog("是否跳转链接", span.getURL())
                                     .setPositiveButton("确认", (dialogInterface, i) -> {
@@ -259,12 +283,12 @@ public class PostActivity extends AppCompatActivity {
                                     .show();
                             return;
                         }
-                        HashMap<String,String> queryMap=getQueryParams(url);
-                        if(Objects.equals(path, "/forum.php")){
-                            String mod=queryMap.get("mod");
-                            if(mod!=null){
-                                if(mod.equals("viewthread")){
-                                    String tid=queryMap.get("tid");
+                        HashMap<String, String> queryMap = getQueryParams(url);
+                        if (Objects.equals(path, "/forum.php")) {
+                            String mod = queryMap.get("mod");
+                            if (mod != null) {
+                                if (mod.equals("viewthread")) {
+                                    String tid = queryMap.get("tid");
                                     Intent intent = new Intent(PostActivity.this, PostActivity.class);
                                     //intent.setData();
                                     Uri jumpUri = new Uri.Builder().scheme("vdim")
@@ -276,7 +300,7 @@ public class PostActivity extends AppCompatActivity {
                                     startActivity(intent);
                                 }
                             }
-                        }else {
+                        } else {
                             // 移除字符串开头的"/"
                             assert path != null;
                             String withoutLeadingSlash = path.substring(1);
@@ -291,7 +315,7 @@ public class PostActivity extends AppCompatActivity {
                                 // 使用"."分割第二部分，以提取数字
                                 String[] partsByDot = partsByDash[1].split("\\.");
 
-                                String index,page;
+                                String index, page;
                                 // 检查是否至少有两个部分
                                 if (partsByDot.length >= 2) {
                                     index = partsByDot[0]; //板块id部分
@@ -300,7 +324,7 @@ public class PostActivity extends AppCompatActivity {
                                 } else {
                                     index = partsByDot[0];
                                 }
-                                if(Objects.equals(forumString, "forum")){
+                                if (Objects.equals(forumString, "forum")) {
                                     Intent intent = new Intent(PostActivity.this, ForumActivity.class);
                                     Uri jumpUri = new Uri.Builder().scheme("vdim")
                                             .authority("")  // authority 这里可以为空
@@ -311,11 +335,11 @@ public class PostActivity extends AppCompatActivity {
                                     startActivity(intent);
                                 }
                             } else {
-                                Log.d(TAG,"error finding forumid");
+                                Log.d(TAG, "error finding forumid");
                             }
                         }
 
-                    }else {
+                    } else {
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(span.getURL()));
                         startActivity(intent);
                     }
@@ -333,36 +357,6 @@ public class PostActivity extends AppCompatActivity {
         // 使得链接可点击
         textView.setMovementMethod(LinkMovementMethod.getInstance());
         textView.setText(textView.getText());
-    }
-
-    @NonNull
-    public static HashMap<String, String> getQueryParams(String urlString) {
-        HashMap<String, String> params = new HashMap<>();
-
-        // 使用 Uri 类来解析 URL 参数
-        Uri uri = Uri.parse(urlString);
-
-        Log.d("uri",uri.toString());
-
-
-
-        // 获取 URL 查询参数部分
-        String query = uri.getQuery();
-
-        if (query != null && !query.isEmpty()) {
-            // 遍历每一个参数键值对
-            String[] pairs = query.split("&");
-            for (String pair : pairs) {
-                String[] keyValue = pair.split("=");
-                if (keyValue.length == 2) {
-                    String key = Uri.decode(keyValue[0]);
-                    String value = Uri.decode(keyValue[1]);
-                    params.put(key, value);
-                }
-            }
-        }
-
-        return params;
     }
 
     void setupUI() {
@@ -485,7 +479,7 @@ public class PostActivity extends AppCompatActivity {
         ArrayList<Integer> imageList = comment.getImagelist();
         if (comment.getAttachments() != null)
             for (ThreadAttachment attachment : comment.getAttachments()) {
-                    //TODO 带图评论的图片
+                //TODO 带图评论的图片
 /*                    ImageView imageView=new ImageView(this);
                     imageView.setMaxWidth(20);
                     imageView.setMaxHeight(10);
@@ -509,12 +503,12 @@ public class PostActivity extends AppCompatActivity {
         private static final String TAG = "PostViewModel";
         private final DzService dzService = DzClient.getRetrofitInstance().create(DzService.class);
 
-        private final MutableLiveData<ThreadData> threadData=new MutableLiveData<>();
+        private final MutableLiveData<ThreadData> threadData = new MutableLiveData<>();
         private final MutableLiveData<ArrayList<Post>> postLiveData = new MutableLiveData<>();
         private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
 
 
-        public LiveData<ThreadData> getThreadData(){
+        public LiveData<ThreadData> getThreadData() {
             return threadData;
         }
 
@@ -528,13 +522,13 @@ public class PostActivity extends AppCompatActivity {
         }
 
 
-        public void fetchThread(int tid){
+        public void fetchThread(int tid) {
             dzService.getThread(tid).enqueue(new Callback<>() {
                 @Override
                 public void onResponse(@NonNull Call<ThreadData> call, @NonNull Response<ThreadData> response) {
-                    if(response.isSuccessful()){
-                        ThreadData data= response.body();
-                        if(data!=null){
+                    if (response.isSuccessful()) {
+                        ThreadData data = response.body();
+                        if (data != null) {
                             threadData.postValue(data);
                         }
                     }
@@ -576,7 +570,7 @@ public class PostActivity extends AppCompatActivity {
                 int len = output.length();
                 ImageSpan[] images = output.getSpans(len - 1, len, ImageSpan.class);
                 String imageSource = images[0].getSource();
-                if(imageSource==null)return;
+                if (imageSource == null) return;
                 ClickableSpan clickableSpan = new ClickableSpan() {
                     @Override
                     public void onClick(@NonNull View widget) {
