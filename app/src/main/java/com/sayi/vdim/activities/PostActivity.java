@@ -33,9 +33,14 @@ import com.sayi.vdim.utils.*;
 
 import org.xml.sax.*;
 
+import java.text.*;
 import java.util.*;
 
+import okhttp3.*;
 import retrofit2.*;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class PostActivity extends AppCompatActivity {
     static String TAG = "POST-ACTIVITY";
@@ -44,7 +49,7 @@ public class PostActivity extends AppCompatActivity {
     PostViewModel viewModel;
     UserBannerFragment userBanner;
     private int post_id = -1;
-    private ArrayList<String> attachmentImages = new ArrayList<>();
+    private final ArrayList<String> attachmentImages = new ArrayList<>();
 
     private static String parseDzFormat2Html(String dzContent) {
         return DzCodeParser.parseBBCode(dzContent);
@@ -122,16 +127,15 @@ public class PostActivity extends AppCompatActivity {
 
             int authorId = threadData.getAuthorId();
         });
-        viewModel.getPostLiveData().observe(this, postFeedData -> {
+        viewModel.getPostLiveData().observe(this, posts -> {
 
 
             //Glide.with(PostActivity.this).asBitmap().load("https://i.lty.fan/uc_server/avatar.php?size=big&uid=" + authorId).error(R.drawable.default_avator).into(userBanner.getAvatorView());
 
 
-            ArrayList<Post> posts = postFeedData;
             Post firstPost = posts.remove(0);
 
-            binding.replyCount.setText(posts.size() + "");
+            binding.replyCount.setText(MessageFormat.format("{0}", posts.size()));
 
 
             String content = firstPost.getMessage();
@@ -176,15 +180,16 @@ public class PostActivity extends AppCompatActivity {
                         });
                         Glide.with(imageView).load(image_url).into(imageView);
                         binding.contentContainer.addView(imageView);
-                        //} else {
+                    } else {
                         Log.d("Attachment not image", attachment.toString());
-                        //}
+
                     }
                 }
 
 
             }
             DialogLoading.dismiss(PostActivity.this);
+
         });
         viewModel.getErrorMessage().observe(this, errorMsg -> {
             DialogLoading.dismiss(PostActivity.this);
@@ -198,9 +203,6 @@ public class PostActivity extends AppCompatActivity {
     @NonNull
     private SpannableString getFormattedHtml(String content, TextView textView) {
         content = parseDzFormat2Html(content);
-        content = content.replace("&amp;", "&");
-        content = content.replace("&gt;", ">")
-                .replace("&lt;", "<");
         Spanned sp = Html.fromHtml(content, HtmlCompat.FROM_HTML_MODE_LEGACY, source -> {
             final LevelListDrawable drawable = new LevelListDrawable();
 
@@ -378,6 +380,7 @@ public class PostActivity extends AppCompatActivity {
                     return true;
                 }
                 MainApplication.toast("发送");
+                viewModel.commentPost(post_id,content);
                 return true;
             }
             return false;
@@ -480,18 +483,20 @@ public class PostActivity extends AppCompatActivity {
         if (comment.getAttachments() != null)
             for (ThreadAttachment attachment : comment.getAttachments()) {
                 //TODO 带图评论的图片
-/*                    ImageView imageView=new ImageView(this);
+                if(attachment.getAttachimg()) {
+                    ImageView imageView = new ImageView(this);
                     imageView.setMaxWidth(20);
                     imageView.setMaxHeight(10);
-                    String attachmentName=attachment.getAttachment();
-                    String url=attachment.getUrl();
+                    String attachmentName = attachment.getUrl();
+                    String url = attachment.getUrl();
 
-                    String finalUrl=url+attachmentName;
+                    String finalUrl = url + attachmentName;
 
-                    Log.d("attachment",finalUrl);
+                    Log.d("attachment", finalUrl);
                     Glide.with(this).load(finalUrl).into(imageView);
                     commentBinding.contentContainer.addView(imageView);
-*/
+                }
+
             }
 
 
@@ -558,6 +563,26 @@ public class PostActivity extends AppCompatActivity {
                 public void onFailure(@NonNull Call<ArrayList<Post>> call, @NonNull Throwable t) {
                     errorMessage.postValue(t.getMessage());
                     Log.e(TAG, "Error fetching post", t);
+                }
+            });
+        }
+
+        public void commentPost(int tid,String message){
+            Call<ResponseBody> call=dzService.comment(tid,message);
+            call.enqueue(new Callback<>() {
+                @Override
+                public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        Log.d("comment",response.message());
+                        MainApplication.toast("评论成功");
+                    } else {
+                        MainApplication.toast("评论失败:"+response.message());
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable throwable) {
+                    MainApplication.toast("请求失败:"+throwable.getMessage());
                 }
             });
         }

@@ -2,7 +2,9 @@ package com.sayi.vdim.dz_entity;
 
 import java.util.*;
 
+import okhttp3.*;
 import retrofit2.*;
+import retrofit2.Call;
 import retrofit2.http.*;
 
 public interface DzService {
@@ -18,6 +20,10 @@ public interface DzService {
 
     @GET("posts")
     Call<ArrayList<Post>> getPosts(@Query("tid") int tid);
+
+    @POST("post_comment")
+    @FormUrlEncoded
+    Call<ResponseBody> comment(@Field("tid") int tid,@Field("message") String message);
 
     @GET("index.php?version=4&module=forumdisplay")
     Call<ForumDetailed> getForumDetailed(@Query("fid") int fid,@Query("page") int page);

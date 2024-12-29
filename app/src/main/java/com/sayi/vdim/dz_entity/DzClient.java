@@ -136,6 +136,9 @@ public class DzClient {
             builder.addHeader("Package-Name", MainApplication.getContext().getPackageName());
             builder.addHeader("Referer","https://api.lty.fan/");
 
+            Log.d("token",MainApplication.getContext().getToken());
+            builder.addHeader("Authorization","Bearer "+MainApplication.getContext().getToken());
+
             Request newRequest = builder.build();
 
 
