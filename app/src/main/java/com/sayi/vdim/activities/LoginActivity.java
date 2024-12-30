@@ -1,6 +1,5 @@
 package com.sayi.vdim.activities;
 
-import android.annotation.*;
 import android.content.ClipboardManager;
 import android.content.*;
 import android.graphics.*;
@@ -11,21 +10,15 @@ import android.util.*;
 import android.view.*;
 import android.widget.*;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.*;
 import androidx.appcompat.app.*;
 
-import com.android.volley.toolbox.*;
 import com.sayi.*;
 import com.sayi.vdim.*;
 import com.sayi.vdim.databinding.*;
 import com.sayi.vdim.dz_entity.*;
 
-import java.io.*;
-import java.net.*;
-import java.security.cert.*;
 import java.util.*;
-
-import javax.net.ssl.*;
 
 import retrofit2.*;
 
@@ -45,8 +38,7 @@ public class LoginActivity extends AppCompatActivity {
         //window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 
 
-        Log.d("pkg",MainApplication.getContext().getPackageName());
-
+        Log.d("pkg", MainApplication.getContext().getPackageName());
 
 
         int flags = window.getDecorView().getSystemUiVisibility();
@@ -152,46 +144,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-    }
-
-    public static class AllTrustManager implements X509TrustManager {
-        @SuppressLint("TrustAllX509TrustManager")
-        @Override
-        public void checkClientTrusted(X509Certificate[] chain, String authType) {
-        }
-
-        @SuppressLint("TrustAllX509TrustManager")
-        @Override
-        public void checkServerTrusted(X509Certificate[] chain, String authType) {
-        }
-
-        @Override
-        public X509Certificate[] getAcceptedIssuers() {
-            return new X509Certificate[0];
-        }
-    }
-
-    public static class AllTrustHurlStack extends HurlStack {
-        private final SSLSocketFactory sslSocketFactory;
-
-        public AllTrustHurlStack() {
-            try {
-                SSLContext sslContext = SSLContext.getInstance("TLS");
-                sslContext.init(null, new TrustManager[]{new AllTrustManager()}, null);
-                sslSocketFactory = sslContext.getSocketFactory();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        @Override
-        protected HttpURLConnection createConnection(URL url) throws IOException {
-            HttpURLConnection httpURLConnection = super.createConnection(url);
-            if (httpURLConnection instanceof HttpsURLConnection) {
-                ((HttpsURLConnection) httpURLConnection).setSSLSocketFactory(sslSocketFactory);
-            }
-            return httpURLConnection;
-        }
     }
 
     class InputTextWatcher implements TextWatcher {

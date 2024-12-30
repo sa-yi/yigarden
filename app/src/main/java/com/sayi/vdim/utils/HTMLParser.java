@@ -11,6 +11,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.text.*;
+
 public class HTMLParser {
     public static void parseHtmlContent(Context context,LinearLayout parentLayout, String htmlContent) {
         Document document = Jsoup.parse(htmlContent);
@@ -35,7 +37,7 @@ public class HTMLParser {
                 for(Element childElement:element.children()){
 
                     TextView textView = new TextView(context);
-                    textView.setText("• "+childElement.text());
+                    textView.setText(MessageFormat.format("• {0}", childElement.text()));
                     textView.setTextSize(18);
                     textView.setPadding(10,10,10,10);
                     parentLayout.addView(textView);

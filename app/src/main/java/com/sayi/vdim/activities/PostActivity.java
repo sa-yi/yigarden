@@ -51,10 +51,6 @@ public class PostActivity extends AppCompatActivity {
     private int post_id = -1;
     private final ArrayList<String> attachmentImages = new ArrayList<>();
 
-    private static String parseDzFormat2Html(String dzContent) {
-        return DzCodeParser.parseBBCode(dzContent);
-    }
-
     @NonNull
     public static HashMap<String, String> getQueryParams(String urlString) {
         HashMap<String, String> params = new HashMap<>();
@@ -121,6 +117,8 @@ public class PostActivity extends AppCompatActivity {
 
             String author = threadData.getAuthor();
             String date = threadData.getLastpost();
+
+            date=DateFormatter.format(date);
 
             userBanner.setAuthorName(author);
             userBanner.setSendTime(date);
@@ -203,7 +201,7 @@ public class PostActivity extends AppCompatActivity {
 
     @NonNull
     private SpannableString getFormattedHtml(String content, TextView textView) {
-        content = parseDzFormat2Html(content);
+        content = DzCodeParser.parseBBCode(content);
         Spanned sp = Html.fromHtml(content, HtmlCompat.FROM_HTML_MODE_LEGACY, source -> {
             final LevelListDrawable drawable = new LevelListDrawable();
 
@@ -380,7 +378,6 @@ public class PostActivity extends AppCompatActivity {
                     MainApplication.toast("不可评论空内容");
                     return true;
                 }
-                MainApplication.toast("发送");
                 viewModel.commentPost(post_id,content);
                 return true;
             }
@@ -472,7 +469,7 @@ public class PostActivity extends AppCompatActivity {
         commentBinding.userName.setTextColor(ContextCompat.getColor(this, R.color.tianyi_blue));
 
         String sendTime = comment.getDateline();
-        sendTime = sendTime.replace("&nbsp;", " ");
+        sendTime = DateFormatter.format(sendTime);
         commentBinding.sendTime.setText(sendTime);
 
 

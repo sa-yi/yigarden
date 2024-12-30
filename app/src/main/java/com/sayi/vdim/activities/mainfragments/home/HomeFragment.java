@@ -66,7 +66,6 @@ public class HomeFragment extends Fragment {
             }
         });
         homeViewModel.dzDataList.observe(getViewLifecycleOwner(), dzDatalist -> {
-            binding.refreshCookie.setVisibility(View.GONE);
             for (ThreadData dzThreadData : dzDatalist) {
                 dzDataAdapter.addData(dzThreadData);
                 dzDataAdapter.notifyItemChanged(dzDataAdapter.getItemCount());
@@ -77,23 +76,11 @@ public class HomeFragment extends Fragment {
 
         homeViewModel.fetchDzData(page);
 
+        binding.loadMore.setOnClickListener(v->homeViewModel.fetchDzData(++page));
 
         homeViewModel.getFailedData().observe(getViewLifecycleOwner(), failedData -> {
             binding.nickPostView.setVisibility(View.GONE);
-            binding.refreshCookie.setVisibility(View.VISIBLE);
             MainApplication.toast("加载帖子失败");
-        });
-        binding.refreshCookie.setOnClickListener(v -> {
-            /*Dialog.init(requireActivity())
-                    .setupDialog("获取帖子失败", "是否重新获取Cookie")
-                    .setPositiveButton("确认", (dialogInterface, i) -> {
-                        MainApplication.toast("正在重新获取cookie...");
-                        Intent intent = new Intent(requireActivity(), WebLoginActivity.class);
-                        startActivity(intent);
-                        requireActivity().finish();
-                    })
-                    .show();
-            */
         });
 
         binding.searchInput.setOnClickListener(v -> {

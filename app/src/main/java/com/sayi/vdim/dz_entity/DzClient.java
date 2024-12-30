@@ -73,7 +73,7 @@ public class DzClient {
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
 
             //TODO:加上允许抓包
-            builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
+            //builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
 
 
             builder.hostnameVerifier((hostname, session) -> true);
@@ -104,13 +104,14 @@ public class DzClient {
 
     @NonNull
     private static String getAppCode() {
-        long appCode = -1;
+        long appCode;
         try {
             PackageManager packageManager = MainApplication.getContext().getPackageManager();
             PackageInfo packageInfo = packageManager.getPackageInfo(MainApplication.getContext().getPackageName(), 0);
             appCode = packageInfo.getLongVersionCode();  // 或者使用 versionCode，如果你需要整型值
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
+            return "-1";
         }
         return String.valueOf(appCode);
     }

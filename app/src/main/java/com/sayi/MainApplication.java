@@ -8,7 +8,7 @@ import android.content.*;
 import android.os.*;
 import android.widget.*;
 
-import com.sayi.vdim.*;
+
 import com.sayi.vdim.utils.*;
 
 public class MainApplication extends Application {
@@ -38,26 +38,12 @@ public class MainApplication extends Application {
         editor.commit();
     }
 
-    public void putDzCookie(String dzCookie) {
-        SharedPreferences sharedPreferences = getSharedPreferences(DzConsts.COOKIE_PREFS, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(DzConsts.COOKIE, dzCookie);
-        editor.apply();
-    }
-
-    public String getDzCookie() {
-        SharedPreferences sharedPreferences = getSharedPreferences(DzConsts.COOKIE_PREFS, MODE_PRIVATE);
-        return sharedPreferences.getString(DzConsts.COOKIE, "");
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
         mContext = getApplication();
         CrashHandler.getInstance().init(mContext);
         DarkModeUtils.init(this);
-
-
     }
 
     @Override
@@ -68,6 +54,4 @@ public class MainApplication extends Application {
     public MainApplication getApplication() {
         return this;
     }
-
-
 }

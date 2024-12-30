@@ -8,25 +8,24 @@ import android.view.*;
 import androidx.annotation.*;
 import androidx.recyclerview.widget.*;
 
-import com.bumptech.glide.Glide;
-import com.sayi.vdim.*;
 import com.sayi.vdim.activities.*;
 import com.sayi.vdim.databinding.*;
 import com.sayi.vdim.dz_entity.*;
+import com.sayi.vdim.utils.*;
 
 import java.util.*;
 
 public class ThreadDataAdapter {
     public static class DzDataAdapter extends RecyclerView.Adapter<DzDataViewHolder> {
-        private List<ThreadData> dzThreadDataList = new ArrayList<>();
+        private final List<ThreadData> dzThreadDataList = new ArrayList<>();
+        Activity activity;
+
+        public DzDataAdapter(Activity activity) {
+            this.activity = activity;
+        }
 
         public void addData(ThreadData threadData) {
             dzThreadDataList.add(threadData);
-        }
-
-        Activity activity;
-        public DzDataAdapter(Activity activity){
-            this.activity=activity;
         }
 
         @NonNull
@@ -34,7 +33,7 @@ public class ThreadDataAdapter {
         public DzDataViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             NickPostBinding nickPostBinding = NickPostBinding.inflate(inflater, parent, false);
-            return new DzDataViewHolder(activity,nickPostBinding);
+            return new DzDataViewHolder(activity, nickPostBinding);
         }
 
         @Override
@@ -55,15 +54,15 @@ public class ThreadDataAdapter {
 
         public DzDataViewHolder(Activity activity, NickPostBinding binding) {
             super(binding.getRoot());
-            this.activity=activity;
+            this.activity = activity;
             this.binding = binding;
         }
 
         public void bind(ThreadData threadData) {
-            int authorId=threadData.getAuthorId();
+            int authorId = threadData.getAuthorId();
             binding.userName.setText(threadData.getAuthor());
             String sendTime = threadData.getLastpost();
-            sendTime = sendTime.replace("&nbsp;", " ");
+            sendTime = DateFormatter.format(sendTime);
             binding.sendTime.setText(sendTime);
             binding.title.setText(threadData.getSubject());
             binding.expert.setText(threadData.getMessage());

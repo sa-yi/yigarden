@@ -1,7 +1,5 @@
 package com.sayi.vdim.dz_entity;
 
-import androidx.annotation.*;
-
 import com.google.gson.annotations.*;
 
 import java.util.*;
@@ -165,7 +163,6 @@ public class ThreadData extends BaseResponse {
     public String getMessage() {
         return message;
     }
-
 
 
 }
