@@ -44,7 +44,7 @@ import retrofit2.Response;
 
 public class PostActivity extends AppCompatActivity {
     static String TAG = "POST-ACTIVITY";
-    ActivityPostBinding binding;
+    static ActivityPostBinding binding;
 
     PostViewModel viewModel;
     UserBannerFragment userBanner;
@@ -151,6 +151,7 @@ public class PostActivity extends AppCompatActivity {
             binding.content.setText(sp);
 
 
+            binding.commentContainer.removeAllViews();
             for (int i = 0; i < posts.size(); i++) {
                 Post post = posts.get(i);
 
@@ -574,7 +575,10 @@ public class PostActivity extends AppCompatActivity {
                 public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                     if (response.isSuccessful()) {
                         Log.d("comment",response.message());
+                        binding.postComment.setText("");
                         MainApplication.toast("评论成功");
+                        fetchPost(tid);
+
                     } else {
                         MainApplication.toast("评论失败:"+response.message());
                     }

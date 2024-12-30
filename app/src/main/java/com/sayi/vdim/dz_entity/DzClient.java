@@ -3,17 +3,14 @@ package com.sayi.vdim.dz_entity;
 
 import android.content.pm.*;
 import android.util.*;
-import android.webkit.*;
 
 import androidx.annotation.*;
 
 import com.google.gson.*;
-import com.ihsanbal.logging.*;
 import com.sayi.*;
 
 import java.io.*;
 import java.security.cert.*;
-import java.util.*;
 
 import javax.net.ssl.*;
 
@@ -23,8 +20,6 @@ import retrofit2.*;
 import retrofit2.converter.gson.*;
 
 public class DzClient {
-    // 创建一个Cookie存储容器
-    final static Map<String, List<Cookie>> cookieStore = new HashMap<>();
     private static final String BASE_URL = "https://api.lty.fan/";
 
     private static Retrofit retrofit;
@@ -107,6 +102,7 @@ public class DzClient {
         return "unknown"; // 如果获取失败，返回未知
     }
 
+    @NonNull
     private static String getAppCode() {
         long appCode = -1;
         try {
