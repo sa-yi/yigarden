@@ -12,16 +12,16 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.sayi.MainApplication;
-import com.sayi.vdim.databinding.UserBannerBinding;
+import com.sayi.vdim.databinding.UserBannerFragmentBinding;
 
 public class UserBannerFragment extends Fragment {
-    private UserBannerBinding binding;
+    private UserBannerFragmentBinding binding;
     private UserBannerViewModel viewModel;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = UserBannerBinding.inflate(getLayoutInflater());
+        binding = UserBannerFragmentBinding.inflate(getLayoutInflater());
         viewModel = new ViewModelProvider(this).get(UserBannerViewModel.class);
 
         // 绑定 ViewModel 数据到 UI

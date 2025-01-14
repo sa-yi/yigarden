@@ -92,7 +92,7 @@ public class UserFragment extends Fragment {
             editor.putString(sp_token, "");
             editor.apply();
             requireActivity().finish();
-            Intent intent = new Intent(getContext(), LoginActivity.class);
+            Intent intent = new Intent(getContext(), AccountActivity.class);
             startActivity(intent);
         });
 

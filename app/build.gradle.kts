@@ -128,7 +128,7 @@ dependencies {
 
 
     implementation("org.jsoup:jsoup:1.17.2")
-    implementation("com.alibaba:fastjson:1.2.47")
+    //implementation("com.alibaba:fastjson:1.2.47")
 
     implementation("com.github.bumptech.glide:glide:4.15.1")
     implementation("com.github.bumptech.glide:okhttp3-integration:4.15.1")
@@ -151,5 +151,8 @@ dependencies {
         exclude(group = "org.json", module = "json")
     }
     implementation("com.github.amggg:YXing:V2.0.1")
+
+    implementation("io.github.weilianyang:gradienttext:1.0.3")//渐变字
+    implementation("com.github.GoodieBag:Pinview:v1.5")//验证码输入框
 
 }

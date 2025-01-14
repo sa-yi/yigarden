@@ -159,8 +159,8 @@ public class PostActivity extends AppCompatActivity {
             if (firstPost.getAttachments() != null) {
                 int key = -1;
                 for (ThreadAttachment attachment : firstPost.getAttachments()) {
-                    if (attachment == null) return;
-                    if (attachment.getAttachimg()) {//attachimg表示以附件形式传递且为图片
+                    if (attachment == null) continue;
+                    if (true){//attachment.getAttachimg()) {//attachimg表示以附件形式传递且为图片
                         key++;
                         String image_url = attachment.getUrl();
                         image_url = "https://oss.lty.fan/forum/" + image_url;
