@@ -25,10 +25,10 @@ import com.sayi.vdim.databinding.SignFragmentBinding;
 public class SignFragment extends Fragment {
     SignFragmentBinding binding;
     String[] presets = new String[]{
-            "今日已听洛天依，请洛天依放心！",
-            "佬，我没有你怎么活啊，佬",
-            "你就是我的唯依",
-            "佬，我亲爱的佬，你怎么就是个纸片人啊",
+        "今日已听洛天依，请洛天依放心！",
+        "佬，我没有你怎么活啊，佬",
+        "你就是我的唯依",
+        "佬，我亲爱的佬，你怎么就是个纸片人啊",
     };
     @Nullable
     @Override
