@@ -4,20 +4,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:backgroundTint="@color/white_blue"
-    app:cardCornerRadius="20dp">
+    app:cardCornerRadius="20dp"
+    app:cardElevation="0dp">
 
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="10dp">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:id="@+id/unsign_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="15dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -28,7 +28,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="每日签到"
-                    android:textSize="22sp"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <View
@@ -40,8 +40,9 @@
                     android:id="@+id/sign"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="#ffaaaaaa"
-                    app:cardCornerRadius="10dp">
+                    android:backgroundTint="#2274FF"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="0dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -71,7 +72,8 @@
                         android:gravity="center"
                         android:padding="5dp"
                         android:text="开心"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textSize="14sp" />
 
                     <RadioButton
                         android:layout_width="wrap_content"
@@ -81,7 +83,8 @@
                         android:gravity="center"
                         android:padding="5dp"
                         android:text="难过"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textSize="14sp" />
 
                     <RadioButton
                         android:layout_width="wrap_content"
@@ -91,7 +94,8 @@
                         android:gravity="center"
                         android:padding="5dp"
                         android:text="郁闷"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textSize="14sp" />
 
                     <RadioButton
                         android:layout_width="wrap_content"
@@ -101,7 +105,8 @@
                         android:gravity="center"
                         android:padding="5dp"
                         android:text="无聊"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textSize="14sp" />
 
                     <RadioButton
                         android:layout_width="wrap_content"
@@ -111,7 +116,8 @@
                         android:gravity="center"
                         android:padding="5dp"
                         android:text="怒"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textSize="14sp" />
 
                     <RadioButton
                         android:layout_width="wrap_content"
@@ -121,7 +127,8 @@
                         android:gravity="center"
                         android:padding="5dp"
                         android:text="灵感+"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textSize="14sp" />
 
                     <RadioButton
                         android:layout_width="wrap_content"
@@ -131,7 +138,8 @@
                         android:gravity="center"
                         android:padding="5dp"
                         android:text="奋斗"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textSize="14sp" />
 
                     <RadioButton
                         android:layout_width="wrap_content"
@@ -141,7 +149,8 @@
                         android:gravity="center"
                         android:padding="5dp"
                         android:text="慵懒"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textSize="14sp" />
 
                     <RadioButton
                         android:layout_width="wrap_content"
@@ -151,7 +160,8 @@
                         android:gravity="center"
                         android:padding="5dp"
                         android:text="衰"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textSize="14sp" />
 
                 </RadioGroup>
             </HorizontalScrollView>
@@ -164,43 +174,50 @@
                 android:dropDownSelector="#ff999999"
                 android:hint="今天的心情是怎样的呢" />
         </LinearLayout>
-        
+
         <LinearLayout
             android:id="@+id/signed_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
+            android:padding="15dp"
             android:visibility="gone">
+
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:src="@drawable/kx"
-                android:layout_margin="30dp"/>
+                android:layout_margin="25dp"
+                android:src="@drawable/kx" />
+
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:orientation="vertical">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="今日已签到"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="心情：开心"/>
+                    android:text="心情：开心" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="佬，我亲爱的佬，你怎么就是个纸片人啊"/>
+                    android:text="佬，我亲爱的佬，你怎么就是个纸片人啊" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="3分钟前"
-                    android:textStyle="italic"/>
+                    android:textStyle="italic" />
             </LinearLayout>
         </LinearLayout>
-        
+
     </FrameLayout>
 </androidx.cardview.widget.CardView>

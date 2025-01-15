@@ -34,6 +34,7 @@
                     android:layout_height="wrap_content"/>
                 <!-- Header Content -->
                 <LinearLayout
+                    android:layout_marginTop="15dp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
@@ -42,8 +43,9 @@
                     <androidx.cardview.widget.CardView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        app:cardCornerRadius="30dp">
+                        android:layout_margin="20dp"
+                        app:cardCornerRadius="30dp"
+                        app:cardElevation="0dp">
                         <!-- 头像 -->
                         <ImageView
                             android:id="@+id/avator_image"
@@ -55,6 +57,8 @@
                     </androidx.cardview.widget.CardView>
                     <!-- User Info -->
                     <LinearLayout
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -80,6 +84,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
+                        android:layout_marginStart="10dp"
                         android:gravity="center_vertical"
                         android:orientation="vertical">
 
@@ -150,6 +155,7 @@
             android:translationY="-25dp">
 
             <LinearLayout
+                android:layout_marginTop="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -235,6 +241,12 @@
                 </LinearLayout>
 
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/edit_profile"
+                    android:layout_weight="1"
+                    app:cardCornerRadius="4dp"
+                    app:contentPadding="4dp"
+                    app:cardElevation="0dp"
+                    android:backgroundTint="#fff3f3f3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical">
@@ -244,12 +256,12 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:layout_marginHorizontal="10dp"
-                        android:layout_marginVertical="10dp"
                         android:text="编辑资料" />
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
 
             <LinearLayout
+                android:layout_marginTop="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -258,6 +270,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
+                    app:cardElevation="0dp"
+                    app:cardCornerRadius="4dp"
                     android:backgroundTint="#ffe9f4fe">
 
                     <TextView
@@ -265,6 +279,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
+                        android:paddingHorizontal="5dp"
                         android:text="UID 000247" />
                 </androidx.cardview.widget.CardView>
 
@@ -272,6 +287,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
+                    app:cardElevation="0dp"
+                    app:cardCornerRadius="4dp"
                     android:backgroundTint="#fff3f3f3">
 
                     <TextView
@@ -279,6 +296,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
+                        android:paddingHorizontal="5dp"
                         android:text="瓦纳海姆" />
                 </androidx.cardview.widget.CardView>
 
@@ -286,6 +304,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
+                    app:cardElevation="0dp"
+                    app:cardCornerRadius="4dp"
                     android:backgroundTint="#fff3f3f3">
 
                     <TextView
@@ -293,12 +313,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
+                        android:paddingHorizontal="5dp"
                         android:text="♀️ 女" />
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
 
 
             <fragment
+                android:layout_margin="10dp"
                 android:id="@+id/sign_fragment"
                 android:name="com.sayi.vdim.activities.mainfragments.user.SignFragment"
                 android:layout_width="match_parent"
@@ -317,7 +339,6 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_margin="10dp"
                     android:orientation="vertical">
 
                     <ImageView
@@ -325,23 +346,26 @@
                         android:layout_height="wrap_content"
                         android:scaleType="fitStart"
                         android:adjustViewBounds="true"
-                        android:padding="15dp"
+                        android:padding="22dp"
                         android:src="@drawable/function_user" />
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center"
+                        android:textSize="12sp"
                         android:text="个人空间" />
                 </LinearLayout>
-
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.25"/>
 
                 <LinearLayout
                     android:id="@+id/history"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_margin="10dp"
                     android:orientation="vertical">
 
                     <ImageView
@@ -349,57 +373,66 @@
                         android:layout_height="wrap_content"
                         android:scaleType="fitStart"
                         android:adjustViewBounds="true"
-                        android:padding="15dp"
+                        android:padding="22dp"
                         android:src="@drawable/function_history" />
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="浏览历史" />
+                        android:text="浏览历史"
+                        android:textSize="12sp"/>
                 </LinearLayout>
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.25"/>
                 <LinearLayout
                     android:id="@+id/gallery"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_margin="10dp"
                     android:orientation="vertical">
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:scaleType="fitStart"
                         android:adjustViewBounds="true"
-                        android:padding="15dp"
+                        android:padding="22dp"
                         android:src="@drawable/function_gallarey" />
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="我的相册" />
+                        android:text="我的相册"
+                        android:textSize="12sp"/>
                 </LinearLayout>
 
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.25"/>
                 <LinearLayout
                     android:id="@+id/favourite"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_margin="10dp"
                     android:orientation="vertical">
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:scaleType="fitStart"
                         android:adjustViewBounds="true"
-                        android:padding="15dp"
+                        android:padding="22dp"
                         android:src="@drawable/function_favourite" />
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="收藏" />
+                        android:text="收藏"
+                        android:textSize="12sp"/>
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
@@ -413,7 +446,6 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_margin="10dp"
                     android:orientation="vertical">
 
                     <ImageView
@@ -421,23 +453,27 @@
                         android:layout_height="wrap_content"
                         android:scaleType="fitStart"
                         android:adjustViewBounds="true"
-                        android:padding="15dp"
+                        android:padding="22dp"
                         android:src="@drawable/function_wallet" />
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="钱包" />
+                        android:text="钱包"
+                        android:textSize="12sp"/>
                 </LinearLayout>
 
 
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.25"/>
                 <LinearLayout
                     android:id="@+id/prop"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_margin="10dp"
                     android:orientation="vertical">
 
                     <ImageView
@@ -445,61 +481,71 @@
                         android:layout_height="wrap_content"
                         android:scaleType="fitStart"
                         android:adjustViewBounds="true"
-                        android:padding="15dp"
+                        android:padding="22dp"
                         android:src="@drawable/function_prop" />
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="道具" />
+                        android:text="道具"
+                        android:textSize="12sp"/>
                 </LinearLayout>
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.25"/>
                 <LinearLayout
                     android:id="@+id/theme"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_margin="10dp"
                     android:orientation="vertical">
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:scaleType="fitStart"
                         android:adjustViewBounds="true"
-                        android:padding="15dp"
+                        android:padding="22dp"
                         android:src="@drawable/function_theme" />
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="主题" />
+                        android:text="主题"
+                        android:textSize="12sp"/>
                 </LinearLayout>
 
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.25"/>
                 <LinearLayout
                     android:id="@+id/medal"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_margin="10dp"
                     android:orientation="vertical">
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:scaleType="fitStart"
                         android:adjustViewBounds="true"
-                        android:padding="15dp"
+                        android:padding="22dp"
                         android:src="@drawable/function_medal" />
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="勋章" />
+                        android:text="勋章"
+                        android:textSize="12sp"/>
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/bind"
+                android:layout_marginTop="25dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -580,6 +626,7 @@
 
             <Button
                 android:id="@+id/exit"
+                android:layout_marginTop="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="退出app" />
