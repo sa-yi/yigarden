@@ -23,8 +23,8 @@ android {
         compileSdk = 35
         minSdk = 28
         targetSdk = 35
-        versionCode = 10
-        versionName = "0.7.0-alpha"
+        versionCode = 11
+        versionName = "0.8.0-alpha"
 
         vectorDrawables {
             useSupportLibrary = true
@@ -80,6 +80,8 @@ android {
                 "src/main/res/fragments",
                 "src/main/res/common",
                 "src/main/res/items",
+                "src/main/res/pics_sign",
+                "src/main/res/pics_function",
                 "src/main/res/legacy"
             )
         }

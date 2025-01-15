@@ -1,13 +1,7 @@
 package com.sayi.vdim.activities.mainfragments.user;
 
-
-import static android.content.Context.MODE_PRIVATE;
-import static com.sayi.vdim.Consts.sp_token;
-import static com.sayi.vdim.Consts.sp_user_data;
-
 import android.Manifest;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,30 +22,24 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
-import com.bumptech.glide.Glide;
 import com.sayi.MainApplication;
 import com.sayi.vdim.R;
-import com.sayi.vdim.activities.AccountActivity;
 import com.sayi.vdim.activities.SettingsActivity;
 import com.sayi.vdim.databinding.FragmentUserBinding;
-import com.sayi.vdim.dz_entity.DzUser;
-import com.sayi.vdim.utils.Statusbar;
 import com.yxing.ScanCodeActivity;
 import com.yxing.ScanCodeConfig;
 import com.yxing.def.ScanStyle;
 
-import java.text.MessageFormat;
 import java.util.Set;
 
 public class UserFragment extends Fragment {
-
     static int requestCameraPermission = 1;
     ActivityResultLauncher<String> callPermissionRequest;
 
     boolean granted = false;
-    private FragmentUserBinding binding;
+    FragmentUserBinding binding;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,58 +54,24 @@ public class UserFragment extends Fragment {
         });
     }
 
-    private boolean isCameraPermissionGranted() {
-        return ContextCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        UserViewModel userViewModel =
-                new ViewModelProvider(this).get(UserViewModel.class);
-
-        binding = FragmentUserBinding.inflate(inflater, container, false);
-        binding.statusbarPlaceholder.setHeight(Statusbar.getStatusBHeight(requireActivity()));
-        binding.statusbarPlaceholder.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.default_background));
-
-        View root = binding.getRoot();
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        binding= FragmentUserBinding.inflate(getLayoutInflater());
 
         ((AppCompatActivity) requireActivity()).setSupportActionBar(binding.toolbar);
         requireActivity().setTitle("");
         setupMenu();
 
-        userViewModel.getUserData().observe(getViewLifecycleOwner(), userEntity -> {
-            DzUser user = userEntity.getSpace();
-            Log.d("User", user.toString());
-            int id = user.getUid();
-            binding.userId.setText(MessageFormat.format("{0}", id));
-            String name = user.getUsername();
-            binding.displayName.setText(name);
-            Glide.with(UserFragment.this).load("https://i.lty.fan/uc_server/avatar.php?size=big&uid=" + id).into(binding.avatorImage);
-        });
-
-        userViewModel.fetchUserData();
-
-        binding.logout.setOnClickListener(v -> {
-            SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(sp_user_data, MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString(sp_token, "");
-            editor.apply();
-            requireActivity().finish();
-            Intent intent = new Intent(getContext(), AccountActivity.class);
-            startActivity(intent);
-        });
-
-        binding.settings.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), SettingsActivity.class);
-            startActivity(intent);
-        });
-        binding.exit.setOnClickListener(v -> {
+        binding.exit.setOnClickListener(v->{
             requireActivity().finish();
         });
 
-        return root;
+        return binding.getRoot();
     }
-
+    private boolean isCameraPermissionGranted() {
+        return ContextCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+    }
     private void setupMenu() {
         requireActivity().addMenuProvider(new MenuProvider() {
             @Override

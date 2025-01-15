@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">V次元</string>
     <string name="title_activity_main">V次元</string>
-    <string name="title_home">主页</string>
+    <string name="title_home">首页</string>
     <string name="title_dashboard">板块</string>
     <string name="title_music">音乐</string>
     <string name="title_user">用户</string>

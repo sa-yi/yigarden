@@ -3,20 +3,20 @@
 
     <item
         android:id="@+id/navigation_home"
-        android:icon="@drawable/ic_home_black_24dp"
+        android:icon="@drawable/nav_home"
         android:title="@string/title_home" />
 
     <item
         android:id="@+id/navigation_dashboard"
-        android:icon="@drawable/ic_dashboard_black_24dp"
+        android:icon="@drawable/nav_dashboard"
         android:title="@string/title_dashboard" />
 
     <item
         android:id="@+id/navigation_music"
-        android:icon="@drawable/baseline_queue_music_24"
+        android:icon="@drawable/nav_music"
         android:title="@string/title_music" />
     <item
         android:id="@+id/navigation_user"
-        android:icon="@drawable/ic_account"
+        android:icon="@drawable/nav_user"
         android:title="@string/title_user" />
 </menu>

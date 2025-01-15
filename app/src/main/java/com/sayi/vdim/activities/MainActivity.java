@@ -36,11 +36,14 @@ public class MainActivity extends AppCompatActivity {
     static String DASHBOARD_FRAGMENT_KEY = "DASHBOARD_FRAGMENT_KEY";
     static String MUSIC_FRAGMENT_KEY = "MUSIC_FRAGMENT_KEY";
     static String USER_FRAGMENT_KEY = "USER_FRAGMENT_KEY";
+    static String USER_FRAG_KEY = "USER_FRAGM_KEY";
+
     static String TAG = "MainActivity";
     HomeFragment homeFragment;
     DashboardFragment dashboardFragment;
     MusicFragment musicFragment;
     UserFragment userFragment;
+
     private ActivityMainBinding binding;
 
     @Override
@@ -81,7 +84,10 @@ public class MainActivity extends AppCompatActivity {
         if (homeFragment == null) homeFragment = new HomeFragment();
         if (dashboardFragment == null) dashboardFragment = new DashboardFragment();
         if (musicFragment == null) musicFragment = new MusicFragment();
-        if (userFragment == null) userFragment = new UserFragment();
+        //if (userFragment == null) userFragment = new UserFragment();
+
+
+        if(userFragment == null) userFragment = new UserFragment();
 
         adapter.addFragment(homeFragment);
         adapter.addFragment(dashboardFragment);
@@ -113,8 +119,8 @@ public class MainActivity extends AppCompatActivity {
         if (musicFragment != null) {
             getSupportFragmentManager().putFragment(outState, MUSIC_FRAGMENT_KEY, musicFragment);
         }
-        if (userFragment != null) {
-            getSupportFragmentManager().putFragment(outState, USER_FRAGMENT_KEY, userFragment);
+        if(userFragment != null) {
+            getSupportFragmentManager().putFragment(outState, USER_FRAG_KEY, userFragment);
         }
     }
 
@@ -125,7 +131,8 @@ public class MainActivity extends AppCompatActivity {
         homeFragment = (HomeFragment) getSupportFragmentManager().getFragment(savedInstanceState, HOME_FRAGMENT_KEY);
         dashboardFragment = (DashboardFragment) getSupportFragmentManager().getFragment(savedInstanceState, DASHBOARD_FRAGMENT_KEY);
         musicFragment = (MusicFragment) getSupportFragmentManager().getFragment(savedInstanceState, MUSIC_FRAGMENT_KEY);
-        userFragment = (UserFragment) getSupportFragmentManager().getFragment(savedInstanceState, USER_FRAGMENT_KEY);
+
+        userFragment = (UserFragment) getSupportFragmentManager().getFragment(savedInstanceState, USER_FRAG_KEY);
     }
 
     @Override
