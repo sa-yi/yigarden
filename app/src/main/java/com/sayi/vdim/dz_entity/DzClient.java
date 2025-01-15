@@ -54,20 +54,20 @@ public class DzClient {
         try {
             // Create a trust manager that does not validate certificate chains
             final TrustManager[] trustAllCerts = new TrustManager[]{
-                    new X509TrustManager() {
-                        @Override
-                        public void checkClientTrusted(X509Certificate[] chain, String authType) {
-                        }
-
-                        @Override
-                        public void checkServerTrusted(X509Certificate[] chain, String authType) {
-                        }
-
-                        @Override
-                        public X509Certificate[] getAcceptedIssuers() {
-                            return new X509Certificate[]{};
-                        }
+                new X509TrustManager() {
+                    @Override
+                    public void checkClientTrusted(X509Certificate[] chain, String authType) {
                     }
+
+                    @Override
+                    public void checkServerTrusted(X509Certificate[] chain, String authType) {
+                    }
+
+                    @Override
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return new X509Certificate[]{};
+                    }
+                }
             };
 
             // Install the all-trusting trust manager
@@ -138,10 +138,10 @@ public class DzClient {
             builder.addHeader("Version-Code", getAppCode());
 
             builder.addHeader("Package-Name", MainApplication.getContext().getPackageName());
-            builder.addHeader("Referer","https://api.lty.fan/");
+            builder.addHeader("Referer", "https://api.lty.fan/");
 
-            Log.d("token",MainApplication.getContext().getToken());
-            builder.addHeader("Authorization","Bearer "+MainApplication.getContext().getToken());
+            Log.d("token", MainApplication.getContext().getToken());
+            builder.addHeader("Authorization", "Bearer " + MainApplication.getContext().getToken());
 
             Request newRequest = builder.build();
 
