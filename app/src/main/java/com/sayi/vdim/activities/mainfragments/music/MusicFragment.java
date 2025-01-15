@@ -1,34 +1,47 @@
 package com.sayi.vdim.activities.mainfragments.music;
 
-import static android.content.Context.*;
+import static android.content.Context.BIND_AUTO_CREATE;
 
 import android.Manifest;
-import android.content.*;
-import android.content.pm.*;
-import android.graphics.drawable.*;
-import android.net.*;
-import android.os.*;
-import android.provider.*;
-import android.view.*;
-import android.widget.*;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.provider.Settings;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-import androidx.activity.result.*;
-import androidx.activity.result.contract.*;
-import androidx.annotation.*;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
-import androidx.core.content.*;
-import androidx.fragment.app.*;
-import androidx.lifecycle.*;
-import androidx.media3.common.*;
-import androidx.recyclerview.widget.*;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.Player;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.sayi.*;
-import com.sayi.music.*;
+import com.sayi.MainApplication;
+import com.sayi.music.MusicActivity;
+import com.sayi.music.MusicService;
 import com.sayi.vdim.R;
-import com.sayi.vdim.databinding.*;
-import com.sayi.vdim.utils.*;
+import com.sayi.vdim.databinding.FragmentMusicBinding;
+import com.sayi.vdim.databinding.MusicBarBinding;
+import com.sayi.vdim.utils.Dialog;
+import com.sayi.vdim.utils.Statusbar;
 
-import java.util.*;
+import java.util.ArrayList;
 
 public class MusicFragment extends Fragment implements Player.Listener {
 

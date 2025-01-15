@@ -1,13 +1,15 @@
 package com.sayi.vdim.activities;
 
-import android.content.*;
-import android.net.*;
-import android.os.*;
-import android.view.*;
-import androidx.appcompat.app.*;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.View;
 
-import com.sayi.*;
-import com.sayi.vdim.databinding.*;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.sayi.MainApplication;
+import com.sayi.vdim.databinding.ActivitySearchBinding;
 
 public class SearchActivity extends AppCompatActivity {
     ActivitySearchBinding binding;

@@ -1,16 +1,22 @@
 package com.sayi.vdim.activities.mainfragments.home;
 
-import android.util.*;
+import android.util.Log;
 
-import androidx.annotation.*;
-import androidx.lifecycle.*;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
-import com.sayi.*;
-import com.sayi.vdim.dz_entity.*;
+import com.sayi.MainApplication;
+import com.sayi.vdim.dz_entity.DzClient;
+import com.sayi.vdim.dz_entity.DzService;
+import com.sayi.vdim.dz_entity.ThreadData;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import retrofit2.*;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class HomeViewModel extends ViewModel {
     public final MutableLiveData<List<ThreadData>> dzDataList=new MutableLiveData<>(new ArrayList<>());;

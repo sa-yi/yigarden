@@ -1,26 +1,38 @@
 package com.sayi.vdim.activities;
 
+import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.*;
-import android.graphics.*;
-import android.net.*;
-import android.os.*;
-import android.text.*;
-import android.util.*;
-import android.view.*;
-import android.widget.*;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.widget.EditText;
 
-import androidx.annotation.*;
-import androidx.appcompat.app.*;
 
-import com.sayi.*;
-import com.sayi.vdim.*;
-import com.sayi.vdim.databinding.*;
-import com.sayi.vdim.dz_entity.*;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.*;
+import com.sayi.MainApplication;
 
-import retrofit2.*;
+import com.sayi.vdim.Consts;
+import com.sayi.vdim.databinding.ActivityLoginBinding;
+import com.sayi.vdim.dz_entity.DzClient;
+import com.sayi.vdim.dz_entity.DzService;
+
+
+import java.util.ArrayList;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class LoginActivity extends AppCompatActivity {

@@ -1,17 +1,21 @@
 package com.sayi.vdim.utils;
 
-import android.content.*;
+import android.content.Context;
 
-import com.bumptech.glide.*;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.GlideBuilder;
+import com.bumptech.glide.Registry;
 import com.bumptech.glide.annotation.GlideModule;
-import com.bumptech.glide.integration.okhttp3.*;
-import com.bumptech.glide.load.model.*;
-import com.bumptech.glide.module.*;
-import com.sayi.vdim.dz_entity.*;
+import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader;
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.module.AppGlideModule;
+import com.sayi.vdim.dz_entity.DzClient;
 
-import java.io.*;
+import java.io.InputStream;
 
-import okhttp3.*;
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+
 @GlideModule
 public class MAppGlideModule extends AppGlideModule {
     @Override

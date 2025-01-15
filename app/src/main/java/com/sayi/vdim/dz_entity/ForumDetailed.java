@@ -1,10 +1,10 @@
 package com.sayi.vdim.dz_entity;
 
-import android.util.*;
+import android.util.ArrayMap;
 
-import com.google.gson.annotations.*;
+import com.google.gson.annotations.SerializedName;
 
-import java.util.*;
+import java.util.ArrayList;
 
 public class ForumDetailed extends BaseResponse{
     public Forum getForum() {

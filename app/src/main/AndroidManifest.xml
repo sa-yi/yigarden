@@ -119,6 +119,8 @@
             android:exported="true"
             android:launchMode="singleInstance"
             android:theme="@style/ErrorTheme" />
+        <activity android:name=".activities.CaptchaActivity"
+            android:exported="true"/>
 
         <service
             android:name="com.sayi.music.PlaybackService"

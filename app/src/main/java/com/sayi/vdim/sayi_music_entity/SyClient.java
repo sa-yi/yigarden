@@ -1,17 +1,21 @@
 package com.sayi.vdim.sayi_music_entity;
 
-import androidx.annotation.*;
+import androidx.annotation.NonNull;
 
-import com.google.gson.*;
-import com.sayi.vdim.dz_entity.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.sayi.vdim.dz_entity.DzClient;
 
-import java.security.cert.*;
+import java.security.cert.X509Certificate;
 
-import javax.net.ssl.*;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
-import okhttp3.*;
-import retrofit2.*;
-import retrofit2.converter.gson.*;
+import okhttp3.OkHttpClient;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SyClient {
     private static final String BASE_URL="http://api.sa-yi.cn/";

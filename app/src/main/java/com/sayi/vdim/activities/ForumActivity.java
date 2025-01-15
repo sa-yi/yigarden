@@ -1,22 +1,26 @@
 package com.sayi.vdim.activities;
 
-import android.content.*;
-import android.net.*;
-import android.os.*;
-import android.util.*;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.util.Log;
 
-import androidx.annotation.*;
-import androidx.appcompat.app.*;
-import androidx.recyclerview.widget.*;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.sayi.*;
-import com.sayi.vdim.adapter.*;
-import com.sayi.vdim.databinding.*;
-import com.sayi.vdim.dz_entity.*;
+import com.sayi.MainApplication;
+import com.sayi.vdim.adapter.ThreadDataAdapter;
+import com.sayi.vdim.databinding.ActivityForumBinding;
+import com.sayi.vdim.dz_entity.DzClient;
+import com.sayi.vdim.dz_entity.DzService;
+import com.sayi.vdim.dz_entity.ForumDetailed;
 
-import java.util.*;
+import java.util.Objects;
 
-import retrofit2.*;
+import retrofit2.Call;
 
 public class ForumActivity extends AppCompatActivity {
     static String TAG = "ForumActivity";

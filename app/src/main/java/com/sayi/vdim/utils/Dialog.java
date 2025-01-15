@@ -2,7 +2,6 @@ package com.sayi.vdim.utils;
 
 import android.content.Context;
 
-import androidx.annotation.*;
 import androidx.appcompat.app.AlertDialog;
 
 public class Dialog {

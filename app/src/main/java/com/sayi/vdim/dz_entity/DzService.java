@@ -1,11 +1,16 @@
 package com.sayi.vdim.dz_entity;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
 
-import okhttp3.*;
-import retrofit2.*;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.http.*;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface DzService {
     @POST("/auth/login")

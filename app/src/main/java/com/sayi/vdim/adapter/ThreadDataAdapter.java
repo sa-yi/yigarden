@@ -1,19 +1,21 @@
 package com.sayi.vdim.adapter;
 
-import android.app.*;
-import android.content.*;
-import android.net.*;
-import android.view.*;
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 
-import androidx.annotation.*;
-import androidx.recyclerview.widget.*;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.sayi.vdim.activities.*;
-import com.sayi.vdim.databinding.*;
-import com.sayi.vdim.dz_entity.*;
-import com.sayi.vdim.utils.*;
+import com.sayi.vdim.activities.PostActivity;
+import com.sayi.vdim.databinding.NickPostBinding;
+import com.sayi.vdim.dz_entity.ThreadData;
+import com.sayi.vdim.utils.DateFormatter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ThreadDataAdapter {
     public static class DzDataAdapter extends RecyclerView.Adapter<DzDataViewHolder> {

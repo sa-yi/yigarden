@@ -1,25 +1,29 @@
 package com.sayi.vdim.activities.mainfragments.home;
 
-import android.content.*;
-import android.os.*;
-import android.util.*;
-import android.view.*;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-import androidx.annotation.*;
-import androidx.core.content.*;
-import androidx.fragment.app.*;
-import androidx.lifecycle.*;
-import androidx.recyclerview.widget.*;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.sayi.*;
-import com.sayi.vdim.*;
-import com.sayi.vdim.activities.*;
-import com.sayi.vdim.adapter.*;
-import com.sayi.vdim.databinding.*;
-import com.sayi.vdim.dz_entity.*;
-import com.sayi.vdim.utils.*;
+import com.sayi.MainApplication;
+import com.sayi.vdim.R;
+import com.sayi.vdim.activities.SearchActivity;
+import com.sayi.vdim.adapter.ThreadDataAdapter;
+import com.sayi.vdim.databinding.FragmentHomeBinding;
+import com.sayi.vdim.dz_entity.ThreadData;
+import com.sayi.vdim.utils.Statusbar;
 
-import java.util.*;
+import java.util.Objects;
 
 public class HomeFragment extends Fragment {
 

@@ -1,17 +1,21 @@
 package com.sayi.vdim.activities;
 
-import android.graphics.*;
-import android.os.*;
-import android.view.*;
 
-import androidx.annotation.*;
-import androidx.appcompat.app.*;
-import androidx.fragment.app.*;
-import androidx.viewpager2.adapter.*;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.View;
+import android.view.Window;
 
-import com.google.android.material.tabs.*;
-import com.sayi.vdim.activities.fragments.*;
-import com.sayi.vdim.databinding.*;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+
+import com.google.android.material.tabs.TabLayout;
+import com.sayi.vdim.activities.fragments.LoginFragment;
+import com.sayi.vdim.activities.fragments.RegisterFragment;
+import com.sayi.vdim.databinding.ActivityAccountBinding;
 
 
 public class AccountActivity extends AppCompatActivity {

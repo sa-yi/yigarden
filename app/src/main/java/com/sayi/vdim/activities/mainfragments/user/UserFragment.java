@@ -1,38 +1,49 @@
 package com.sayi.vdim.activities.mainfragments.user;
 
-import static android.content.Context.*;
-import static com.sayi.vdim.Consts.*;
+
+import static android.content.Context.MODE_PRIVATE;
+import static com.sayi.vdim.Consts.sp_token;
+import static com.sayi.vdim.Consts.sp_user_data;
 
 import android.Manifest;
-import android.content.*;
-import android.content.pm.*;
-import android.net.*;
-import android.os.*;
-import android.util.*;
-import android.view.*;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
-import androidx.activity.result.*;
-import androidx.activity.result.contract.*;
-import androidx.annotation.*;
-import androidx.appcompat.app.*;
-import androidx.core.app.*;
-import androidx.core.content.*;
-import androidx.core.view.*;
-import androidx.fragment.app.*;
-import androidx.lifecycle.*;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.MenuProvider;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
-import com.bumptech.glide.*;
-import com.sayi.*;
+import com.bumptech.glide.Glide;
+import com.sayi.MainApplication;
 import com.sayi.vdim.R;
-import com.sayi.vdim.activities.*;
-import com.sayi.vdim.databinding.*;
-import com.sayi.vdim.dz_entity.*;
-import com.sayi.vdim.utils.*;
-import com.yxing.*;
-import com.yxing.def.*;
+import com.sayi.vdim.activities.AccountActivity;
+import com.sayi.vdim.activities.SettingsActivity;
+import com.sayi.vdim.databinding.FragmentUserBinding;
+import com.sayi.vdim.dz_entity.DzUser;
+import com.sayi.vdim.utils.Statusbar;
+import com.yxing.ScanCodeActivity;
+import com.yxing.ScanCodeConfig;
+import com.yxing.def.ScanStyle;
 
-import java.text.*;
-import java.util.*;
+import java.text.MessageFormat;
+import java.util.Set;
 
 public class UserFragment extends Fragment {
 

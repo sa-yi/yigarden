@@ -11,7 +11,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.text.*;
+import java.text.MessageFormat;
+
 
 public class HTMLParser {
     public static void parseHtmlContent(Context context,LinearLayout parentLayout, String htmlContent) {

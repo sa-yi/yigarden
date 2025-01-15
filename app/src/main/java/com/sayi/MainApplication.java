@@ -1,15 +1,16 @@
 package com.sayi;
 
-import static com.sayi.vdim.Consts.*;
+import static com.sayi.vdim.Consts.sp_token;
+import static com.sayi.vdim.Consts.sp_user_data;
 
-import android.annotation.*;
-import android.app.*;
-import android.content.*;
-import android.os.*;
-import android.widget.*;
+import android.annotation.SuppressLint;
+import android.app.Application;
+import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Looper;
+import android.widget.Toast;
 
-
-import com.sayi.vdim.utils.*;
+import com.sayi.vdim.utils.DarkModeUtils;
 
 public class MainApplication extends Application {
     public static String token = "";

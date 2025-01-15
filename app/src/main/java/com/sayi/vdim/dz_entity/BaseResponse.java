@@ -1,6 +1,7 @@
 package com.sayi.vdim.dz_entity;
 
-import com.google.gson.annotations.*;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 public abstract class BaseResponse {
     @SerializedName("Version")

@@ -1,8 +1,6 @@
 package com.sayi.vdim.sayi_music_entity;
 
-import androidx.annotation.*;
-
-import com.google.gson.annotations.*;
+import com.google.gson.annotations.SerializedName;
 
 public class MusicFully {
     @SerializedName("code")

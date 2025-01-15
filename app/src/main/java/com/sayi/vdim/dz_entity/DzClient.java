@@ -1,23 +1,30 @@
 package com.sayi.vdim.dz_entity;
 
 
-import android.content.pm.*;
-import android.util.*;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.util.Log;
 
-import androidx.annotation.*;
+import androidx.annotation.NonNull;
 
-import com.google.gson.*;
-import com.sayi.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.sayi.MainApplication;
 
-import java.io.*;
-import java.security.cert.*;
+import java.io.IOException;
+import java.security.cert.X509Certificate;
 
-import javax.net.ssl.*;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.*;
-import retrofit2.*;
-import retrofit2.converter.gson.*;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class DzClient {
     private static final String BASE_URL = "https://api.lty.fan/";

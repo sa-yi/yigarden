@@ -1,16 +1,21 @@
 package com.sayi.vdim.activities.mainfragments.music;
 
-import android.util.*;
+import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.sayi.vdim.sayi_music_entity.*;
+import com.sayi.vdim.sayi_music_entity.Music;
+import com.sayi.vdim.sayi_music_entity.MusicFully;
+import com.sayi.vdim.sayi_music_entity.SyClient;
+import com.sayi.vdim.sayi_music_entity.SyService;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.ArrayList;
 
-import retrofit2.*;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MusicViewModel extends ViewModel {
     static String TAG="MusicViewModel";

@@ -1,8 +1,8 @@
 package com.sayi.vdim.dz_entity;
 
-import com.google.gson.annotations.*;
+import com.google.gson.annotations.SerializedName;
 
-import java.util.*;
+import java.util.Map;
 
 public class DzUser extends BaseResponse {
 

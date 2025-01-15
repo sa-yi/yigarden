@@ -1,12 +1,10 @@
 package com.sayi.vdim.activities.mainfragments.user;
 
-import android.util.*;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
-import androidx.lifecycle.*;
-
-import com.sayi.vdim.dz_entity.*;
-
-import retrofit2.*;
+import com.sayi.vdim.dz_entity.DzUser;
 
 public class UserViewModel extends ViewModel {
     private final MutableLiveData<String> mText;

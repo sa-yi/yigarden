@@ -1,29 +1,34 @@
 package com.sayi.vdim.activities;
 
-import static com.sayi.vdim.Consts.*;
+import static com.sayi.vdim.Consts.sp_token;
 
-import android.content.*;
-import android.content.res.*;
-import android.graphics.*;
-import android.os.*;
-import android.util.*;
-import android.view.*;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.os.PersistableBundle;
+import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
-import androidx.annotation.*;
-import androidx.appcompat.app.*;
-import androidx.fragment.app.*;
-import androidx.viewpager2.adapter.*;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.sayi.*;
-import com.sayi.vdim.*;
-import com.sayi.vdim.activities.mainfragments.dashboard.*;
-import com.sayi.vdim.activities.mainfragments.home.*;
-import com.sayi.vdim.activities.mainfragments.music.*;
-import com.sayi.vdim.activities.mainfragments.user.*;
-import com.sayi.vdim.databinding.*;
-import com.sayi.vdim.utils.*;
+import com.sayi.MainApplication;
+import com.sayi.vdim.Consts;
+import com.sayi.vdim.activities.mainfragments.dashboard.DashboardFragment;
+import com.sayi.vdim.activities.mainfragments.home.HomeFragment;
+import com.sayi.vdim.activities.mainfragments.music.MusicFragment;
+import com.sayi.vdim.activities.mainfragments.user.UserFragment;
+import com.sayi.vdim.databinding.ActivityMainBinding;
+import com.sayi.vdim.utils.DarkModeUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 

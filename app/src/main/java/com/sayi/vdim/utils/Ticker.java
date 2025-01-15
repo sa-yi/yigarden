@@ -1,7 +1,9 @@
 package com.sayi.vdim.utils;
 
-import android.os.*;
-import java.util.*;
+import android.os.Handler;
+import android.os.Message;
+
+import java.util.ArrayList;
 
 public class Ticker{
 	private Handler mHandler;

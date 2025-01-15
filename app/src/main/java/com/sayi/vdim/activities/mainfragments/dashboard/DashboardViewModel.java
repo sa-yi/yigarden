@@ -1,16 +1,16 @@
 package com.sayi.vdim.activities.mainfragments.dashboard;
 
-import android.util.*;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.sayi.vdim.dz_entity.*;
+import com.sayi.vdim.dz_entity.DzClient;
+import com.sayi.vdim.dz_entity.DzService;
+import com.sayi.vdim.dz_entity.Forum;
 
-import java.util.*;
+import java.util.ArrayList;
 
-import retrofit2.*;
+import retrofit2.Call;
 
 public class DashboardViewModel extends ViewModel {
     String TAG="DashboardViewModel";

@@ -1,6 +1,7 @@
 package com.sayi.vdim.dz_entity;
 
 import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 public class ThreadAttachment implements Serializable {

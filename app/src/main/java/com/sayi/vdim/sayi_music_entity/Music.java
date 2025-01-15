@@ -1,6 +1,6 @@
 package com.sayi.vdim.sayi_music_entity;
 
-import com.google.gson.annotations.*;
+import com.google.gson.annotations.SerializedName;
 
 public class Music {
     public int getId() {
