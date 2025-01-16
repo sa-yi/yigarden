@@ -70,7 +70,8 @@ public class MusicFragment extends Fragment implements Player.Listener {
     };
     MusicViewModel musicViewModel;
     private FragmentMusicBinding binding;
-    private Drawable playBtnDrawable, pauseBtnDrawable;
+    private Drawable playBtnDrawable;
+    private Drawable pauseBtnDrawable;
 
     private void requestPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -301,7 +302,8 @@ public class MusicFragment extends Fragment implements Player.Listener {
         }
 
         public static class ViewHolder extends RecyclerView.ViewHolder {
-            TextView music_name, music_artist;
+            TextView music_name;
+            TextView music_artist;
             ImageView more_action;
 
             public ViewHolder(@NonNull View itemView) {

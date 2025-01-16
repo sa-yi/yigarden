@@ -1,20 +1,23 @@
 package com.sayi.vdim.adapter;
 
-import android.annotation.*;
-import android.app.*;
-import android.graphics.*;
-import android.view.*;
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.graphics.Color;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-import androidx.annotation.*;
-import androidx.recyclerview.widget.*;
-import androidx.vectordrawable.graphics.drawable.*;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.vectordrawable.graphics.drawable.ArgbEvaluator;
 
-import com.sayi.*;
-import com.sayi.vdim.*;
-import com.sayi.vdim.databinding.*;
-import com.sayi.vdim.dz_entity.*;
+import com.sayi.MainApplication;
+import com.sayi.vdim.R;
+import com.sayi.vdim.databinding.ItemHotTopicBinding;
+import com.sayi.vdim.dz_entity.HotTopic;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HotTopicAdapter extends RecyclerView.Adapter<HotTopicAdapter.HotTopicViewHolder> {
     private final List<HotTopic> hotTopicList = new ArrayList<>();

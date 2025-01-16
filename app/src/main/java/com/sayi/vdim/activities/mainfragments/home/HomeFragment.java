@@ -13,12 +13,15 @@ import androidx.recyclerview.widget.*;
 
 import com.sayi.MainApplication;
 import com.sayi.vdim.activities.SearchActivity;
-import com.sayi.vdim.adapter.*;
+import com.sayi.vdim.adapter.HotTopicAdapter;
+import com.sayi.vdim.adapter.ThreadDataAdapter;
 import com.sayi.vdim.databinding.FragmentHomeBinding;
-import com.sayi.vdim.dz_entity.*;
+import com.sayi.vdim.dz_entity.HotTopic;
+import com.sayi.vdim.dz_entity.ThreadData;
 import com.sayi.vdim.utils.Statusbar;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class HomeFragment extends Fragment {
 

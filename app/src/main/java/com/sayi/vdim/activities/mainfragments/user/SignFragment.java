@@ -1,17 +1,26 @@
 package com.sayi.vdim.activities.mainfragments.user;
 
-import android.animation.*;
-import android.os.*;
-import android.text.*;
-import android.view.*;
-import android.view.animation.*;
-import android.widget.*;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.ArrayAdapter;
+import android.widget.Filter;
+import android.widget.FrameLayout;
 
-import androidx.annotation.*;
-import androidx.fragment.app.*;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
-import com.sayi.*;
-import com.sayi.vdim.databinding.*;
+import com.sayi.MainApplication;
+import com.sayi.vdim.databinding.SignFragmentBinding;
 
 public class SignFragment extends Fragment {
     SignFragmentBinding binding;
