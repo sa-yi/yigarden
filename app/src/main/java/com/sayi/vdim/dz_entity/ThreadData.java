@@ -121,6 +121,11 @@ public class ThreadData extends BaseResponse {
     private String avatar;
     @SerializedName("attachmentImageNumber")
     private String attachmentImageNumber;
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     @SerializedName("message")
     private String message;
     @SerializedName("attachmentImagePreviewList")

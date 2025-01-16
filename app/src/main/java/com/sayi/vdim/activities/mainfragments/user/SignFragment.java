@@ -1,26 +1,17 @@
 package com.sayi.vdim.activities.mainfragments.user;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
-import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.ArrayAdapter;
-import android.widget.Filter;
-import android.widget.FrameLayout;
+import android.animation.*;
+import android.os.*;
+import android.text.*;
+import android.view.*;
+import android.view.animation.*;
+import android.widget.*;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.annotation.*;
+import androidx.fragment.app.*;
 
-import com.sayi.MainApplication;
-import com.sayi.vdim.databinding.SignFragmentBinding;
+import com.sayi.*;
+import com.sayi.vdim.databinding.*;
 
 public class SignFragment extends Fragment {
     SignFragmentBinding binding;
@@ -30,10 +21,11 @@ public class SignFragment extends Fragment {
         "你就是我的唯依",
         "佬，我亲爱的佬，你怎么就是个纸片人啊",
     };
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding=SignFragmentBinding.inflate(getLayoutInflater());
+        binding = SignFragmentBinding.inflate(getLayoutInflater());
 
 
         binding.radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
@@ -42,10 +34,10 @@ public class SignFragment extends Fragment {
 
         // 创建适配器
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                requireActivity(),
-                android.R.layout.simple_dropdown_item_1line,
-                presets
-        ){
+            requireActivity(),
+            android.R.layout.simple_dropdown_item_1line,
+            presets
+        ) {
             @NonNull
             @Override
             public Filter getFilter() {
@@ -83,28 +75,27 @@ public class SignFragment extends Fragment {
             }
         });
 
-        binding.autoCompleteTextView.setOnClickListener(v->{
+        binding.autoCompleteTextView.setOnClickListener(v -> {
             binding.autoCompleteTextView.showDropDown();
         });
 
-        binding.sign.setOnClickListener(v->{
+        binding.sign.setOnClickListener(v -> {
             MainApplication.toast("签到成功");
-            toggleViewsWithAnimation(binding.unsignView,binding.signedView);
+            toggleViewsWithAnimation(binding.unsignView, binding.signedView);
         });
         return binding.getRoot();
     }
 
 
-
     private void toggleViewsWithAnimation(View toHide, View toShow) {
-        int animDur=200;
+        int animDur = 200;
         // 获取父布局
         FrameLayout parent = (FrameLayout) toHide.getParent();
 
         // 确保目标视图已经被测量
         if (toShow.getVisibility() == View.GONE) {
             toShow.measure(View.MeasureSpec.makeMeasureSpec(parent.getWidth(), View.MeasureSpec.EXACTLY),
-                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
         }
 
         int fromHeight = toHide.getHeight();

@@ -1,21 +1,20 @@
 package com.sayi.vdim.adapter;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
+import android.app.*;
+import android.content.*;
+import android.net.*;
+import android.view.*;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.annotation.*;
+import androidx.recyclerview.widget.*;
 
-import com.sayi.vdim.activities.PostActivity;
-import com.sayi.vdim.databinding.NickPostBinding;
-import com.sayi.vdim.dz_entity.ThreadData;
-import com.sayi.vdim.utils.DateFormatter;
+import com.sayi.vdim.*;
+import com.sayi.vdim.activities.*;
+import com.sayi.vdim.databinding.*;
+import com.sayi.vdim.dz_entity.*;
+import com.sayi.vdim.utils.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ThreadDataAdapter {
     public static class DzDataAdapter extends RecyclerView.Adapter<DzDataViewHolder> {
@@ -72,13 +71,19 @@ public class ThreadDataAdapter {
                 Intent intent = new Intent(activity, PostActivity.class);
                 //intent.setData();
                 Uri uri = new Uri.Builder().scheme("vdim")
-                        .authority("")  // authority 这里可以为空
-                        .path("/viewthread")
-                        .appendQueryParameter("tid", threadData.getTid())
-                        .build();
+                    .authority("")  // authority 这里可以为空
+                    .path("/viewthread")
+                    .appendQueryParameter("tid", threadData.getTid())
+                    .build();
                 intent.setData(uri);
                 activity.startActivity(intent);
             });
+            Random random = new Random();
+            float value = random.nextFloat();
+            if (value > 0.5) binding.like.setImageResource(R.drawable.nick_post_thumb_up);
+            value = random.nextFloat();
+            binding.hotCommentCard.setVisibility(value > 0.5 ? View.VISIBLE : View.GONE);
+
             //Glide.with(activity).asBitmap().load("https://i.lty.fan/uc_server/avatar.php?size=big&uid="+ authorId).error(R.drawable.default_avator).into(binding.avator);
         }
     }

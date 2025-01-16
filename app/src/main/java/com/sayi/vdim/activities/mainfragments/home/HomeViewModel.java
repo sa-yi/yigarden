@@ -7,9 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.sayi.MainApplication;
-import com.sayi.vdim.dz_entity.DzClient;
-import com.sayi.vdim.dz_entity.DzService;
-import com.sayi.vdim.dz_entity.ThreadData;
+import com.sayi.vdim.dz_entity.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +17,19 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class HomeViewModel extends ViewModel {
-    public final MutableLiveData<List<ThreadData>> dzDataList=new MutableLiveData<>(new ArrayList<>());;
+    public final MutableLiveData<List<ThreadData>> dzDataList=new MutableLiveData<>(new ArrayList<>());
 
+    public final MutableLiveData<List<HotTopic>> hotTopicList=new MutableLiveData<>(new ArrayList<>());
+
+    public void fetchHotTopicData(){
+        List<HotTopic> hotTopics=new ArrayList<>();
+        hotTopics.add(new HotTopic("洛天依 ilem——大吉",87214558));
+        hotTopics.add(new HotTopic("看一看新闻怎么说",7214558));
+        hotTopics.add(new HotTopic("好事也没提我",162000));
+        hotTopics.add(new HotTopic("坏事也没提我",82710));
+        //hotTopics.add(new HotTopic("今天也努力工作",5271));
+        hotTopicList.postValue(hotTopics);
+    }
 
     public void fetchDzData(int page) {
 
@@ -33,6 +42,9 @@ public class HomeViewModel extends ViewModel {
 
                     List<ThreadData> data = response.body();
                     if ((data != null)) {
+                        for(ThreadData threadData:data){
+                            threadData.setMessage("我想起来了\uD83D\uDE2D，我全都想起来了\uD83D\uDE2D，我想起来了\uD83D\uDE2D，我全都想起来了\uD83D\uDE2D，我想起来了\uD83D\uDE2D，我全都想起来了\uD83D\uDE2D我们\uD83D\uDE2D我们\uD83D\uDE2D走吧\uD83D\uDE2B就算我们无法让大雨停下\uD83D\uDE22还有我\uD83D\uDE2B陪你在雨里放肆......");
+                        }
                         dzDataList.postValue(data);
                     }
                 } else {

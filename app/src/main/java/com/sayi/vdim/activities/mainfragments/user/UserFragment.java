@@ -25,7 +25,7 @@ import androidx.fragment.app.Fragment;
 
 import com.sayi.MainApplication;
 import com.sayi.vdim.R;
-import com.sayi.vdim.activities.SettingsActivity;
+import com.sayi.vdim.activities.*;
 import com.sayi.vdim.databinding.FragmentUserBinding;
 import com.yxing.ScanCodeActivity;
 import com.yxing.ScanCodeConfig;
@@ -68,6 +68,11 @@ public class UserFragment extends Fragment {
         });
         binding.editProfile.setOnClickListener(v->{
             MainApplication.toast("编辑资料");
+        });
+        binding.exitAccount.setOnClickListener(v->{
+            requireActivity().finish();
+            Intent intent=new Intent(requireActivity(), AccountActivity.class);
+            startActivity(intent);
         });
 
         return binding.getRoot();

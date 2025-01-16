@@ -13,9 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -199,6 +197,15 @@ public class MusicFragment extends Fragment implements Player.Listener {
         if (granted && isServiceConnected)
             requireActivity().unbindService(connection);
         binding = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Window window = requireActivity().getWindow();
+        /*如果之前是半透明模式，要加这一句需要取消半透明的Flag*/
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
     }
 
     @Override

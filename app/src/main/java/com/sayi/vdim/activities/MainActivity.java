@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         Window window = getWindow();
         /*如果之前是半透明模式，要加这一句需要取消半透明的Flag*/
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         window.setStatusBarColor(Color.TRANSPARENT);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -84,9 +84,6 @@ public class MainActivity extends AppCompatActivity {
         if (homeFragment == null) homeFragment = new HomeFragment();
         if (dashboardFragment == null) dashboardFragment = new DashboardFragment();
         if (musicFragment == null) musicFragment = new MusicFragment();
-        //if (userFragment == null) userFragment = new UserFragment();
-
-
         if(userFragment == null) userFragment = new UserFragment();
 
         adapter.addFragment(homeFragment);
@@ -102,6 +99,13 @@ public class MainActivity extends AppCompatActivity {
                     binding.viewpager.setCurrentItem(i, false);
                     break;
                 }
+            }
+            /*如果之前是半透明模式，要加这一句需要取消半透明的Flag*/
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            if(binding.viewpager.getCurrentItem()==1||binding.viewpager.getCurrentItem()==2){
+                window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+            }else {
+                window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
             }
             return true;
         });

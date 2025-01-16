@@ -1,38 +1,34 @@
 package com.sayi.vdim.activities.mainfragments.home;
 
 import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.os.*;
+import android.util.*;
+import android.view.*;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.*;
 
 import com.sayi.MainApplication;
-import com.sayi.vdim.R;
 import com.sayi.vdim.activities.SearchActivity;
-import com.sayi.vdim.adapter.ThreadDataAdapter;
+import com.sayi.vdim.adapter.*;
 import com.sayi.vdim.databinding.FragmentHomeBinding;
-import com.sayi.vdim.dz_entity.ThreadData;
+import com.sayi.vdim.dz_entity.*;
 import com.sayi.vdim.utils.Statusbar;
 
-import java.util.Objects;
+import java.util.*;
 
 public class HomeFragment extends Fragment {
 
-
+    HotTopicAdapter hotTopicAdapter;
     ThreadDataAdapter.DzDataAdapter dzDataAdapter;
     View root;
     HomeViewModel homeViewModel;
     int page = 1;
     private FragmentHomeBinding binding;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -41,7 +37,6 @@ public class HomeFragment extends Fragment {
         root = binding.getRoot();
 
         binding.statusbarPlaceholder.setHeight(Statusbar.getStatusBHeight(requireActivity()));
-        binding.statusbarPlaceholder.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.default_background));
         return root;
     }
 
@@ -50,11 +45,24 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
+        Objects.requireNonNull(binding.toolbar.getTabAt(1)).select();
+
+
+
+        binding.hotTopic.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        hotTopicAdapter=new HotTopicAdapter(requireActivity());
+        binding.hotTopic.setAdapter(hotTopicAdapter);
+
+        homeViewModel.hotTopicList.observe(getViewLifecycleOwner(),hotTopics -> {
+            for(HotTopic topic:hotTopics){
+                Log.d("Topic",topic.getTopic());
+            }
+            hotTopicAdapter.addValue((ArrayList<HotTopic>) hotTopics);
+        });
+
+
         binding.nickPostView
                 .setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-
-
-        Objects.requireNonNull(binding.toolbar.toolbar.getTabAt(2)).select();
         dzDataAdapter = new ThreadDataAdapter.DzDataAdapter(requireActivity());
         binding.nickPostView.setAdapter(dzDataAdapter);
         binding.nickPostView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -64,7 +72,7 @@ public class HomeFragment extends Fragment {
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 if (layoutManager != null && layoutManager.findLastCompletelyVisibleItemPosition() == dzDataAdapter.getItemCount() - 1) {
                     // 滑动到底部，触发加载更多
-                    page++;
+                    //page++;
                     //homeViewModel.fetchDzData(page);
                 }
             }
@@ -78,6 +86,7 @@ public class HomeFragment extends Fragment {
         });
 
 
+        homeViewModel.fetchHotTopicData();
         homeViewModel.fetchDzData(page);
 
         binding.loadMore.setOnClickListener(v->homeViewModel.fetchDzData(++page));
@@ -92,21 +101,14 @@ public class HomeFragment extends Fragment {
             startActivity(intent);
         });
 
-
-        binding.publish.setOnClickListener(v -> {
-            //TODO 发布帖子界面开发中
-            //Intent intent = new Intent(getContext(), WpPublishActivity.class);
-            //startActivity(intent);
-            MainApplication.toast("开发中...");
-        });
-        binding.message.setOnClickListener(v -> {
-            //TODO 消息界面开发中
-            //Intent intent = new Intent(getContext(), NotifyActivity.class);
-            //startActivity(intent);
-            MainApplication.toast("开发中...");
+        binding.sign.setOnClickListener(v->{
+            binding.sign.setText("已签到");
+            binding.sign.setTextColor(0xff757575);
         });
 
-
+        binding.publish.setOnClickListener(v->{
+            MainApplication.toast("发布帖子");
+        });
     }
 
     @Override
