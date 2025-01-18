@@ -1,0 +1,22 @@
+<resources>
+
+    <!-- Base application theme with NoActionBar -->
+    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/tianyi_blue</item>
+        <item name="colorPrimaryDark">@color/tianyi_blue</item>
+        <item name="colorAccent">@color/tianyi_blue</item>
+        <item name="android:statusBarColor">@color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:colorControlNormal">@color/tianyi_blue</item>
+        <item name="android:colorControlActivated">@color/tianyi_blue</item>
+        <item name="android:textColorSecondary">@color/tianyi_blue</item>
+    </style>
+
+    <!-- Error theme -->
+    <style name="ErrorTheme" parent="AppTheme">
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:statusBarColor">@color/tianyi_blue</item>
+    </style>
+
+</resources>

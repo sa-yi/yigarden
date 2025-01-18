@@ -14,5 +14,5 @@
         android:id="@+id/navView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/nav_blcock"/>
+        tools:listitem="@layout/item_nav_block"/>
 </LinearLayout>

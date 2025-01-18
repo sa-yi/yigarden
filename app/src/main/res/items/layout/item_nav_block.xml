@@ -25,6 +25,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:columnCount="2"
-            tools:listitem="@layout/nav_grid_item"/>
+            tools:listitem="@layout/item_nav_grid_item"/>
     </androidx.cardview.widget.CardView>
 </LinearLayout>

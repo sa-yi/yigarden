@@ -18,8 +18,8 @@ import com.bumptech.glide.Glide;
 import com.sayi.vdim.R;
 import com.sayi.vdim.activities.ForumActivity;
 import com.sayi.vdim.databinding.FragmentDashboardBinding;
-import com.sayi.vdim.databinding.NavBlcockBinding;
-import com.sayi.vdim.databinding.NavGridItemBinding;
+import com.sayi.vdim.databinding.ItemNavBlockBinding;
+import com.sayi.vdim.databinding.ItemNavGridItemBinding;
 import com.sayi.vdim.dz_entity.Forum;
 import com.sayi.vdim.utils.Statusbar;
 
@@ -87,8 +87,8 @@ public class DashboardFragment extends Fragment {
         @Override
         public ForumViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-            NavBlcockBinding navBlcockBinding = NavBlcockBinding.inflate(inflater, parent, false);
-            return new ForumViewHolder(navBlcockBinding);
+            ItemNavBlockBinding navBlockBinding = ItemNavBlockBinding.inflate(inflater, parent, false);
+            return new ForumViewHolder(navBlockBinding);
         }
 
         @Override
@@ -104,9 +104,9 @@ public class DashboardFragment extends Fragment {
 
 
         public class ForumViewHolder extends RecyclerView.ViewHolder {
-            private NavBlcockBinding binding;
+            private ItemNavBlockBinding binding;
 
-            public ForumViewHolder(NavBlcockBinding binding) {
+            public ForumViewHolder(ItemNavBlockBinding binding) {
                 super(binding.getRoot());
                 this.binding = binding;
             }
@@ -115,7 +115,7 @@ public class DashboardFragment extends Fragment {
                 binding.category.setText(category.getName());
                 for (Forum forum : forums) {
                     if (category.getForums().contains(forum.getFid())) {
-                        NavGridItemBinding gridItemBinding = NavGridItemBinding.inflate(getLayoutInflater());
+                        ItemNavGridItemBinding gridItemBinding = ItemNavGridItemBinding.inflate(getLayoutInflater());
                         gridItemBinding.name.setText(forum.getName());
 
                         Glide.with(requireActivity()).load(forum.getIconUrl()).override(240, 240).into(gridItemBinding.icon);

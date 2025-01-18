@@ -1,7 +1,6 @@
 package com.sayi.vdim.adapter;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,11 +20,6 @@ import java.util.List;
 
 public class HotTopicAdapter extends RecyclerView.Adapter<HotTopicAdapter.HotTopicViewHolder> {
     private final List<HotTopic> hotTopicList = new ArrayList<>();
-    private Activity activity;
-
-    public HotTopicAdapter(Activity activity) {
-        this.activity = activity;
-    }
 
     public void addValue(ArrayList<HotTopic> hotTopics) {
         hotTopicList.addAll(hotTopics);
@@ -37,7 +31,7 @@ public class HotTopicAdapter extends RecyclerView.Adapter<HotTopicAdapter.HotTop
     public HotTopicViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         ItemHotTopicBinding binding = ItemHotTopicBinding.inflate(inflater, parent, false);
-        return new HotTopicViewHolder(activity, binding);
+        return new HotTopicViewHolder(binding);
     }
 
     @Override
@@ -60,7 +54,7 @@ public class HotTopicAdapter extends RecyclerView.Adapter<HotTopicAdapter.HotTop
 
         ItemHotTopicBinding binding;
 
-        public HotTopicViewHolder(Activity activity, ItemHotTopicBinding binding) {
+        public HotTopicViewHolder(ItemHotTopicBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }

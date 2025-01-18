@@ -69,11 +69,6 @@ public class UserFragment extends Fragment {
         binding.editProfile.setOnClickListener(v->{
             MainApplication.toast("编辑资料");
         });
-        binding.exitAccount.setOnClickListener(v->{
-            requireActivity().finish();
-            Intent intent=new Intent(requireActivity(), AccountActivity.class);
-            startActivity(intent);
-        });
 
         return binding.getRoot();
     }
