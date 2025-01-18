@@ -25,7 +25,7 @@ import androidx.fragment.app.Fragment;
 
 import com.sayi.MainApplication;
 import com.sayi.vdim.R;
-import com.sayi.vdim.activities.*;
+import com.sayi.vdim.activities.SettingsActivity;
 import com.sayi.vdim.databinding.FragmentUserBinding;
 import com.yxing.ScanCodeActivity;
 import com.yxing.ScanCodeConfig;
