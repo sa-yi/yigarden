@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -28,8 +29,9 @@
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
+        tools:replace="android:allowBackup"
         android:name="com.sayi.MainApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
@@ -74,7 +76,6 @@
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
-
                 <!-- 必须设置 -->
                 <action android:name="android.intent.action.VIEW" />
 
@@ -122,7 +123,8 @@
             android:theme="@style/ErrorTheme" />
         <activity android:name=".activities.CaptchaActivity"
             android:exported="true"/>
-
+        <activity android:name=".activities.FollowingListActivity"
+            android:exported="true"/>
         <service
             android:name="com.sayi.music.PlaybackService"
             android:exported="true"

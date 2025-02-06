@@ -3,6 +3,7 @@ package com.sayi.vdim.dz_entity;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -25,6 +26,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
 
 public class DzClient {
     private static final String BASE_URL = "https://api.lty.fan/";
@@ -128,11 +130,15 @@ public class DzClient {
         @Override
         public Response intercept(Chain chain) throws IOException {
             Request originalRequest = chain.request();
-
+            String ua="LtyfansApp/"
+                +getAppVersion()
+                +"(Android;"+Build.VERSION.RELEASE+";"
+                +Build.MODEL+") Build/"+getAppCode()+";CreatedAt/20250110";
+            Log.d("ua",ua);
 
             Request.Builder builder = originalRequest.newBuilder();
             builder.removeHeader("User-Agent");//带cookie时不带ua也能过
-            builder.addHeader("User-Agent", "AndroidApp");//TODO 修改header的信息
+            builder.addHeader("User-Agent", ua);
 
             builder.addHeader("Version-Name", getAppVersion());
             builder.addHeader("Version-Code", getAppCode());

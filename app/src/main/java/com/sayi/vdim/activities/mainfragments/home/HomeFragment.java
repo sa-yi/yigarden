@@ -56,7 +56,7 @@ public class HomeFragment extends Fragment {
 
 
         binding.hotTopic.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        hotTopicAdapter=new HotTopicAdapter();
+        hotTopicAdapter =new HotTopicAdapter();
         binding.hotTopic.setAdapter(hotTopicAdapter);
 
         homeViewModel.hotTopicList.observe(getViewLifecycleOwner(),hotTopics -> {

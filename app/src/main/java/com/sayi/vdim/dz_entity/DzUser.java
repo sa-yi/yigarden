@@ -11,7 +11,7 @@ public class DzUser extends BaseResponse {
     @SerializedName("uid")
     private int uid;
     @SerializedName("username")
-    private String username;
+    private String username="洛天依";
     @SerializedName("secmobicc")
     private int secmobicc;
     @SerializedName("secmobile")
